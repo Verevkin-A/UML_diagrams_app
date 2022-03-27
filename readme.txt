@@ -10,3 +10,6 @@ Instalace:
 
 Spusteni:
     mvn javafx:run
+
+Spusteni testu:
+    mvn test
