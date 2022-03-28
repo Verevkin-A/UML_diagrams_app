@@ -1,13 +1,5 @@
 package classDiagram;
 
-enum NodeType {
-    AGGREGATION,
-    ASSOCIATION,
-    GENERALIZATION,
-    COMPOSITION
-
-}
-
 /**
  * @author Marek Dohnal (xdohna48)
  * @since 2022-03-26

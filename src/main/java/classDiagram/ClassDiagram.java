@@ -18,20 +18,29 @@ public class ClassDiagram {
 
     //TODO: Implement methods
     public boolean addClass(CDClass newClass) {
-        return false;
+        return this.classes.add(newClass);
     }
 
     public boolean addNode(CDNode newNode) {
-        return false;
+        return this.nodes.add(newNode);
     }
 
-    public boolean getCDClass() {
-        return false;
+    public CDClass getCDClass(int index) {
+        return this.classes.get(index);
     }
 
-    public boolean getCDNode() {
-        return false;
+    public CDNode getCDNode(int index) {
+        return this.nodes.get(index);
     }
+
+    public int classesLen() {
+        return this.classes.size();
+    }
+
+    public int nodesLen() {
+        return this.nodes.size();
+    }
+
 
     public boolean removeClass(int index) {
         return false;
@@ -40,4 +49,5 @@ public class ClassDiagram {
     public boolean removeNode(int index) {
         return false;
     }
+
 }

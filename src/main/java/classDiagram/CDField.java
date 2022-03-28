@@ -1,12 +1,5 @@
 package classDiagram;
 
-enum Visibility {
-    PUBLIC,
-    PRIVATE,
-    PROTECTED,
-    PKG_PRIVATE
-}
-
 /**
  * @author Marek Dohnal (xdohna48)
  * @since 2022-03-26

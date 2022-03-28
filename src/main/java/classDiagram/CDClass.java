@@ -29,4 +29,65 @@ public class CDClass {
         this.fields = fields;
         this.methods = methods;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setParent(CDClass parent) {
+        this.parent = parent;
+    }
+
+    public void setParent(ClassDiagram cd, int index) {
+        try {
+            this.parent = cd.getCDClass(index);
+        } catch (IndexOutOfBoundsException e) {
+            this.parent = null;
+        }
+    }
+
+    public void setFields(ArrayList<CDField> fields) {
+        this.fields = fields;
+    }
+
+    public void setMethods(ArrayList<CDField> methods) {
+        this.methods = methods;
+    }
+
+    public boolean addField(CDField field) {
+        return this.fields.add(field);
+    }
+
+    public boolean addMethod(CDField method) {
+        return this.methods.add(method);
+    }
+
+    public void setInterface(boolean isInterface) {
+        this.isInterface = isInterface;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public CDClass getParent() {
+        return this.parent;
+    }
+
+    public int getParentAsInt(ClassDiagram cd) {
+        if (this.parent != null) {
+            for (int i = 0; i < cd.classesLen(); i++) {
+                if (cd.getCDClass(i) == this.parent) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        return -1;
+    }
+
+    @Override
+    public String toString() {
+        return "a";
+    }
 }
