@@ -1,5 +1,6 @@
 package classDiagram;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -84,6 +85,13 @@ public class CDClass {
             return -1;
         }
         return -1;
+    }
+
+    public ArrayList<CDField> getFields() {
+        return this.fields;
+    }
+    public ArrayList<CDField> getMethods() {
+        return this.methods;
     }
 
     @Override

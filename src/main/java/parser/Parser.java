@@ -1,6 +1,5 @@
 package parser;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,8 +15,6 @@ public class Parser {
         String diagString = "";
         try {
             diagString = Files.readString(Paths.get(path));
-            System.out.println(diagString);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -31,14 +28,13 @@ public class Parser {
         for (int i = 0; i < classesJSON.length(); i++) {
             JSONObject classJSON = classesJSON.getJSONObject(i);
             CDClass newClass = new CDClass();
-
             JSONArray fieldsJSON = classJSON.getJSONArray("fields");
             JSONArray methodsJSON = classJSON.getJSONArray("methods");
 
             for (int j = 0; j < fieldsJSON.length(); j++) {
                 CDField field = new CDField(
                         fieldsJSON.getJSONObject(j).getString("name"),
-                        Visibility.valueOfLabel(fieldsJSON.getJSONObject(j).getString("name"))
+                        Visibility.valueOfLabel(fieldsJSON.getJSONObject(j).getString("visibility"))
                 );
                 newClass.addField(field);
             }
@@ -46,7 +42,7 @@ public class Parser {
             for (int j = 0; j < methodsJSON.length(); j++) {
                 CDField method = new CDField(
                         fieldsJSON.getJSONObject(j).getString("name"),
-                        Visibility.valueOfLabel(fieldsJSON.getJSONObject(j).getString("name"))
+                        Visibility.valueOfLabel(fieldsJSON.getJSONObject(j).getString("visibility"))
                 );
                 newClass.addMethod(method);
             }
@@ -94,12 +90,43 @@ public class Parser {
             JSONArray fields = new JSONArray();
             classJSON.put("fields", fields);
 
+            ArrayList<CDField> cdFields = cdClass.getFields();
+
+            for (CDField cdField : cdFields) {
+                JSONObject field = new JSONObject();
+                field.put("name", cdField.getName());
+                field.put("visibility", cdField.getVisibilityAsString());
+                fields.put(field);
+            }
+
+            JSONArray methods = new JSONArray();
+            classJSON.put("methods", methods);
+
+            ArrayList<CDField> cdMethods = cdClass.getMethods();
+
+            for (CDField cdMethod : cdMethods) {
+                JSONObject method = new JSONObject();
+                method.put("name", cdMethod.getName());
+                method.put("visibility", cdMethod.getVisibilityAsString());
+                methods.put(method);
+            }
+            classes.put(classJSON);
+        }
+
+        for (int i = 0; i < cd.nodesLen(); i++) {
+            JSONObject node = new JSONObject();
+            node.put("from", cd.getCDNode(i).getFromAsInt(cd));
+            node.put("to", cd.getCDNode(i).getToAsInt(cd));
+            node.put("fCard", cd.getCDNode(i).getfCard());
+            node.put("tCard", cd.getCDNode(i).gettCard());
+            node.put("type", cd.getCDNode(i).getType());
+            nodes.put(node);
         }
 
 
         try {
-            FileWriter file = new FileWriter("data/testOutput.json");
-            file.write(obj.toString());
+            FileWriter file = new FileWriter(path);
+            file.write(obj.toString(4));
             file.close();
         } catch (IOException e) {
             // TODO Auto-generated catch block

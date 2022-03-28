@@ -12,4 +12,12 @@ public class CDField {
         this.name = name;
         this.visibility = visibility;
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public String getVisibilityAsString() {
+        return this.visibility.getSymb();
+    }
 }

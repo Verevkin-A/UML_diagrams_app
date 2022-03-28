@@ -19,4 +19,34 @@ public class CDNode {
         this.tCard = tCard;
         this.type = type;
     }
+
+    public int getFromAsInt(ClassDiagram cd) {
+        for (int i = 0; i < cd.classesLen(); i++) {
+            if (cd.getCDClass(i) == this.from) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int getToAsInt(ClassDiagram cd) {
+        for (int i = 0; i < cd.classesLen(); i++) {
+            if (cd.getCDClass(i) == this.to) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public String getfCard() {
+        return this.fCard;
+    }
+
+    public String gettCard() {
+        return this.tCard;
+    }
+
+    public int getType() {
+        return this.type.getNumVal();
+    }
 }
