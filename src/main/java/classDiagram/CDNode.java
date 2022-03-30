@@ -20,6 +20,14 @@ public class CDNode {
         this.type = type;
     }
 
+    public CDClass getFrom() {
+        return this.from;
+    }
+
+    public CDClass getTo() {
+        return this.to;
+    }
+
     public int getFromAsInt(ClassDiagram cd) {
         for (int i = 0; i < cd.classesLen(); i++) {
             if (cd.getCDClass(i) == this.from) {

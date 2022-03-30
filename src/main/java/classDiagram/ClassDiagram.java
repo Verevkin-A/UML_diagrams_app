@@ -43,10 +43,27 @@ public class ClassDiagram {
 
 
     public boolean removeClass(int index) {
+        if (index < this.classes.size()) {
+            for (CDClass cdClass : this.classes) {
+                if (this.classes.get(index).getParent() == cdClass) {
+                    this.classes.get(index).removeParent();
+                }
+            }
+            for (CDNode cdNode : this.nodes) {
+                if (cdNode.getFrom() == this.classes.get(index) ||
+                    cdNode.getTo() == this.classes.get(index)) {
+                    this.nodes.remove(cdNode);
+                }
+            }
+            this.classes.remove(index);
+        }
         return false;
     }
 
     public boolean removeNode(int index) {
+        if (index < this.nodes.size()) {
+            this.nodes.remove(index);
+        }
         return false;
     }
 

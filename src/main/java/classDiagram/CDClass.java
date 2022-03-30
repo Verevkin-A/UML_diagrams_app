@@ -47,6 +47,10 @@ public class CDClass {
         }
     }
 
+    public void removeParent() {
+        this.parent = null;
+    }
+
     public void setFields(ArrayList<CDField> fields) {
         this.fields = fields;
     }
@@ -87,15 +91,24 @@ public class CDClass {
         return -1;
     }
 
+    public ArrayList<CDField> getOverridenMethods() {
+        ArrayList<CDField> overridenMethods = new ArrayList<>();
+        if (this.parent != null) {
+            for (CDField method : this.methods) {
+                if (this.parent.methods.contains(method) &&
+                        method.getVisibility() != Visibility.PRIVATE) {
+                    overridenMethods.add(method);
+                }
+            }
+            return overridenMethods;
+        }
+        return null;
+    }
+
     public ArrayList<CDField> getFields() {
         return this.fields;
     }
     public ArrayList<CDField> getMethods() {
         return this.methods;
-    }
-
-    @Override
-    public String toString() {
-        return "a";
     }
 }

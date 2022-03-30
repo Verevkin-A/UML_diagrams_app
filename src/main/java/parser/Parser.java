@@ -1,24 +1,11 @@
 package parser;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-
 import classDiagram.*;
 import org.json.*;
 
 public class Parser {
-    public static ClassDiagram decodeJSON(String path) {
-        // File to String
-        String diagString = "";
-        try {
-            diagString = Files.readString(Paths.get(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+    public static ClassDiagram decodeJSON(String diagString) {
         ClassDiagram classDiagram = new ClassDiagram();
 
         JSONObject obj = new JSONObject(diagString);
@@ -72,7 +59,7 @@ public class Parser {
         return classDiagram;
     }
 
-    public static void encodeJSON(String path, ClassDiagram cd) {
+    public static String encodeJSON(ClassDiagram cd) {
         JSONObject obj = new JSONObject();
         JSONObject classDiagram = new JSONObject();
         JSONArray classes = new JSONArray();
@@ -112,7 +99,6 @@ public class Parser {
             }
             classes.put(classJSON);
         }
-
         for (int i = 0; i < cd.nodesLen(); i++) {
             JSONObject node = new JSONObject();
             node.put("from", cd.getCDNode(i).getFromAsInt(cd));
@@ -122,15 +108,6 @@ public class Parser {
             node.put("type", cd.getCDNode(i).getType());
             nodes.put(node);
         }
-
-
-        try {
-            FileWriter file = new FileWriter(path);
-            file.write(obj.toString(4));
-            file.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        return obj.toString(4);
     }
 }
