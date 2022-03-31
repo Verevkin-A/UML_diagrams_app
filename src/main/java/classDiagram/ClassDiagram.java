@@ -12,8 +12,8 @@ public class ClassDiagram {
 
 
     public ClassDiagram() {
-        this.classes = new ArrayList<CDClass>();
-        this.nodes = new ArrayList<CDNode>();
+        this.classes = new ArrayList<>();
+        this.nodes = new ArrayList<>();
     }
 
     //TODO: Implement methods

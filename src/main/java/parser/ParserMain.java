@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 
 
 public class ParserMain {
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         ClassDiagram cd = new ClassDiagram();
         try {
             String filepath = "data/format.json";
