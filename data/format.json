@@ -1,0 +1,49 @@
+{
+  "classDiagram": {
+    "classes": [
+      {
+        "name": "testClass",
+        "parent": -1,
+        "fields": [
+          {
+            "name": "firstAttr",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "myTestMethod()",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false
+      },
+      {
+        "name": "testClass2",
+        "parent": 0,
+        "fields": [
+          {
+            "name": "firstAttr2",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "myTestMethod2()",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false
+      }
+    ],
+    "nodes": [
+      {
+        "from": 0,
+        "to": 1,
+        "fCard": "0..*",
+        "tCard": "1",
+        "type": 1
+      }
+    ]
+  }
+}
