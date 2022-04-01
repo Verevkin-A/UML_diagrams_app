@@ -1,5 +1,10 @@
 package classDiagram;
 
+/**
+ * The visibility of a field.
+ * @author Marek Dohnal (xdohna48)
+ * @since 2022-03-26
+ */
 public enum Visibility {
     PUBLIC("+"),
     PRIVATE("-"),
@@ -16,6 +21,11 @@ public enum Visibility {
         return symb;
     }
 
+    /**
+     * Returns the Visibility specified by it's String descriptor
+     * @param symb the String descriptor
+     * @return the Visibility
+     */
     public static Visibility valueOfLabel(String symb) {
         for (Visibility v : values()) {
             if (v.symb.equals(symb)) {

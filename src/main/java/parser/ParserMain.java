@@ -7,7 +7,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-
+/**
+ * A temporary class to demonstrate Parser functionality.
+ * @author Marek Dohnal (xdohna48)
+ * @since 2022-03-26
+ */
 public class ParserMain {
     public static void main(String[] args) {
         ClassDiagram cd = new ClassDiagram();

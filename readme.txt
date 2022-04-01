@@ -13,3 +13,6 @@ Spusteni:
 
 Spusteni testu:
     mvn test
+
+Generovani dokumentace:
+    mvn javadoc:javadoc

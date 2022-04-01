@@ -4,7 +4,18 @@ import java.util.ArrayList;
 import classDiagram.*;
 import org.json.*;
 
+/**
+ * Encodes and decodes a JSON file with a class diagram and a sequence diagram.
+ * @author Marek Dohnal (xdohna48)
+ * @since 2022-03-26
+ */
 public class Parser {
+    /**
+     * Decodes a JSON string containing the class diagram
+     * into a ClassDiagram object.
+     * @param diagString The string containing a JSON class diagram
+     * @return a filled ClassDiagram object
+     */
     public static ClassDiagram decodeJSON(String diagString) {
         ClassDiagram classDiagram = new ClassDiagram();
 
@@ -59,6 +70,11 @@ public class Parser {
         return classDiagram;
     }
 
+    /**
+     * Encodes a ClassDiagram object into a JSON String.
+     * @param cd The ClassDiagram to be encoded
+     * @return The encoded JSON String.
+     */
     public static String encodeJSON(ClassDiagram cd) {
         JSONObject obj = new JSONObject();
         JSONObject classDiagram = new JSONObject();
