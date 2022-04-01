@@ -85,8 +85,9 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.3.2</version>
                 <configuration>
+                    <outputDirectory>doc</outputDirectory>
+                    <reportOutputDirectory>doc</reportOutputDirectory>
                     <source>11</source>
-                    <target>11</target>
                 </configuration>
             </plugin>
 
