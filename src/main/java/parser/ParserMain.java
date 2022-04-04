@@ -23,6 +23,7 @@ public class ParserMain {
             e.printStackTrace();
         }
 
+
         try {
             FileWriter file = new FileWriter("data/output.json");
             String output = Parser.encodeJSON(cd);
