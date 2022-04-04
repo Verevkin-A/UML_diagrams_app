@@ -1,6 +1,9 @@
 package parser;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+
 import classDiagram.*;
 import org.json.*;
 
@@ -30,25 +33,30 @@ public class Parser {
             JSONArray methodsJSON = classJSON.getJSONArray("methods");
 
             for (int j = 0; j < fieldsJSON.length(); j++) {
+                JSONObject fieldJSON = fieldsJSON.getJSONObject(j);
                 CDField field = new CDField(
-                        fieldsJSON.getJSONObject(j).getString("name"),
-                        Visibility.valueOfLabel(fieldsJSON.getJSONObject(j).getString("visibility"))
+                        fieldJSON.getString("name"),
+                        Visibility.valueOfLabel(fieldJSON.getString("visibility"))
                 );
                 newClass.addField(field);
             }
 
             for (int j = 0; j < methodsJSON.length(); j++) {
+                JSONObject methodJSON = methodsJSON.getJSONObject(j);
                 CDField method = new CDField(
-                        fieldsJSON.getJSONObject(j).getString("name"),
-                        Visibility.valueOfLabel(fieldsJSON.getJSONObject(j).getString("visibility"))
+                        methodJSON.getString("name"),
+                        Visibility.valueOfLabel(methodJSON.getString("visibility"))
                 );
                 newClass.addMethod(method);
             }
 
+
             newClass.setName(classJSON.getString("name"));
-            newClass.setParent(classDiagram,
-                    classJSON.getInt("parent"));
+            newClass.setParent(classJSON.getInt("parent"));
             newClass.setInterface(classJSON.getBoolean("isInterface"));
+            newClass.setPosition(classJSON.getInt("xPos"), classJSON.getInt("yPos"));
+            newClass.setWidth(classJSON.getInt("width"));
+            newClass.setHeight(classJSON.getInt("height"));
 
             classDiagram.addClass(newClass);
         }
@@ -59,7 +67,9 @@ public class Parser {
             JSONObject node = nodesJSON.getJSONObject(i);
             CDNode newNode = new CDNode(
                     classDiagram.getCDClass(node.getInt("from")),
+                    AnchorType.valueOfLabel(node.getString("fAnchor")),
                     classDiagram.getCDClass(node.getInt("to")),
+                    AnchorType.valueOfLabel(node.getString("tAnchor")),
                     node.getString("fCard"),
                     node.getString("tCard"),
                     NodeType.valueOfLabel(node.getInt("type"))
@@ -88,7 +98,12 @@ public class Parser {
             CDClass cdClass = cd.getCDClass(i);
             JSONObject classJSON = new JSONObject();
             classJSON.put("name", cdClass.getName());
-            classJSON.put("parent", cdClass.getParentAsInt(cd));
+            classJSON.put("parent", cdClass.getParent());
+            classJSON.put("isInterface", cdClass.getInterface());
+            classJSON.put("xPos", cdClass.getXposition());
+            classJSON.put("yPos", cdClass.getYposition());
+            classJSON.put("width", cdClass.getWidth());
+            classJSON.put("height", cdClass.getHeight());
 
             JSONArray fields = new JSONArray();
             classJSON.put("fields", fields);
@@ -118,7 +133,9 @@ public class Parser {
         for (int i = 0; i < cd.nodesLen(); i++) {
             JSONObject node = new JSONObject();
             node.put("from", cd.getCDNode(i).getFromAsInt(cd));
+            node.put("fAnchor", cd.getCDNode(i).getfAnchor().getSymb());
             node.put("to", cd.getCDNode(i).getToAsInt(cd));
+            node.put("tAnchor", cd.getCDNode(i).gettAnchor().getSymb());
             node.put("fCard", cd.getCDNode(i).getfCard());
             node.put("tCard", cd.getCDNode(i).gettCard());
             node.put("type", cd.getCDNode(i).getType());

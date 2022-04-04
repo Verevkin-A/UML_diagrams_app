@@ -28,6 +28,9 @@ public class ClassDiagram {
         return this.classes.add(newClass);
     }
 
+    public void addClass(CDClass newClass, int index) {
+        this.classes.add(index, newClass);
+    }
     /**
      * Adds a node to the class diagram
      * @param newNode the node to be added
@@ -37,6 +40,9 @@ public class ClassDiagram {
         return this.nodes.add(newNode);
     }
 
+    public void addNode(CDNode newNode, int index) {
+        this.nodes.add(index, newNode);
+    }
     /**
      * Returns a class of the class diagram on the specified index
      * @param index position of the class in the class diagram
@@ -75,32 +81,35 @@ public class ClassDiagram {
     /**
      * Removes a class from the class diagram.
      * If the class was a parent to another class,
-     * the parent of the latter class is set to null.
+     * the parent of the latter class is set to -1.
      * Also removes any nodes coming from or to the class.
      * @param index Index of the class to be removed
-     * @return true if removal was successful, false otherwise
      */
-    public boolean removeClass(int index) {
-        if (index < this.classes.size()) {
-            for (CDClass cdClass : this.classes) {
-                if (this.classes.get(index).getParent() == cdClass) {
-                    this.classes.get(index).removeParent();
-                }
+    public void removeClass(int index) {
+        CDClass removedClass = this.classes.get(index);
+        for (CDClass cdClass : this.classes) {
+            if (index == cdClass.getParent()) {
+                cdClass.removeParent();
             }
-            for (CDNode cdNode : this.nodes) {
-                if (cdNode.getFrom() == this.classes.get(index) ||
-                    cdNode.getTo() == this.classes.get(index)) {
-                    this.nodes.remove(cdNode);
-                }
-            }
-            this.classes.remove(index);
         }
-        return false;
+
+        CDNode removedNode = null;
+        for (int i = 0; i < this.nodes.size(); i++) {
+            if (this.nodes.get(i).getFrom() == removedClass ||
+                    this.nodes.get(i).getTo() == removedClass) {
+                this.nodes.remove(i);
+                i = 0;
+            }
+        }
+        this.nodes.removeIf(e ->
+                (e.getFrom() == removedClass || e.getTo() == removedClass));
+        this.classes.remove(index);
     }
 
     public boolean removeNode(int index) {
         if (index < this.nodes.size()) {
             this.nodes.remove(index);
+            return true;
         }
         return false;
     }
