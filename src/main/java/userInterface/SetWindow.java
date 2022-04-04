@@ -1,70 +1,46 @@
 package userInterface;
 
-import classDiagram.ClassDiagram;
-import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 
+import static java.lang.System.out;
+
 public class SetWindow {
+    Controller controller;
+    AnchorPane root;
 
-    public AnchorPane createWindow() {
-        AnchorPane root = new AnchorPane();
-
-        return root;
+    public SetWindow() {
+        this.root = new AnchorPane();
+        this.controller = new Controller(this.root);
     }
 
-//    public AnchorPane createWindow() {
-//        AnchorPane root = new AnchorPane();
-//
-//        TitledPane titledPane1 = new TitledPane();
-//        TitledPane titledPane2 = new TitledPane();
-//
-//        GridPane gridPane1 = createGridPane();
-//        titledPane1.setContent(gridPane1);
-//
-//        GridPane gridPane2 = createGridPane();
-//        titledPane2.setContent(gridPane2);
-//
-//        titledPane1.setText("Address");
-//        titledPane1.setExpanded(true);
-//        titledPane1.setCollapsible(false);
-//
-//        titledPane2.setText("Address2");
-//        titledPane2.setExpanded(true);
-//        titledPane2.setCollapsible(false);
-//
-//        AnchorPane.setTopAnchor(titledPane1, 10.0);
-//        AnchorPane.setLeftAnchor(titledPane1, 10.0);
-//
-//        AnchorPane.setTopAnchor(titledPane2, 10.0);
-//        AnchorPane.setLeftAnchor(titledPane2, 310.0);
-//        // bound line
-//        Line line = new Line(10, 10, 310, 10);
-//        // add all elements into canvas
-//        root.getChildren().addAll(titledPane1, titledPane2, line);
-//        return root;
-//    }
+    public AnchorPane createWindow() {
 
-    public GridPane createGridPane() {
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
-        gridPane.setVgap(5);
-        gridPane.setHgap(5);
-        gridPane.add(new Label("Street name"), 0, 1);
-        gridPane.add(new TextField(), 1, 1);
-        gridPane.add(new Label("House number"), 0, 0);
-        gridPane.add(new TextField(), 1, 0);
-        gridPane.add(new Label("City"), 0, 2);
-        gridPane.add(new TextField(), 1, 2);
-        gridPane.add(new Label("Province"), 0, 3);
-        gridPane.add(new TextField(), 1, 3);
-        gridPane.add(new Label("Postal"), 0, 4);
-        gridPane.add(new TextField(), 1, 4);
+        Menu menuFile = new Menu("File");
+        menuFile.getItems().addAll(this.controller.menuItemLoad, this.controller.menuItemSave);
+        Menu menuAbout = new Menu("About");
+        menuAbout.getItems().addAll(this.controller.menuItemHelp, this.controller.menuItemCredits);
+        // configure menu title bar
+        MenuBar menuBar = new MenuBar(menuFile, menuAbout);
+        AnchorPane.setTopAnchor(menuBar, 0.0);
+        AnchorPane.setLeftAnchor(menuBar, 0.0);
+        AnchorPane.setRightAnchor(menuBar, 0.0);
 
-        return gridPane;
+        ScrollPane scrollPane = new ScrollPane(new VBox());
+
+        AnchorPane.setTopAnchor(scrollPane, 70.0);
+        AnchorPane.setLeftAnchor(scrollPane, 950.0);
+        AnchorPane.setRightAnchor(scrollPane, 20.0);
+        AnchorPane.setBottomAnchor(scrollPane, 15.0);
+
+        AnchorPane.setTopAnchor(this.controller.buttonCreateClass, 40.0);
+        AnchorPane.setLeftAnchor(this.controller.buttonCreateClass, 950.0);
+
+        this.root.getChildren().addAll(menuBar, scrollPane, this.controller.buttonCreateClass);
+
+        return this.root;
     }
 }
