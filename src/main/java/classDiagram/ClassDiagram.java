@@ -1,8 +1,6 @@
 package classDiagram;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * The class diagram which contains classes and nodes.
@@ -86,7 +84,6 @@ public class ClassDiagram {
      * the parent of the latter class is set to -1.
      * Also removes any nodes coming from or to the class.
      * @param index Index of the class to be removed
-     * @return true if removal was successful, false otherwise
      */
     public void removeClass(int index) {
         CDClass removedClass = this.classes.get(index);

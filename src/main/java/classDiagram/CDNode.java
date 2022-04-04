@@ -18,7 +18,7 @@ public class CDNode {
     /**
      * Constructs a filled node
      * @param from The class from which the node originates
-     * @param tAnchor The anchor of the originating class to which
+     * @param fAnchor The anchor of the originating class to which
      *                the node is connected
      * @param to The class at which the node ends
      * @param tAnchor The anchor of the terminating class to which

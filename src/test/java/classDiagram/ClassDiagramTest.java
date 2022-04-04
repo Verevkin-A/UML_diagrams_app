@@ -26,8 +26,8 @@ public class ClassDiagramTest {
 
     @Test
     public void testRemoveClass() {
-        Assertions.assertThrows(IndexOutOfBoundsException.class,() -> {cd.removeClass(-1);});
-        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> {cd.removeClass(3);});
+        Assertions.assertThrows(IndexOutOfBoundsException.class,() -> cd.removeClass(-1));
+        Assertions.assertThrows(IndexOutOfBoundsException.class, () -> cd.removeClass(3));
 
         CDClass classRmvdParent = cd.getCDClass(2);
         Assertions.assertEquals(0, classRmvdParent.getParent());
