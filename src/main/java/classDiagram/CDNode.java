@@ -7,23 +7,32 @@ package classDiagram;
  */
 public class CDNode {
     private CDClass from;
+    private AnchorType fAnchor;
+    private AnchorType tAnchor;
     private CDClass to;
     private String fCard;
     private String tCard;
     private NodeType type;
 
+
     /**
      * Constructs a filled node
      * @param from The class from which the node originates
+     * @param fAnchor The anchor of the originating class to which
+     *                the node is connected
      * @param to The class at which the node ends
+     * @param tAnchor The anchor of the terminating class to which
+     *                the node is connected
      * @param fCard The cardinality at the originating class
      * @param tCard The cardinality at the terminating class
      * @param type The type of the node
      */
-    public CDNode(CDClass from, CDClass to, String fCard,
+    public CDNode(CDClass from, AnchorType fAnchor, CDClass to, AnchorType tAnchor, String fCard,
                   String tCard, NodeType type) {
         this.from = from;
+        this.fAnchor = fAnchor;
         this.to = to;
+        this.tAnchor = tAnchor;
         this.fCard = fCard;
         this.tCard = tCard;
         this.type = type;
@@ -97,5 +106,13 @@ public class CDNode {
      */
     public int getType() {
         return this.type.getNumVal();
+    }
+
+    public AnchorType getfAnchor() {
+        return this.fAnchor;
+    }
+
+    public AnchorType gettAnchor() {
+        return this.tAnchor;
     }
 }
