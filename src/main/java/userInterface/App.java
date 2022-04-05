@@ -1,5 +1,6 @@
 package userInterface;
 
+import controllers.AppCtrl;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;

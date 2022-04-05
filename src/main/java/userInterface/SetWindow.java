@@ -29,7 +29,7 @@ public class SetWindow {
         AnchorPane.setLeftAnchor(menuBar, 0.0);
         AnchorPane.setRightAnchor(menuBar, 0.0);
 
-        ScrollPane scrollPane = new ScrollPane(new VBox());
+        ScrollPane scrollPane = new ScrollPane(new GridPane());
 
         AnchorPane.setTopAnchor(scrollPane, 70.0);
         AnchorPane.setLeftAnchor(scrollPane, 950.0);

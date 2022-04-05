@@ -12,15 +12,21 @@ import java.util.Objects;
 import classDiagram.CDClass;
 import classDiagram.CDField;
 import classDiagram.ClassDiagram;
+import controllers.Command;
+import controllers.ToolState;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import parser.Parser;
 
 import static java.lang.System.out;
@@ -37,12 +43,15 @@ public class Controller implements EventHandler<ActionEvent> {
     public MenuItem menuItemCredits = new MenuItem("Credits");
 
     public final Button buttonCreateClass = new Button("New class");
+    public boolean classCreation;
 
     public ArrayList<Button> addFieldButtons;
     public ArrayList<Button> addMethodButtons;
     public ArrayList<Button> deleteRowButtons;
 
     public Controller(AnchorPane root) {
+        this.root = root;
+        this.root.setOnMouseClicked(this.canvasMousePress);
         // set json extension filter
         this.fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON Files", "*.json"));
         // set buttons handler
@@ -51,13 +60,8 @@ public class Controller implements EventHandler<ActionEvent> {
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
 
-        this.buttonCreateClass.setOnAction(this);
-
-        this.addFieldButtons = new ArrayList<>();
-        this.addMethodButtons = new ArrayList<>();
-        this.deleteRowButtons = new ArrayList<>();
-
-        this.root = root;
+        this.buttonCreateClass.setOnAction(createClass);
+        this.classCreation = false;
     }
 
     @Override
@@ -75,11 +79,7 @@ public class Controller implements EventHandler<ActionEvent> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // add all classes
-            for (int i = 0; i < this.cd.classesLen(); i++) {
-                CDClass clsToAdd = this.cd.getCDClass(i);
-                this.addClass(this.root, clsToAdd);
-            }
+            // TODO add all classes
         } else if (actionEvent.getSource() == this.menuItemSave) {
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
@@ -100,131 +100,75 @@ public class Controller implements EventHandler<ActionEvent> {
             System.out.println("Help");     // TODO help window
         } else if (actionEvent.getSource() == this.menuItemCredits) {
             System.out.println("Credits");      // TODO credits window
-        } else if (actionEvent.getSource() == this.buttonCreateClass) {
-            // TODO create class
-            addClass(this.root, new CDClass());
-        } else if (this.addFieldButtons.contains(actionEvent.getSource())) {
-            this.addNewField((GridPane) ((Node) actionEvent.getSource()).getParent());
-        } else if (this.addMethodButtons.contains(actionEvent.getSource())) {
-            this.addNewMethod((GridPane) ((Node) actionEvent.getSource()).getParent());
-        } else if (this.deleteRowButtons.contains(actionEvent.getSource())) {
-            this.deleteRow((Button) actionEvent.getSource());
         }
     }
 
-    public void addClass(AnchorPane root, CDClass cls) {
+    public EventHandler<ActionEvent> createClass = new EventHandler<ActionEvent>()
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            classCreation = true;
+        }
+    };
+
+    public EventHandler<MouseEvent> canvasMousePress = new EventHandler<MouseEvent>()
+    {
+        @Override
+        public void handle(MouseEvent event)
+        {
+            if (event.getTarget() == event.getSource())
+            {
+                if (classCreation) {
+                    System.out.println(event.getX());
+                    System.out.println(event.getY());
+                    addClass(event.getX(), event.getY());
+
+                    classCreation = false;
+                } else {
+                    System.out.println("CANVAS: canvas clicked, no action");
+                }
+            }
+        }
+    };
+
+    public void addClass(double axisX, double axisY) {
+
+        Stage stage = new Stage();
+        // create and initialize starting window
+        AnchorPane root = new AnchorPane();
+
+        Scene scene = new Scene(root, 600, 400);
+        stage.setTitle("New window");
+        stage.setScene(scene);
+        stage.show();
+
+
         TitledPane titledPane = new TitledPane();
+        titledPane.setText("Class");
+        titledPane.setCollapsible(false);
 
-        titledPane.setContent(this.populateClass(cls));
+        AnchorPane.setLeftAnchor(titledPane, axisX);
+        AnchorPane.setTopAnchor(titledPane, axisY);
 
-        titledPane.setText(cls.getName());
-        titledPane.setExpanded(false);
-        titledPane.setAnimated(true);
-
-        for (Node node: root.getChildren()) {
-            if (node instanceof ScrollPane) {
-                Node vbox = ((ScrollPane) node).getContent();
-                ((VBox) vbox).getChildren().add(titledPane);
-                break;
-            }
-        }
+        this.root.getChildren().add(titledPane);
     }
 
-    public GridPane populateClass(CDClass cls) {
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
-        gridPane.setVgap(5);
-        gridPane.setHgap(5);
-        // set row counter
-        int cnt = 0;
-        // create add add field button
-        Button addField = new Button("Add");
-        addField.setOnAction(this);
-        this.addFieldButtons.add(addField);
-        // add fields row
-        gridPane.addRow(cnt, new Label("Attributes:"), addField);
-        cnt++;
-        for (CDField field: cls.getFields()) {
-            // crete field name
-            TextField textField = new TextField(field.getName());
-            textField.setPrefColumnCount(10);
-            // create delete button
-            Button delField = new Button("Del");
-            delField.setOnAction(this);
-            this.deleteRowButtons.add(delField);
-            // add field row
-            gridPane.addRow(cnt, textField, delField);
-            cnt++;
-        }
-        // create add method button
-        Button addMethod = new Button("Add");
-        addMethod.setOnAction(this);
-        this.addMethodButtons.add(addMethod);
-        // add methods row
-        gridPane.addRow(cnt, new Label("Methods:"), addMethod);
-        cnt++;
-        for (CDField method: cls.getMethods()) {
-            // create method name
-            TextField textField = new TextField(method.getName());
-            textField.setPrefColumnCount(10);
-            // create delete button
-            Button delMethod = new Button("Del");
-            delMethod.setOnAction(this);
-            this.deleteRowButtons.add(delMethod);
-            // add method row
-            gridPane.addRow(cnt, textField, delMethod);
-            cnt++;
-        }
-
-        return gridPane;
-    }
-
-    public void addNewField(GridPane gridPane) {
-        boolean incRows = false;
-        // move other rows
-        for (Node child: gridPane.getChildren()) {
-            out.println(GridPane.getRowIndex(child));
-            if (!incRows && child instanceof Label && Objects.equals(((Label) child).getText(), "Methods:")) {
-                incRows = true;
-                out.println("here");
-            }
-            if (incRows) {
-                Integer index = GridPane.getRowIndex(child);
-                GridPane.setRowIndex(child, index + 1);
-            }
-        }
-
-        TextField textField = new TextField("");
-        textField.setPrefColumnCount(10);
-
-        Button delField = new Button("Del");
-        delField.setOnAction(this);
-        this.deleteRowButtons.add(delField);
-
-        gridPane.addRow(1, textField, delField);
-        out.println("Method");
-    }
-
-    public void addNewMethod(GridPane gridPane) {
-        TextField textField = new TextField("");
-        textField.setPrefColumnCount(10);
-
-        Button delMethod = new Button("Del");
-        delMethod.setOnAction(this);
-        this.deleteRowButtons.add(delMethod);
-
-        gridPane.addRow(gridPane.getChildren().size() / 2, textField, delMethod);
-
-        out.println("Method");
-    }
-
-    public void deleteRow(Button button) {
-        for (Node child: ((GridPane) ((Node) button).getParent()).getChildren()) {
-            // TODO
-        }
-    }
-
-    public void refresh() {
-        // TODO needed?
-    }
+//    public void addClass(AnchorPane root, CDClass cls) {
+//        TitledPane titledPane = new TitledPane();
+//
+//        titledPane.setContent(this.populateClass(cls));
+//
+//        titledPane.setText(cls.getName());
+//        titledPane.setExpanded(false);
+//        titledPane.setAnimated(true);
+//
+//        for (Node node: root.getChildren()) {
+//            if (node instanceof ScrollPane) {
+//                Node vbox = ((ScrollPane) node).getContent();
+//                ((VBox) vbox).getChildren().add(titledPane);
+//                break;
+//            }
+//        }
+//    }
 }
