@@ -16,8 +16,10 @@ import controllers.Command;
 import controllers.ToolState;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -26,7 +28,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import parser.Parser;
 
 import static java.lang.System.out;
@@ -133,16 +137,18 @@ public class Controller implements EventHandler<ActionEvent> {
     };
 
     public void addClass(double axisX, double axisY) {
-
-        Stage stage = new Stage();
-        // create and initialize starting window
-        AnchorPane root = new AnchorPane();
-
-        Scene scene = new Scene(root, 600, 400);
-        stage.setTitle("New window");
-        stage.setScene(scene);
-        stage.show();
-
+        // open form window
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("formWindow.fxml"));
+            Parent root1 = (Parent) fxmlLoader.load();
+            Stage stage = new Stage();
+//            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Class form");
+            stage.setScene(new Scene(root1));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         TitledPane titledPane = new TitledPane();
         titledPane.setText("Class");

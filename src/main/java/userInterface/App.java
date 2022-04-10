@@ -2,6 +2,7 @@ package userInterface;
 
 import controllers.AppCtrl;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TitledPane;
@@ -28,6 +29,7 @@ public class App extends Application {
 
         Scene scene = new Scene(root, 1200, 800);
         stage.setTitle("UML Editor");
+        stage.onCloseRequestProperty().setValue(e -> Platform.exit());
         stage.setScene(scene);
         stage.show();
     }

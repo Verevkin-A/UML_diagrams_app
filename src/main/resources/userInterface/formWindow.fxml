@@ -12,15 +12,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane prefHeight="477.0" prefWidth="432.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.FormWindow">
+<AnchorPane prefHeight="477.0" prefWidth="432.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.FormController">
    <children>
       <Label layoutX="8.0" layoutY="14.0" prefHeight="28.0" prefWidth="89.0" text="Class name:">
          <font>
             <Font size="14.0" />
          </font>
       </Label>
-      <TextField fx:id="tfClassName" layoutX="103.0" layoutY="16.0" />
+      <TextField fx:id="tfClassName" layoutX="103.0" layoutY="16.0" prefHeight="24.0" prefWidth="218.0" />
       <VBox layoutX="8.0" layoutY="65.0" prefHeight="119.0" prefWidth="77.0" spacing="21.0">
          <children>
             <Label text="Name:">
@@ -35,16 +34,16 @@
             </Label>
          </children>
       </VBox>
-      <ToggleButton fx:id="tbInterface" layoutX="313.0" layoutY="16.0" mnemonicParsing="false" text="Interface" textAlignment="CENTER" />
+      <ToggleButton fx:id="tbInterface" layoutX="336.0" layoutY="16.0" mnemonicParsing="false" text="Interface" textAlignment="CENTER" />
       <RadioButton fx:id="rbPublic" layoutX="91.0" layoutY="107.0" mnemonicParsing="false" selected="true" text="Public">
          <toggleGroup>
-            <ToggleGroup fx:id="Vsibility" />
+            <ToggleGroup fx:id="Visibility" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="rbPrivate" layoutX="163.0" layoutY="107.0" mnemonicParsing="false" text="Private" toggleGroup="$Vsibility" />
-      <RadioButton fx:id="rbProtected" layoutX="242.0" layoutY="107.0" mnemonicParsing="false" text="Protected" toggleGroup="$Vsibility" />
-      <RadioButton fx:id="rbPackage" layoutX="339.0" layoutY="107.0" mnemonicParsing="false" text="Package" toggleGroup="$Vsibility" />
-      <TextField fx:id="tfFieldName" layoutX="103.0" layoutY="65.0" />
+      <RadioButton fx:id="rbPrivate" layoutX="163.0" layoutY="107.0" mnemonicParsing="false" text="Private" toggleGroup="$Visibility" />
+      <RadioButton fx:id="rbProtected" layoutX="242.0" layoutY="107.0" mnemonicParsing="false" text="Protected" toggleGroup="$Visibility" />
+      <RadioButton fx:id="rbPackage" layoutX="339.0" layoutY="107.0" mnemonicParsing="false" text="Package" toggleGroup="$Visibility" />
+      <TextField fx:id="tfFieldName" layoutX="103.0" layoutY="65.0" prefHeight="24.0" prefWidth="120.0" />
       <TableView fx:id="tvFields" layoutX="23.0" layoutY="139.0" prefHeight="283.0" prefWidth="387.0">
         <columns>
             <TableColumn fx:id="tcName" prefWidth="157.0" text="Name" />
@@ -56,5 +55,11 @@
       <Button fx:id="bDone" layoutX="339.0" layoutY="433.0" mnemonicParsing="false" onAction="#ClassAction" prefHeight="30.0" prefWidth="70.0" text="Done" />
       <Button fx:id="bDelete" layoutX="213.0" layoutY="433.0" mnemonicParsing="false" onAction="#ClassAction" prefHeight="30.0" prefWidth="90.0" text="Delete" />
       <Button fx:id="bUpdate" layoutX="118.0" layoutY="433.0" mnemonicParsing="false" onAction="#ClassAction" prefHeight="30.0" prefWidth="90.0" text="Update" />
+      <RadioButton fx:id="rbMethod" layoutX="342.0" layoutY="68.0" mnemonicParsing="false" selected="true" text="Method">
+         <toggleGroup>
+            <ToggleGroup fx:id="Type" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton fx:id="rbField" layoutX="242.0" layoutY="68.0" mnemonicParsing="false" selected="true" text="Field" toggleGroup="$Type" />
    </children>
 </AnchorPane>
