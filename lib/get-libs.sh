@@ -1,4 +1,5 @@
-# TODO
+#!/bin/sh
+mvn dependency:copy-dependencies
 # Adresář lib
 # obsahuje pouze skript s názvem get-libs.sh,
 # který po spuštění stáhne z internetu požadované externí knihovny či soubory

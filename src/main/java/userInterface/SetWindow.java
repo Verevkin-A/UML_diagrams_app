@@ -5,19 +5,29 @@ import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
-import static java.lang.System.out;
-
+/**
+ * Main window initialization
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-02
+ */
 public class SetWindow {
     Controller controller;
     AnchorPane root;
 
+    /**
+     * setWindow constructor
+     */
     public SetWindow() {
         this.root = new AnchorPane();
         this.controller = Controller.setController(this.root);
     }
 
+    /**
+     * Main window initialization
+     *
+     * @return root pane object
+     */
     public AnchorPane createWindow() {
-
         Menu menuFile = new Menu("File");
         menuFile.getItems().addAll(this.controller.menuItemLoad, this.controller.menuItemSave);
         Menu menuAbout = new Menu("About");
@@ -42,7 +52,7 @@ public class SetWindow {
 
         AnchorPane.setTopAnchor(this.controller.buttonCreateClass, 40.0);
         AnchorPane.setLeftAnchor(this.controller.buttonCreateClass, 950.0);
-
+        // add all objects on the main pane
         this.root.getChildren().addAll(menuBar, scrollPane, this.controller.buttonCreateClass);
 
         return this.root;

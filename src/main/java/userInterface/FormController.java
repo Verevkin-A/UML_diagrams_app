@@ -13,7 +13,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-
+/**
+ * Class form window controller
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-02
+ */
 public class FormController {
 
     @FXML
@@ -40,6 +44,9 @@ public class FormController {
     @FXML
     private TableView<FormField> tvFields;
 
+    /**
+     * Form window initialization
+     */
     @FXML
     public void initialize() {
         tcName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -47,6 +54,11 @@ public class FormController {
         tcVisibility.setCellValueFactory(new PropertyValueFactory<>("visibility"));
     }
 
+    /**
+     * Form button events handler
+     *
+     * @param event pressed button
+     */
     @FXML
     void FormAction(ActionEvent event) {
         if (event.getSource() == bCreate) {
@@ -61,11 +73,17 @@ public class FormController {
         }
     }
 
+    /**
+     * New field button handler
+     */
     void createField() {
         FormField formField = new FormField(tfFieldName.getText(), getType(), getVisibility());
         tvFields.getItems().add(formField);
     }
 
+    /**
+     * Delete field button handler
+     */
     void deleteField() {
         try {
             tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
@@ -74,6 +92,9 @@ public class FormController {
         }
     }
 
+    /**
+     * Update field button handler
+     */
     void updateField() {
         try {
             FormField formField = tvFields.getSelectionModel().getSelectedItem();
@@ -86,6 +107,11 @@ public class FormController {
         }
     }
 
+    /**
+     * Table view dynamic row selection
+     *
+     * @param event selected row
+     */
     @FXML
     void tvSelectRow(MouseEvent event) {
         FormField formField = tvFields.getSelectionModel().getSelectedItem();
@@ -113,13 +139,21 @@ public class FormController {
         }
     }
 
+    /**
+     * Current visibility radio button selection getter
+     *
+     * @return selected visibility toggle text
+     */
     private String getVisibility() {
         return ((RadioButton) Visibility.getSelectedToggle()).getText();
     }
 
+    /**
+     * Current type radio button selection getter
+     *
+     * @return selected type toggle text
+     */
     private String getType() {
         return ((RadioButton) Type.getSelectedToggle()).getText();
     }
-
 }
-

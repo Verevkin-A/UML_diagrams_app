@@ -11,6 +11,7 @@ import java.util.Objects;
 import classDiagram.CDClass;
 import classDiagram.CDField;
 import classDiagram.ClassDiagram;
+import classDiagram.Visibility;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -26,13 +27,17 @@ import parser.Parser;
 
 import static java.lang.System.out;
 
+/**
+ * Main window controller
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-02
+ */
 public class Controller implements EventHandler<ActionEvent> {
     public AnchorPane root;
     public GridPane classesGridPane;
-    private ClassDiagram cd = new ClassDiagram();
 
     private final FileChooser fileChooser = new FileChooser();
-
+    // Menu buttons
     public MenuItem menuItemLoad = new MenuItem("Load");
     public MenuItem menuItemSave = new MenuItem("Save");
     public MenuItem menuItemHelp = new MenuItem("Help");
@@ -45,7 +50,7 @@ public class Controller implements EventHandler<ActionEvent> {
     public double axisY = 0.0;
 
     public ArrayList<UIConnector> uiConnectors;
-
+    // controller singleton instance
     private static Controller _controller;
 
     private Controller(AnchorPane root) {
@@ -79,10 +84,9 @@ public class Controller implements EventHandler<ActionEvent> {
 
     @Override
     public void handle(ActionEvent actionEvent) {
-        System.out.println(actionEvent.getSource());
         if (actionEvent.getSource() == menuItemLoad) {
             File file = this.fileChooser.showOpenDialog(null);
-
+            ClassDiagram cd = new ClassDiagram();
             // read input
             try {
                 String filepath = file.getAbsolutePath();
@@ -93,18 +97,20 @@ public class Controller implements EventHandler<ActionEvent> {
             }
 
             clearScreen();      // clear screen and memory from all classes
-            loadClasses();      // load class diagram
+            loadClasses(cd);      // load class diagram
         } else if (actionEvent.getSource() == this.menuItemSave) {
+            ClassDiagram classes = saveClasses();
+
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
             if (!file.getName().contains(".")) {
                 file = new File(file.getAbsolutePath() + ".json");
             }
 
-            System.out.println(file.getAbsolutePath());     // TODO call save method
+            System.out.println(file.getAbsolutePath());
             try {
                 FileWriter outFile = new FileWriter(file.getAbsolutePath());
-                String output = Parser.encodeJSON(cd);
+                String output = Parser.encodeJSON(classes);
                 outFile.write(output);
                 outFile.close();
             } catch (IOException e) {
@@ -177,7 +183,7 @@ public class Controller implements EventHandler<ActionEvent> {
         uiConnectors.clear();
     }
 
-    public void loadClasses() {
+    public void loadClasses(ClassDiagram cd) {
         for (int i = 0; i < cd.classesLen(); i++) {
             CDClass clsToAdd = cd.getCDClass(i);
             axisX = clsToAdd.getXposition();
@@ -203,6 +209,27 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
+    public ClassDiagram saveClasses() {
+        ClassDiagram cd = new ClassDiagram();
+        for (UIConnector connector: uiConnectors) {
+            ArrayList<CDField> fields = new ArrayList<>();
+            ArrayList<CDField> methods = new ArrayList<>();
+            for (FormField ff: connector.getTableView().getItems()) {
+                if (Objects.equals(ff.getType(), "Field")) {
+                    fields.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
+                }
+                if (Objects.equals(ff.getType(), "Method")) {
+                    methods.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
+                }
+            }
+            // TODO Parent
+            CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99, fields, methods,
+                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue(), 99, 99);
+            cd.addClass(cdClass);
+        }
+        return cd;
+    }
+
     public void editClass(UIConnector uiConnector) {
         // set class x and y
         axisX = uiConnector.getAxisX();
@@ -219,7 +246,7 @@ public class Controller implements EventHandler<ActionEvent> {
             TableView<FormField> tableView = (TableView<FormField>) scene.lookup("#tvFields");
             ToggleButton tbInterface =  (ToggleButton) scene.lookup("#tbInterface");
             if (uiConnector.getInterface_()) {
-                tbInterface.fire();
+                tbInterface.setSelected(true);
             }
             tableView.getItems().addAll(uiConnector.getTableView().getItems());
             stage.setTitle("Class form");
