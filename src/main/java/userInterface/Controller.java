@@ -38,8 +38,8 @@ public class Controller implements EventHandler<ActionEvent> {
     public MenuItem menuItemHelp = new MenuItem("Help");
     public MenuItem menuItemCredits = new MenuItem("Credits");
 
-    public final Button buttonCreateClass = new Button("New class");
-    public boolean classCreation;
+    public final ToggleButton buttonCreateClass = new ToggleButton("New class");
+    public UIConnector connectorEditing = null;
 
     public double axisX = 0.0;
     public double axisY = 0.0;
@@ -58,9 +58,6 @@ public class Controller implements EventHandler<ActionEvent> {
         this.menuItemSave.setOnAction(this);
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
-
-        this.buttonCreateClass.setOnAction(createClass);
-        this.classCreation = false;
 
         uiConnectors = new ArrayList<>();
     }
@@ -95,8 +92,8 @@ public class Controller implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
 
-            clearScreen();
-            loadClasses();
+            clearScreen();      // clear screen and memory from all classes
+            loadClasses();      // load class diagram
         } else if (actionEvent.getSource() == this.menuItemSave) {
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
@@ -120,15 +117,6 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
-    public EventHandler<ActionEvent> createClass = new EventHandler<ActionEvent>()
-    {
-        @Override
-        public void handle(ActionEvent event)
-        {
-            classCreation = true;
-        }
-    };
-
     public EventHandler<ActionEvent> deleteClass = new EventHandler<ActionEvent>()
     {
         @Override
@@ -150,7 +138,13 @@ public class Controller implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event)
         {
-            out.println("TODO");    // TODO
+            for (UIConnector c: uiConnectors) {
+                if (event.getSource() == c.getBtnEdit()) {
+                    editClass(c);
+                    connectorEditing = c;
+                    break;
+                }
+            }
         }
     };
 
@@ -161,18 +155,15 @@ public class Controller implements EventHandler<ActionEvent> {
         {
             if (event.getTarget() == event.getSource())
             {
-                if (classCreation) {
+                if (buttonCreateClass.isSelected()) {
                     if (event.getX() > 930) {
-                        System.out.println("CANVAS: canvas clicked, restricted section");
+                        System.out.println("canvas clicked, restricted section");
                     } else {
                         axisX = event.getX();
                         axisY = event.getY();
                         addClass();
-
-                        classCreation = false;
+                        buttonCreateClass.setSelected(false);
                     }
-                } else {
-                    System.out.println("CANVAS: canvas clicked, no action");
                 }
             }
         }
@@ -212,13 +203,41 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
+    public void editClass(UIConnector uiConnector) {
+        // set class x and y
+        axisX = uiConnector.getAxisX();
+        axisY = uiConnector.getAxisY();
+        // open form window
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("formWindow.fxml"));
+            Stage stage = new Stage();
+            Scene scene = new Scene(fxmlLoader.load());
+
+            TextField textField = (TextField) scene.lookup("#tfClassName");
+            textField.setText(uiConnector.getClassNameLabel().getText());   // set class name in form
+
+            TableView<FormField> tableView = (TableView<FormField>) scene.lookup("#tvFields");
+            ToggleButton tbInterface =  (ToggleButton) scene.lookup("#tbInterface");
+            if (uiConnector.getInterface_()) {
+                tbInterface.fire();
+            }
+            tableView.getItems().addAll(uiConnector.getTableView().getItems());
+            stage.setTitle("Class form");
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addClass() {
         // open form window
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("formWindow.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Class form");
-            stage.setScene(new Scene(fxmlLoader.load()));
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -226,6 +245,12 @@ public class Controller implements EventHandler<ActionEvent> {
     }
 
     public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
+        if (connectorEditing != null) {
+            root.getChildren().remove(connectorEditing.getTpClass());
+            classesGridPane.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
+            uiConnectors.remove(connectorEditing);
+            connectorEditing = null;
+        }
         VBox vBox = new VBox(10.0);
         for (FormField ff: tableView.getItems()) {
             if (Objects.equals(ff.getType(), "Field")) {
@@ -243,7 +268,7 @@ public class Controller implements EventHandler<ActionEvent> {
         AnchorPane.setLeftAnchor(titledPane, axisX);
         AnchorPane.setTopAnchor(titledPane, axisY);
 
-        this.root.getChildren().add(titledPane);
+        root.getChildren().add(titledPane);
 
         Button btnClassEdit = new Button("Edit");
         Button btnClassDelete = new Button("Delete");
@@ -257,6 +282,6 @@ public class Controller implements EventHandler<ActionEvent> {
         Label nameLabel = new Label(className);
         classesGridPane.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
 
-        uiConnectors.add(new UIConnector(nameLabel, titledPane, btnClassEdit, btnClassDelete));
+        uiConnectors.add(new UIConnector(titledPane, axisX, axisY, interface_, tableView, nameLabel, btnClassEdit, btnClassDelete));
     }
 }

@@ -41,6 +41,13 @@ public class FormController {
     private TableView<FormField> tvFields;
 
     @FXML
+    public void initialize() {
+        tcName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tcType.setCellValueFactory(new PropertyValueFactory<>("type"));
+        tcVisibility.setCellValueFactory(new PropertyValueFactory<>("visibility"));
+    }
+
+    @FXML
     void FormAction(ActionEvent event) {
         if (event.getSource() == bCreate) {
             this.createField();
@@ -55,9 +62,6 @@ public class FormController {
     }
 
     void createField() {
-        tcName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        tcType.setCellValueFactory(new PropertyValueFactory<>("type"));
-        tcVisibility.setCellValueFactory(new PropertyValueFactory<>("visibility"));
         FormField formField = new FormField(tfFieldName.getText(), getType(), getVisibility());
         tvFields.getItems().add(formField);
     }
