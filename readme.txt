@@ -12,6 +12,12 @@ Stazeni knihoven do adresare lib:
 Sestaveni:
     mvn install
 
+Vytvoreni JAR souboru:
+    mvn package
+
+Spusteni JAR souboru:
+    java -jar dest/ija-app.jar
+
 Spusteni aplikace:
     mvn javafx:run
 
