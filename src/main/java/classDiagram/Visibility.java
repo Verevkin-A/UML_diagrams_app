@@ -17,6 +17,20 @@ public enum Visibility {
         this.symb = symb;
     }
 
+    public String getName() {
+        switch (symb) {
+            case "+":
+                return "Public";
+            case "-":
+                return "Private";
+            case "#":
+                return "Protected";
+            case "~":
+                return "Package";
+        }
+        return null;
+    }
+
     public String getSymb() {
         return symb;
     }

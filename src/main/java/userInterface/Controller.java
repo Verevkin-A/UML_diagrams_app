@@ -6,29 +6,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Objects;
 
 import classDiagram.CDClass;
 import classDiagram.CDField;
 import classDiagram.ClassDiagram;
-import controllers.Command;
-import controllers.ToolState;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import parser.Parser;
 
 import static java.lang.System.out;
@@ -51,6 +44,8 @@ public class Controller implements EventHandler<ActionEvent> {
     public double axisX = 0.0;
     public double axisY = 0.0;
 
+    public ArrayList<UIConnector> uiConnectors;
+
     private static Controller _controller;
 
     private Controller(AnchorPane root) {
@@ -66,6 +61,8 @@ public class Controller implements EventHandler<ActionEvent> {
 
         this.buttonCreateClass.setOnAction(createClass);
         this.classCreation = false;
+
+        uiConnectors = new ArrayList<>();
     }
 
     public static Controller setController(AnchorPane root) {
@@ -89,16 +86,17 @@ public class Controller implements EventHandler<ActionEvent> {
         if (actionEvent.getSource() == menuItemLoad) {
             File file = this.fileChooser.showOpenDialog(null);
 
-            System.out.println(file.getAbsolutePath());     // TODO call read method
             // read input
             try {
                 String filepath = file.getAbsolutePath();
                 String diagString = Files.readString(Paths.get(filepath));
-                this.cd = Parser.decodeJSON(diagString);
+                cd = Parser.decodeJSON(diagString);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            // TODO add all classes
+
+            clearScreen();
+            loadClasses();
         } else if (actionEvent.getSource() == this.menuItemSave) {
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
@@ -109,7 +107,7 @@ public class Controller implements EventHandler<ActionEvent> {
             System.out.println(file.getAbsolutePath());     // TODO call save method
             try {
                 FileWriter outFile = new FileWriter(file.getAbsolutePath());
-                String output = Parser.encodeJSON(this.cd);
+                String output = Parser.encodeJSON(cd);
                 outFile.write(output);
                 outFile.close();
             } catch (IOException e) {
@@ -128,6 +126,31 @@ public class Controller implements EventHandler<ActionEvent> {
         public void handle(ActionEvent event)
         {
             classCreation = true;
+        }
+    };
+
+    public EventHandler<ActionEvent> deleteClass = new EventHandler<ActionEvent>()
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            for (UIConnector c: uiConnectors) {
+                if (event.getSource() == c.getBtnDelete()) {
+                    root.getChildren().remove(c.getTpClass());
+                    classesGridPane.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
+                    uiConnectors.remove(c);
+                    break;
+                }
+            }
+        }
+    };
+
+    public EventHandler<ActionEvent> editClass = new EventHandler<ActionEvent>()
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            out.println("TODO");    // TODO
         }
     };
 
@@ -154,6 +177,40 @@ public class Controller implements EventHandler<ActionEvent> {
             }
         }
     };
+
+    public void clearScreen() {
+        for (UIConnector c: uiConnectors) {
+            root.getChildren().remove(c.getTpClass());
+            classesGridPane.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
+        }
+        uiConnectors.clear();
+    }
+
+    public void loadClasses() {
+        for (int i = 0; i < cd.classesLen(); i++) {
+            CDClass clsToAdd = cd.getCDClass(i);
+            axisX = clsToAdd.getXposition();
+            axisY = clsToAdd.getYposition();
+            TableView<FormField> tableView = new TableView<FormField>();
+            TableColumn<FormField, String> nameColumn = new TableColumn<FormField, String>("Name");
+            nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+            TableColumn<FormField, String> typeColumn = new TableColumn<FormField, String>("Type");
+            typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+            TableColumn<FormField, String> visibilityColumn = new TableColumn<FormField, String>("Visibility");
+            visibilityColumn.setCellValueFactory(new PropertyValueFactory<>("visibility"));
+
+            tableView.getColumns().add(nameColumn);
+            tableView.getColumns().add(typeColumn);
+            tableView.getColumns().add(visibilityColumn);
+            for (CDField method: clsToAdd.getMethods()) {
+                tableView.getItems().add(new FormField(method.getName(), "Method", method.getVisibility().getName()));
+            }
+            for (CDField method: clsToAdd.getFields()) {
+                tableView.getItems().add(new FormField(method.getName(), "Field", method.getVisibility().getName()));
+            }
+            putClass(clsToAdd.getName(), clsToAdd.getInterface(), tableView);
+        }
+    }
 
     public void addClass() {
         // open form window
@@ -190,11 +247,16 @@ public class Controller implements EventHandler<ActionEvent> {
 
         Button btnClassEdit = new Button("Edit");
         Button btnClassDelete = new Button("Delete");
+        btnClassEdit.setOnAction(editClass);
+        btnClassDelete.setOnAction(deleteClass);
         // create place for new row
         for (Node child : classesGridPane.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
         // insert new row
-        classesGridPane.addRow(0, new Label(className), btnClassEdit, btnClassDelete);
+        Label nameLabel = new Label(className);
+        classesGridPane.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
+
+        uiConnectors.add(new UIConnector(nameLabel, titledPane, btnClassEdit, btnClassDelete));
     }
 }

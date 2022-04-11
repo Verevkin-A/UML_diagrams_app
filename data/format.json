@@ -17,8 +17,8 @@
           }
         ],
         "isInterface": false,
-        "xPos": 10,
-        "yPos": 15,
+        "xPos": 500,
+        "yPos": 30,
         "width": 20,
         "height": 30
       },
@@ -54,8 +54,8 @@
           }
         ],
         "isInterface": false,
-        "xPos": 5,
-        "yPos": 5,
+        "xPos": 100,
+        "yPos": 30,
         "width": 50,
         "height": 100
       },
@@ -75,8 +75,8 @@
           }
         ],
         "isInterface": false,
-        "xPos": 5,
-        "yPos": 5,
+        "xPos": 200,
+        "yPos": 300,
         "width": 50,
         "height": 100
       }
