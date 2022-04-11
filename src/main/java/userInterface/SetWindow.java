@@ -1,5 +1,6 @@
 package userInterface;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -14,7 +15,7 @@ public class SetWindow {
 
     public SetWindow() {
         this.root = new AnchorPane();
-        this.controller = new Controller(this.root);
+        this.controller = Controller.setController(this.root);
     }
 
     public AnchorPane createWindow() {
@@ -29,8 +30,13 @@ public class SetWindow {
         AnchorPane.setLeftAnchor(menuBar, 0.0);
         AnchorPane.setRightAnchor(menuBar, 0.0);
 
-        ScrollPane scrollPane = new ScrollPane(new GridPane());
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+        Controller.getController().setGridPane(gridPane);
 
+        ScrollPane scrollPane = new ScrollPane(gridPane);
         AnchorPane.setTopAnchor(scrollPane, 70.0);
         AnchorPane.setLeftAnchor(scrollPane, 950.0);
         AnchorPane.setRightAnchor(scrollPane, 20.0);

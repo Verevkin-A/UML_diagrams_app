@@ -14,6 +14,7 @@ import classDiagram.CDField;
 import classDiagram.ClassDiagram;
 import controllers.Command;
 import controllers.ToolState;
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -23,10 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -37,6 +35,7 @@ import static java.lang.System.out;
 
 public class Controller implements EventHandler<ActionEvent> {
     public AnchorPane root;
+    public GridPane classesGridPane;
     private ClassDiagram cd = new ClassDiagram();
 
     private final FileChooser fileChooser = new FileChooser();
@@ -49,11 +48,12 @@ public class Controller implements EventHandler<ActionEvent> {
     public final Button buttonCreateClass = new Button("New class");
     public boolean classCreation;
 
-    public ArrayList<Button> addFieldButtons;
-    public ArrayList<Button> addMethodButtons;
-    public ArrayList<Button> deleteRowButtons;
+    public double axisX = 0.0;
+    public double axisY = 0.0;
 
-    public Controller(AnchorPane root) {
+    private static Controller _controller;
+
+    private Controller(AnchorPane root) {
         this.root = root;
         this.root.setOnMouseClicked(this.canvasMousePress);
         // set json extension filter
@@ -66,6 +66,21 @@ public class Controller implements EventHandler<ActionEvent> {
 
         this.buttonCreateClass.setOnAction(createClass);
         this.classCreation = false;
+    }
+
+    public static Controller setController(AnchorPane root) {
+        if (_controller == null) {
+            _controller = new Controller(root);
+        }
+        return _controller;
+    }
+
+    public static Controller getController() {
+        return _controller;
+    }
+
+    public void setGridPane(GridPane gridPane) {
+        this.classesGridPane = gridPane;
     }
 
     @Override
@@ -124,11 +139,15 @@ public class Controller implements EventHandler<ActionEvent> {
             if (event.getTarget() == event.getSource())
             {
                 if (classCreation) {
-                    System.out.println(event.getX());
-                    System.out.println(event.getY());
-                    addClass(event.getX(), event.getY());
+                    if (event.getX() > 930) {
+                        System.out.println("CANVAS: canvas clicked, restricted section");
+                    } else {
+                        axisX = event.getX();
+                        axisY = event.getY();
+                        addClass();
 
-                    classCreation = false;
+                        classCreation = false;
+                    }
                 } else {
                     System.out.println("CANVAS: canvas clicked, no action");
                 }
@@ -136,45 +155,46 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     };
 
-    public void addClass(double axisX, double axisY) {
+    public void addClass() {
         // open form window
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("formWindow.fxml"));
-            Parent root1 = (Parent) fxmlLoader.load();
             Stage stage = new Stage();
-//            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Class form");
-            stage.setScene(new Scene(root1));
+            stage.setScene(new Scene(fxmlLoader.load()));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
-        TitledPane titledPane = new TitledPane();
-        titledPane.setText("Class");
+    public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
+        VBox vBox = new VBox(10.0);
+        for (FormField ff: tableView.getItems()) {
+            if (Objects.equals(ff.getType(), "Field")) {
+                vBox.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName()));
+            }
+        }
+        for (FormField ff: tableView.getItems()) {
+            if (Objects.equals(ff.getType(), "Method")) {
+                vBox.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName() + "()"));
+            }
+        }
+        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_? "<<interface>>\n" : ""), className), vBox);
         titledPane.setCollapsible(false);
 
         AnchorPane.setLeftAnchor(titledPane, axisX);
         AnchorPane.setTopAnchor(titledPane, axisY);
 
         this.root.getChildren().add(titledPane);
-    }
 
-//    public void addClass(AnchorPane root, CDClass cls) {
-//        TitledPane titledPane = new TitledPane();
-//
-//        titledPane.setContent(this.populateClass(cls));
-//
-//        titledPane.setText(cls.getName());
-//        titledPane.setExpanded(false);
-//        titledPane.setAnimated(true);
-//
-//        for (Node node: root.getChildren()) {
-//            if (node instanceof ScrollPane) {
-//                Node vbox = ((ScrollPane) node).getContent();
-//                ((VBox) vbox).getChildren().add(titledPane);
-//                break;
-//            }
-//        }
-//    }
+        Button btnClassEdit = new Button("Edit");
+        Button btnClassDelete = new Button("Delete");
+        // create place for new row
+        for (Node child : classesGridPane.getChildren()) {
+            GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+        }
+        // insert new row
+        classesGridPane.addRow(0, new Label(className), btnClassEdit, btnClassDelete);
+    }
 }

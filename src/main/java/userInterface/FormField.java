@@ -22,4 +22,30 @@ public class FormField {
     public String getVisibility() {
         return this.visibility;
     }
+
+    public String getVisibilitySymbol() {
+        switch (this.visibility) {
+            case "Public":
+                return "+";
+            case "Private":
+                return "–";
+            case "Protected":
+                return "#";
+            case "Package":
+                return "~";
+        }
+        return null;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
+    }
 }

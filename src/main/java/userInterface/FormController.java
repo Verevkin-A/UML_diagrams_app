@@ -10,6 +10,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
 
 public class FormController {
 
@@ -38,28 +41,80 @@ public class FormController {
     private TableView<FormField> tvFields;
 
     @FXML
-    void ClassAction(ActionEvent event) {
+    void FormAction(ActionEvent event) {
         if (event.getSource() == bCreate) {
-            tcName.setCellValueFactory(new PropertyValueFactory<FormField, String>("name"));
-            tcType.setCellValueFactory(new PropertyValueFactory<FormField, String>("type"));
-            tcVisibility.setCellValueFactory(new PropertyValueFactory<FormField, String>("visibility"));
-            FormField formField = new FormField(tfFieldName.getText(), getType(), this.getVisibility());
-            tvFields.getItems().add(formField);
+            this.createField();
         } else if (event.getSource() == bDelete) {
-            tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
+            this.deleteField();
         } else if (event.getSource() == bUpdate) {
-
+            this.updateField();
         } else if (event.getSource() == bDone) {
+            Controller.getController().putClass(tfClassName.getText(), tbInterface.isSelected(), tvFields);
+            ((Stage) bDone.getScene().getWindow()).close();
+        }
+    }
 
+    void createField() {
+        tcName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tcType.setCellValueFactory(new PropertyValueFactory<>("type"));
+        tcVisibility.setCellValueFactory(new PropertyValueFactory<>("visibility"));
+        FormField formField = new FormField(tfFieldName.getText(), getType(), getVisibility());
+        tvFields.getItems().add(formField);
+    }
+
+    void deleteField() {
+        try {
+            tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
+        } catch (Exception e) {
+            System.out.println("Nothing is selected");
+        }
+    }
+
+    void updateField() {
+        try {
+            FormField formField = tvFields.getSelectionModel().getSelectedItem();
+            formField.setName(tfFieldName.getText());
+            formField.setType(getType());
+            formField.setVisibility(getVisibility());
+            tvFields.refresh();
+        } catch (Exception e) {
+            System.out.println("Nothing is selected");
+        }
+    }
+
+    @FXML
+    void tvSelectRow(MouseEvent event) {
+        FormField formField = tvFields.getSelectionModel().getSelectedItem();
+        tfFieldName.setText(formField.getName());
+        switch (formField.getType()) {
+            case "Field":
+                rbField.fire();
+                break;
+            case "Method":
+                rbMethod.fire();
+        }
+        switch (formField.getVisibility()) {
+            case "+":
+                rbPublic.fire();
+                break;
+            case "-":
+                rbPrivate.fire();
+                break;
+            case "#":
+                rbProtected.fire();
+                break;
+            case "~":
+                rbPackage.fire();
+                break;
         }
     }
 
     private String getVisibility() {
-        return ((RadioButton) this.Visibility.getSelectedToggle()).getText();
+        return ((RadioButton) Visibility.getSelectedToggle()).getText();
     }
 
     private String getType() {
-        return ((RadioButton) this.Type.getSelectedToggle()).getText();
+        return ((RadioButton) Type.getSelectedToggle()).getText();
     }
 
 }
