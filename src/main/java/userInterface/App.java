@@ -10,12 +10,20 @@ import java.io.IOException;
 
 
 /**
- * JavaFX App
+ * Graphical user interface starter
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-02
  */
 public class App extends Application {
     public SetWindow window;
     public Stage stage;
 
+    /**
+     * Executed on the app start
+     *
+     * @param stage application main stage
+     * @throws IOException
+     */
     @Override
     public void start(Stage stage) throws IOException {
         this.stage = stage;
@@ -30,29 +38,13 @@ public class App extends Application {
         stage.show();
     }
 
+    /**
+     * Application launch
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         // launch application
         launch();
     }
-
-    public void refreshWindow() {
-        Scene scene = new Scene(this.window.root, 1200, 800);
-        this.stage.setTitle("UML Editor");
-        this.stage.setScene(scene);
-        this.stage.show();
-    }
 }
-
-//public class App extends Application
-//{
-//    public static void main(String[] args)
-//    {
-//        launch(args);
-//    }
-//
-//    @Override
-//    public void start(Stage primaryStage) throws Exception
-//    {
-//        AppCtrl.getAppController(primaryStage);
-//    }
-//}
