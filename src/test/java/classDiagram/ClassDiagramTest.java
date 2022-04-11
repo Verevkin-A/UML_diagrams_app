@@ -9,14 +9,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * A test suite for the ClassDiagram
+ * @author Marek Dohnal
+ * @since 2022-04-11
+ */
 public class ClassDiagramTest {
     ClassDiagram cd;
+    String diagString;
     @BeforeEach
     void setUp() {
         cd = new ClassDiagram();
         try {
             String filepath = "data/format.json";
-            String diagString = Files.readString(Paths.get(filepath));
+            diagString = Files.readString(Paths.get(filepath));
             cd = Parser.decodeJSON(diagString);
         } catch (IOException e) {
             e.printStackTrace();

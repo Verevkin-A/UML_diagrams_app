@@ -1,14 +1,18 @@
-# TODO readme
-základní popis projektu (název, členové týmu, ...)
-informace ke způsobu překladu a spuštění aplikace
+Projekt do predmetu IJA
+Editor diagramu trid a sekvencniho diagramu
 
-Stazeni knihoven do lib:
+Aleksandr Verevkin (xverev00)
+Marek Dohnal (xdohna48)
+
+Informace k prekladu a spustení aplikace:
+
+Stazeni knihoven do adresare lib:
     mvn dependency:copy-dependencies
 
-Instalace:
+Sestaveni:
     mvn install
 
-Spusteni:
+Spusteni aplikace:
     mvn javafx:run
 
 Spusteni testu:

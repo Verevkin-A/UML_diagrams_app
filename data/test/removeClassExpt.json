@@ -1,0 +1,75 @@
+{
+  "classDiagram": {
+    "classes": [
+      {
+        "name": "testClass3",
+        "parent": 1,
+        "fields": [
+          {
+            "name": "tc3a1",
+            "visibility": "-"
+          },
+          {
+            "name": "tc3a2",
+            "visibility": "+"
+          },
+          {
+            "name": "tc3a0",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "tc3m0",
+            "visibility": "-"
+          },
+          {
+            "name": "tc3m2",
+            "visibility": "+"
+          },
+          {
+            "name": "tc3m1",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false,
+        "xPos": 5,
+        "yPos": 5,
+        "width": 50,
+        "height": 100
+      },
+      {
+        "name": "testClass2",
+        "parent": -1,
+        "fields": [
+          {
+            "name": "firstAttr2",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "myTestMethod2()",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false,
+        "xPos": 5,
+        "yPos": 5,
+        "width": 50,
+        "height": 100
+      }
+    ],
+    "nodes": [
+      {
+        "from": 1,
+        "fAnchor": "LEFT",
+        "to": 0,
+        "tAnchor": "UP",
+        "fCard": "0..*",
+        "tCard": "1",
+        "type": 3
+      }
+    ]
+  }
+}
