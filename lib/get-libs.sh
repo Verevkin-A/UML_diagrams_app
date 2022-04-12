@@ -1,4 +1,9 @@
 #!/bin/sh
+
+if [ "${PWD##*/}" = "lib" ];
+then
+  cd ..
+fi
 mvn dependency:copy-dependencies
 # Adresář lib
 # obsahuje pouze skript s názvem get-libs.sh,
