@@ -117,17 +117,33 @@ public class Controller implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
-            out.println("Helpwindow");
+            openHelp();
         } else if (actionEvent.getSource() == this.menuItemCredits) {
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("creditsWindow.fxml"));
-                Stage stage = new Stage();
-                stage.setTitle("Credits");
-                stage.setScene(new Scene(fxmlLoader.load()));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            openCredits();
+        }
+    }
+
+    private void openHelp() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("helpWindow.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Help");
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void openCredits() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("creditsWindow.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Credits");
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
