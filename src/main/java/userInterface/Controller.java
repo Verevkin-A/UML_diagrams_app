@@ -117,9 +117,17 @@ public class Controller implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
-            System.out.println("Help");     // TODO help window
+            out.println("Helpwindow");
         } else if (actionEvent.getSource() == this.menuItemCredits) {
-            System.out.println("Credits");      // TODO credits window
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("creditsWindow.fxml"));
+                Stage stage = new Stage();
+                stage.setTitle("Credits");
+                stage.setScene(new Scene(fxmlLoader.load()));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
