@@ -12,13 +12,11 @@ import javafx.scene.control.TitledPane;
  */
 public class UIConnector {
     private TitledPane tpClass;
-    private Double axisX;
-    private Double axisY;
+    private Double axisX, axisY;
     private Boolean interface_;
     private TableView<FormField> tableView;
     private Label classNameLabel;
-    private Button btnEdit;
-    private Button btnDelete;
+    private Button btnEdit, btnDelete;
 
     /**
      * Class connection constructor
