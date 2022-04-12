@@ -1,28 +1,49 @@
-Projekt do predmetu IJA
-Editor diagramu trid a sekvencniho diagramu
+Projekt do předmětu IJA
+Editor diagramu tříd a sekvenčního diagramu
 
-Aleksandr Verevkin (xverev00)
-Marek Dohnal (xdohna48)
+Autoři:
+    Aleksandr Verevkin (xverev00)
+    Marek Dohnal (xdohna48)
+Datum:
+    2022-04-12
 
-Informace k prekladu a spustení aplikace:
+Popis implementace:
+    V implementaci jsme se mírně odchýlili od požadavků specifikovaných v Úkolu 2.
+    Aplikace podporuje načtení a uložení JSON souborů obsahujících pouze třídy.
+    Uživatel může vytvořit třídu pomocí tlačítka "Create class" a následného kliknutí na prázdné pole.
+    Pomocí vyskakovacího okna může editovat parametry třídy. Třída je uložena v seznamu tříd v pravém sloupci,
+    kde je možné ji znovu editovat, nebo smazat.
 
-Stazeni knihoven do adresare lib:
-    mvn dependency:copy-dependencies
+    Funkcionalita knihovny je demonstrována několika testy v souboru ParserTest.java. Testy demonstrují možnost
+    načítat, editovat, a ukládat JSON soubory s třídami a uzly.
 
-Sestaveni:
-    mvn install
+    Aplikaci je možné spustit pomocí padkage manageru Maven pomocí níže uvedeného příkazu mvn javafx:run,
+    nebo vytvořením JAR souboru a jeho následným spuštěním. Způsob vytvoření archivu JAR je uveden níže.
 
-Vytvoreni JAR souboru:
-    mvn package
+    Funkcionalita jednotlivých modulů je blíže popsána v programové dokumentaci, kterou lze generovat níže uvedeným
+    příkazem.
 
-Spusteni JAR souboru:
-    java -jar dest/ija-app.jar
+Informace k překladu a spuštění aplikace:
+    Stažení knihoven do adresáře lib:
+        mvn dependency:copy-dependencies
 
-Spusteni aplikace:
-    mvn javafx:run
+    Sestavení:
+        mvn install
 
-Spusteni testu:
-    mvn test
+    Vytvoření JAR souboru včetně sestavení:
+        mvn package
 
-Generovani dokumentace:
-    mvn javadoc:javadoc
+    Spuštění JAR souboru na Windows:
+        java -jar dest/ija-app.jar
+
+    Spuštění JAR souboru na Linuxu:
+        java -Djdk.gtk.version=2 -jar dest/ija-app.jar
+
+    Spuštění aplikace:
+        mvn javafx:run
+
+    Spuštění testů:
+        mvn test
+
+    Generování dokumentace:
+        mvn javadoc:javadoc
