@@ -8,21 +8,22 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import classDiagram.CDClass;
-import classDiagram.CDField;
-import classDiagram.ClassDiagram;
-import classDiagram.Visibility;
+import classDiagram.*;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import parser.Parser;
 
 import static java.lang.System.out;
@@ -34,7 +35,8 @@ import static java.lang.System.out;
  */
 public class Controller implements EventHandler<ActionEvent> {
     public AnchorPane root;
-    public GridPane classesGridPane;
+    public GridPane gridPaneClasses;
+    public GridPane gridPaneNodes;
 
     private final FileChooser fileChooser = new FileChooser();
     // Menu buttons
@@ -44,6 +46,7 @@ public class Controller implements EventHandler<ActionEvent> {
     public MenuItem menuItemCredits = new MenuItem("Credits");
 
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
+    public final Button buttonCreateNode = new Button("New node");
     public UIConnector connectorEditing = null;
 
     public double axisX = 0.0;
@@ -64,6 +67,8 @@ public class Controller implements EventHandler<ActionEvent> {
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
 
+        this.buttonCreateNode.setOnAction(this);
+
         uiConnectors = new ArrayList<>();
     }
 
@@ -78,8 +83,9 @@ public class Controller implements EventHandler<ActionEvent> {
         return _controller;
     }
 
-    public void setGridPane(GridPane gridPane) {
-        this.classesGridPane = gridPane;
+    public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes) {
+        this.gridPaneClasses = gridPaneClasses;
+        this.gridPaneNodes = gridPaneNodes;
     }
 
     @Override
@@ -120,6 +126,8 @@ public class Controller implements EventHandler<ActionEvent> {
             openHelp();
         } else if (actionEvent.getSource() == this.menuItemCredits) {
             openCredits();
+        } else if (actionEvent.getSource() == this.buttonCreateNode) {
+            addNode();
         }
     }
 
@@ -155,7 +163,7 @@ public class Controller implements EventHandler<ActionEvent> {
             for (UIConnector c: uiConnectors) {
                 if (event.getSource() == c.getBtnDelete()) {
                     root.getChildren().remove(c.getTpClass());
-                    classesGridPane.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
+                    gridPaneClasses.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
                     uiConnectors.remove(c);
                     break;
                 }
@@ -202,7 +210,7 @@ public class Controller implements EventHandler<ActionEvent> {
     public void clearScreen() {
         for (UIConnector c: uiConnectors) {
             root.getChildren().remove(c.getTpClass());
-            classesGridPane.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
+            gridPaneClasses.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
         }
         uiConnectors.clear();
     }
@@ -260,7 +268,7 @@ public class Controller implements EventHandler<ActionEvent> {
         axisY = uiConnector.getAxisY();
         // open form window
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("formWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
 
@@ -269,9 +277,8 @@ public class Controller implements EventHandler<ActionEvent> {
 
             TableView<FormField> tableView = (TableView<FormField>) scene.lookup("#tvFields");
             ToggleButton tbInterface =  (ToggleButton) scene.lookup("#tbInterface");
-            if (uiConnector.getInterface_()) {
-                tbInterface.setSelected(true);
-            }
+            tbInterface.setSelected(uiConnector.getInterface_());
+
             tableView.getItems().addAll(uiConnector.getTableView().getItems());
             stage.setTitle("Class form");
             stage.setScene(scene);
@@ -284,7 +291,7 @@ public class Controller implements EventHandler<ActionEvent> {
     public void addClass() {
         // open form window
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("formWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Class form");
             Scene scene = new Scene(fxmlLoader.load());
@@ -298,7 +305,7 @@ public class Controller implements EventHandler<ActionEvent> {
     public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
         if (connectorEditing != null) {
             root.getChildren().remove(connectorEditing.getTpClass());
-            classesGridPane.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
+            gridPaneClasses.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
             uiConnectors.remove(connectorEditing);
             connectorEditing = null;
         }
@@ -318,7 +325,7 @@ public class Controller implements EventHandler<ActionEvent> {
 
         AnchorPane.setLeftAnchor(titledPane, axisX);
         AnchorPane.setTopAnchor(titledPane, axisY);
-
+        // add class on the pane
         root.getChildren().add(titledPane);
 
         Button btnClassEdit = new Button("Edit");
@@ -326,13 +333,71 @@ public class Controller implements EventHandler<ActionEvent> {
         btnClassEdit.setOnAction(editClass);
         btnClassDelete.setOnAction(deleteClass);
         // create place for new row
-        for (Node child : classesGridPane.getChildren()) {
+        for (Node child : gridPaneClasses.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
-        // insert new row
+        // insert new class row
         Label nameLabel = new Label(className);
-        classesGridPane.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
+        gridPaneClasses.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
 
         uiConnectors.add(new UIConnector(titledPane, axisX, axisY, interface_, tableView, nameLabel, btnClassEdit, btnClassDelete));
     }
+
+    public void addNode() {
+        // open form window
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("nodeForm.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Node form");
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void putNode(UIConnector fromClass, UIConnector toClass, AnchorType anchorFrom, AnchorType anchorTo,
+                        String fCard, String tCard, NodeType nodeType) {
+
+    }
+
+//    public void putClassAnchors(TitledPane titledPane) {
+//        PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
+//        wait.setOnFinished((e) -> {
+//            Bounds tpBounds = titledPane.localToScene(titledPane.getBoundsInLocal());
+//            ToggleButton btnAnchorUP = new ToggleButton("+");
+//            ToggleButton btnAnchorDOWN = new ToggleButton("+");
+//            ToggleButton btnAnchorLEFT = new ToggleButton("+");
+//            ToggleButton btnAnchorRIGHT = new ToggleButton("+");
+//
+//            ToggleGroup tgAnchors = new ToggleGroup();
+//            btnAnchorUP.setToggleGroup(tgAnchors);
+//            btnAnchorDOWN.setToggleGroup(tgAnchors);
+//            btnAnchorLEFT.setToggleGroup(tgAnchors);
+//            btnAnchorRIGHT.setToggleGroup(tgAnchors);
+//
+//            btnAnchorUP.setLayoutX(tpBounds.getCenterX() - 15);
+//            btnAnchorUP.setLayoutY(tpBounds.getMinY() - 20);
+//
+//            btnAnchorDOWN.setLayoutX(tpBounds.getCenterX() - 15);
+//            btnAnchorDOWN.setLayoutY(tpBounds.getMaxY() - 10);
+//
+//            btnAnchorLEFT.setLayoutX(tpBounds.getMinX() - 20);
+//            btnAnchorLEFT.setLayoutY(tpBounds.getCenterY() - 15);
+//
+//            btnAnchorRIGHT.setLayoutX(tpBounds.getMaxX() - 10);
+//            btnAnchorRIGHT.setLayoutY(tpBounds.getCenterY() - 15);
+//
+//            Line line = new Line(btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterX() + 15,
+//                    btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterY() + 15,
+//                    btnAnchorUP.getLayoutX() + 100, 500);
+//            Line line2 = new Line(btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterX() + 15,
+//                    btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterY() + 15,
+//                    btnAnchorUP.getLayoutX() - 100, 500);
+//            line2.getStrokeDashArray().addAll(10d, 10d);
+////            root.getChildren().addAll(line, line2);
+//        });
+//        wait.play();
+//    }
 }

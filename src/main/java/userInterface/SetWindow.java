@@ -37,23 +37,45 @@ public class SetWindow {
         AnchorPane.setTopAnchor(menuBar, 0.0);
         AnchorPane.setLeftAnchor(menuBar, 0.0);
         AnchorPane.setRightAnchor(menuBar, 0.0);
+        // set up classes and nodes grid panes
+        GridPane gridPaneClasses = new GridPane();
+        gridPaneClasses.setPadding(new Insets(10));
+        gridPaneClasses.setVgap(5);
+        gridPaneClasses.setHgap(5);
 
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(10));
-        gridPane.setVgap(5);
-        gridPane.setHgap(5);
-        Controller.getController().setGridPane(gridPane);
+        GridPane gridPaneNodes = new GridPane();
+        gridPaneNodes.setPadding(new Insets(10));
+        gridPaneNodes.setVgap(5);
+        gridPaneNodes.setHgap(5);
+        Controller.getController().setGridPanes(gridPaneClasses, gridPaneNodes);
+        // set up classes and nodes scroll panes
+        ScrollPane scrollPaneClasses = new ScrollPane(gridPaneClasses);
+        AnchorPane.setTopAnchor(scrollPaneClasses, 70.0);
+        AnchorPane.setLeftAnchor(scrollPaneClasses, 950.0);
+        AnchorPane.setRightAnchor(scrollPaneClasses, 20.0);
+        AnchorPane.setBottomAnchor(scrollPaneClasses, 400.0);
 
-        ScrollPane scrollPane = new ScrollPane(gridPane);
-        AnchorPane.setTopAnchor(scrollPane, 70.0);
-        AnchorPane.setLeftAnchor(scrollPane, 950.0);
-        AnchorPane.setRightAnchor(scrollPane, 20.0);
-        AnchorPane.setBottomAnchor(scrollPane, 15.0);
+        ScrollPane scrollPaneNodes = new ScrollPane(gridPaneNodes);
+        AnchorPane.setTopAnchor(scrollPaneNodes, 440.0);
+        AnchorPane.setLeftAnchor(scrollPaneNodes, 950.0);
+        AnchorPane.setRightAnchor(scrollPaneNodes, 20.0);
+        AnchorPane.setBottomAnchor(scrollPaneNodes, 15.0);
+        // set up classes and nodes labels
+        Label labelClasses = new Label("Classes:");
+        AnchorPane.setTopAnchor(labelClasses, 45.0);
+        AnchorPane.setLeftAnchor(labelClasses, 950.0);
+        Label labelNodes = new Label("Nodes:");
+        AnchorPane.setTopAnchor(labelNodes, 415.0);
+        AnchorPane.setLeftAnchor(labelNodes, 950.0);
+        // position add class and node buttons
+        AnchorPane.setTopAnchor(this.controller.buttonCreateClass, 37.0);
+        AnchorPane.setLeftAnchor(this.controller.buttonCreateClass, 1095.0);
 
-        AnchorPane.setTopAnchor(this.controller.buttonCreateClass, 40.0);
-        AnchorPane.setLeftAnchor(this.controller.buttonCreateClass, 950.0);
+        AnchorPane.setTopAnchor(this.controller.buttonCreateNode, 407.0);
+        AnchorPane.setLeftAnchor(this.controller.buttonCreateNode, 1095.0);
         // add all objects on the main pane
-        this.root.getChildren().addAll(menuBar, scrollPane, this.controller.buttonCreateClass);
+        this.root.getChildren().addAll(menuBar, scrollPaneClasses, scrollPaneNodes, labelClasses, labelNodes,
+                this.controller.buttonCreateClass, this.controller.buttonCreateNode);
 
         return this.root;
     }

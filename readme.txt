@@ -33,11 +33,8 @@ Informace k překladu a spuštění aplikace:
     Vytvoření JAR souboru včetně sestavení:
         mvn package
 
-    Spuštění JAR souboru na Windows:
+    Spuštění JAR souboru:
         java -jar dest/ija-app.jar
-
-    Spuštění JAR souboru na Linuxu:
-        java -Djdk.gtk.version=2 -jar dest/ija-app.jar
 
     Spuštění aplikace:
         mvn javafx:run

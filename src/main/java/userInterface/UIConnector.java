@@ -114,4 +114,9 @@ public class UIConnector {
     public Button getBtnDelete() {
         return btnDelete;
     }
+
+    @Override
+    public String toString() {
+        return classNameLabel.getText();
+    }
 }

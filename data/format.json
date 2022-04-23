@@ -18,7 +18,7 @@
         ],
         "isInterface": false,
         "xPos": 500,
-        "yPos": 30,
+        "yPos": 70,
         "width": 20,
         "height": 30
       },
@@ -55,7 +55,7 @@
         ],
         "isInterface": false,
         "xPos": 100,
-        "yPos": 30,
+        "yPos": 70,
         "width": 50,
         "height": 100
       },

@@ -2,13 +2,7 @@ package userInterface;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
@@ -18,13 +12,10 @@ import javafx.stage.Stage;
  * @author Aleksandr Verevkin (xverev00)
  * @since 2022-04-02
  */
-public class FormController {
+public class ClassFormController {
 
     @FXML
-    private ToggleGroup Visibility;
-
-    @FXML
-    private ToggleGroup Type;
+    private ToggleGroup Visibility, Type;
 
     @FXML
     private Button bCreate, bDelete, bDone, bUpdate;
