@@ -362,14 +362,16 @@ public class Controller implements EventHandler<ActionEvent> {
 
     public void putNode(UIClassConnector fromClass, UIClassConnector toClass, AnchorType anchorFrom, AnchorType anchorTo,
                         String fCard, String tCard, NodeType nodeType) {
+        // get titled panes bounds
         TitledPane tpFrom = fromClass.getTpClass();
         Bounds fromBounds = tpFrom.localToScene(tpFrom.getBoundsInLocal());
         TitledPane tpTo = toClass.getTpClass();
         Bounds toBounds = tpTo.localToScene(tpTo.getBoundsInLocal());
+        // get line to-from coordinates
         double[] fCrd = getLineXY(fromBounds, anchorFrom);
         double[] tCrd = getLineXY(toBounds, anchorTo);
+        // get arrow line and head
         Line node = new Line(fCrd[0], fCrd[1], tCrd[0], tCrd[1]);
-
         Shape arrowHead = getArrowHead(nodeType, fCrd, tCrd);
 
         root.getChildren().addAll(node, arrowHead);
@@ -378,15 +380,21 @@ public class Controller implements EventHandler<ActionEvent> {
     private Shape getArrowHead(NodeType nodeType, double[] fCrd, double[] tCrd) {
         double L1 = 15;     // arrow head wings length
         double L2 = Math.sqrt((tCrd[1] - fCrd[1]) * (tCrd[1] - fCrd[1]) + (tCrd[0] - fCrd[0]) * (tCrd[0] - fCrd[0]));
-
+        // count arrow head coordinates
         double arrowX1 = tCrd[0] + L1 * ((fCrd[0] - tCrd[0]) * (Math.sqrt(3)/2) + (fCrd[1] - tCrd[1]) * (Math.sqrt(1)/2)) / L2;
         double arrowY1 = tCrd[1] + L1 * ((fCrd[1] - tCrd[1]) * (Math.sqrt(3)/2) - (fCrd[0] - tCrd[0]) * (Math.sqrt(1)/2)) / L2;
         double arrowX2 = tCrd[0] + L1 * ((fCrd[0] - tCrd[0]) * (Math.sqrt(3)/2) - (fCrd[1] - tCrd[1]) * (Math.sqrt(1)/2)) / L2;
         double arrowY2 = tCrd[1] + L1 * ((fCrd[1] - tCrd[1]) * (Math.sqrt(3)/2) + (fCrd[0] - tCrd[0]) * (Math.sqrt(1)/2)) / L2;
-
+        // return arrow head base on the node type
         switch (nodeType.getNumVal()) {
             case 0:     // aggregation
-                return null;
+                // count point on the line
+                double aggX = arrowX1 - tCrd[0] + arrowX2;
+                double aggY = arrowY1 - tCrd[1] + arrowY2;
+                Polygon aggPolygon = new Polygon(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2, aggX, aggY);
+                aggPolygon.setFill(Color.WHITESMOKE);
+                aggPolygon.setStroke(Color.BLACK);
+                return aggPolygon;
             case 1:     // association
                 return new Polyline(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2);
             case 2:     // generalization
@@ -395,7 +403,12 @@ public class Controller implements EventHandler<ActionEvent> {
                 polygon.setStroke(Color.BLACK);
                 return polygon;
             default:    // composition
-                return null;
+                // count point on the line
+                double compX = arrowX1 - tCrd[0] + arrowX2;
+                double compY = arrowY1 - tCrd[1] + arrowY2;
+                Polygon compPolygon = new Polygon(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2, compX, compY);
+                compPolygon.setFill(Color.BLACK);
+                return compPolygon;
         }
     }
 
@@ -418,27 +431,6 @@ public class Controller implements EventHandler<ActionEvent> {
 //        PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
 //        wait.setOnFinished((e) -> {
 //            Bounds tpBounds = titledPane.localToScene(titledPane.getBoundsInLocal());
-//
-//            btnAnchorUP.setLayoutX(tpBounds.getCenterX() - 15);
-//            btnAnchorUP.setLayoutY(tpBounds.getMinY() - 20);
-//
-//            btnAnchorDOWN.setLayoutX(tpBounds.getCenterX() - 15);
-//            btnAnchorDOWN.setLayoutY(tpBounds.getMaxY() - 10);
-//
-//            btnAnchorLEFT.setLayoutX(tpBounds.getMinX() - 20);
-//            btnAnchorLEFT.setLayoutY(tpBounds.getCenterY() - 15);
-//
-//            btnAnchorRIGHT.setLayoutX(tpBounds.getMaxX() - 10);
-//            btnAnchorRIGHT.setLayoutY(tpBounds.getCenterY() - 15);
-//
-//            Line line = new Line(btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterX() + 15,
-//                    btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterY() + 15,
-//                    btnAnchorUP.getLayoutX() + 100, 500);
-//            Line line2 = new Line(btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterX() + 15,
-//                    btnAnchorUP.localToScene(btnAnchorUP.getBoundsInLocal()).getCenterY() + 15,
-//                    btnAnchorUP.getLayoutX() - 100, 500);
-//            line2.getStrokeDashArray().addAll(10d, 10d);
-////            root.getChildren().addAll(line, line2);
 //        });
 //        wait.play();
 //    }
