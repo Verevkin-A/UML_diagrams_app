@@ -1,5 +1,7 @@
 package userInterface;
 
+import classDiagram.AnchorType;
+import classDiagram.NodeType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Line;
@@ -16,9 +18,12 @@ public class UINodeConnector {
     private Shape arrowHead;
     private Label fCard, tCard, nodeNameLabel;
     private Button btnDelete;
+    private AnchorType fAnchor, tAnchor;
+    private NodeType nodeType;
 
     public UINodeConnector(UIClassConnector from, UIClassConnector to, Line node, Shape arrowHead,
-                           Label fCard, Label tCard, Label nodeNameLabel, Button btnDelete) {
+                           Label fCard, Label tCard, Label nodeNameLabel, Button btnDelete,
+                           AnchorType fAnchor, AnchorType tAnchor, NodeType nodeType) {
         this.from = from;
         this.to = to;
         this.node = node;
@@ -27,7 +32,9 @@ public class UINodeConnector {
         this.tCard = tCard;
         this.nodeNameLabel = nodeNameLabel;
         this.btnDelete = btnDelete;
-
+        this.fAnchor = fAnchor;
+        this.tAnchor = tAnchor;
+        this.nodeType = nodeType;
     }
 
     public UIClassConnector getFrom() {
@@ -60,5 +67,17 @@ public class UINodeConnector {
 
     public Button getBtnDelete() {
         return btnDelete;
+    }
+
+    public AnchorType getfAnchor() {
+        return fAnchor;
+    }
+
+    public AnchorType gettAnchor() {
+        return tAnchor;
+    }
+
+    public NodeType getNodeType() {
+        return nodeType;
     }
 }

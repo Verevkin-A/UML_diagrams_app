@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.lang.Math;
 
 import classDiagram.*;
+import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +28,7 @@ import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import parser.Parser;
 
 /**
@@ -94,6 +96,7 @@ public class Controller implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
         if (actionEvent.getSource() == menuItemLoad) {
+            // load class diagram from .json
             File file = this.fileChooser.showOpenDialog(null);
             ClassDiagram cd = new ClassDiagram();
             // read input
@@ -104,32 +107,43 @@ public class Controller implements EventHandler<ActionEvent> {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            clearScreen();      // clear screen and memory from all classes
-            loadClasses(cd);      // load class diagram
+            // clear screen and memory from all classes
+            clearScreen();
+            // load class diagram
+            loadClasses(cd);
+            // wait before all classes are saved and load nodes
+            PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
+            ClassDiagram finalCd = cd;
+            wait.setOnFinished((e) -> {
+                loadNodes(finalCd);
+            });
+            wait.play();
         } else if (actionEvent.getSource() == this.menuItemSave) {
-            ClassDiagram classes = saveClasses();
-
+            // save class diagram into .json
+            ClassDiagram cd = saveCD();
+            // show file chooser
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
             if (!file.getName().contains(".")) {
                 file = new File(file.getAbsolutePath() + ".json");
             }
-
-            System.out.println(file.getAbsolutePath());
+            // generate output json
             try {
                 FileWriter outFile = new FileWriter(file.getAbsolutePath());
-                String output = Parser.encodeJSON(classes);
+                String output = Parser.encodeJSON(cd);
                 outFile.write(output);
                 outFile.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
+            // help menu
             openHelp();
         } else if (actionEvent.getSource() == this.menuItemCredits) {
+            // credits menu
             openCredits();
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
+            // add new node button
             addNode();
         }
     }
@@ -260,9 +274,26 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
-    public ClassDiagram saveClasses() {
+    public void loadNodes(ClassDiagram cd) {
+        for (int i = 0; i < cd.nodesLen(); i++) {
+            CDNode nodeToAdd = cd.getCDNode(i);
+            putNode(uiClassConnectors.get(nodeToAdd.getFromAsInt(cd)), uiClassConnectors.get(nodeToAdd.getToAsInt(cd)),
+                    nodeToAdd.getfAnchor(), nodeToAdd.gettAnchor(),
+                    nodeToAdd.getfCard(), nodeToAdd.gettCard(),
+                    classDiagram.NodeType.valueOfLabel(nodeToAdd.getType()));
+        }
+    }
+
+    public ClassDiagram saveCD() {
         ClassDiagram cd = new ClassDiagram();
+        saveClasses(cd);
+        saveNodes(cd);
+        return cd;
+    }
+
+    private void saveClasses(ClassDiagram cd) {
         for (UIClassConnector connector: uiClassConnectors) {
+            // extract fields and methods from connector
             ArrayList<CDField> fields = new ArrayList<>();
             ArrayList<CDField> methods = new ArrayList<>();
             for (FormField ff: connector.getTableView().getItems()) {
@@ -273,12 +304,36 @@ public class Controller implements EventHandler<ActionEvent> {
                     methods.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
                 }
             }
-            // TODO Parent
-            CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99, fields, methods,
-                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue(), 99, 99);
+            // TODO Parent, height, width
+            // create and add new class to class diagram
+            CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99,
+                    fields, methods, connector.getInterface_(),
+                    connector.getAxisX().intValue(), connector.getAxisY().intValue(), 99, 99);
             cd.addClass(cdClass);
         }
-        return cd;
+    }
+
+    private void saveNodes(ClassDiagram cd) {
+        for (UINodeConnector connector: uiNodeConnectors) {
+            // get nodes classes
+            CDClass fClass = null, tClass = null;
+            for (UIClassConnector cClass: uiClassConnectors) {
+                if (connector.getFrom() == cClass) {
+                    fClass = cd.getCDClass(uiClassConnectors.indexOf(cClass));
+                    break;
+                }
+            }
+            for (UIClassConnector cClass: uiClassConnectors) {
+                if (connector.getTo() == cClass) {
+                    tClass = cd.getCDClass(uiClassConnectors.indexOf(cClass));
+                    break;
+                }
+            }
+            // create and add new node to class diagram
+            CDNode cdNode = new CDNode(fClass, connector.getfAnchor(), tClass, connector.gettAnchor(),
+                    connector.getfCard().getText(), connector.gettCard().getText(), connector.getNodeType());
+            cd.addNode(cdNode);
+        }
     }
 
     public void editClass(UIClassConnector uiConnector) {
@@ -358,7 +413,7 @@ public class Controller implements EventHandler<ActionEvent> {
         // insert new class row
         Label nameLabel = new Label(className);
         gridPaneClasses.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
-
+        // save class objects in list with classes
         uiClassConnectors.add(new UIClassConnector(titledPane, axisX, axisY, interface_, tableView, nameLabel, btnClassEdit, btnClassDelete));
     }
 
@@ -389,7 +444,12 @@ public class Controller implements EventHandler<ActionEvent> {
         // get arrow line and head
         Line node = new Line(fCrds[0], fCrds[1], tCrds[0], tCrds[1]);
         Shape arrowHead = getArrowHead(nodeType, fCrds, tCrds);
-
+        // if node type is generalization, cardinality is empty
+        if (nodeType == NodeType.GENERALIZATION) {
+            fCard = "";
+            tCard = "";
+        }
+        // create cardinality labels
         Label fCardLabel = new Label(fCard);
         AnchorPane.setLeftAnchor(fCardLabel, fCrds[0] + 10);
         AnchorPane.setTopAnchor(fCardLabel, fCrds[1] - 10);
@@ -409,7 +469,8 @@ public class Controller implements EventHandler<ActionEvent> {
         Label nameLabel = new Label(fromClass.getClassNameLabel().getText() + "->" + toClass.getClassNameLabel().getText());
         gridPaneNodes.addRow(0, nameLabel, btnNodeDelete);
 
-        uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel, nameLabel, btnNodeDelete));
+        uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel,
+                nameLabel, btnNodeDelete, anchorFrom, anchorTo, nodeType));
     }
 
     private Shape getArrowHead(NodeType nodeType, double[] fCrds, double[] tCrds) {
@@ -459,14 +520,4 @@ public class Controller implements EventHandler<ActionEvent> {
                 return new double[] {bounds.getCenterX(), bounds.getMinY()};
         }
     }
-
-
-
-//    public void putClassAnchors(TitledPane titledPane) {
-//        PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
-//        wait.setOnFinished((e) -> {
-//            Bounds tpBounds = titledPane.localToScene(titledPane.getBoundsInLocal());
-//        });
-//        wait.play();
-//    }
 }
