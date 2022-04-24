@@ -189,6 +189,22 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     };
 
+    public EventHandler<ActionEvent> deleteNode = new EventHandler<ActionEvent>()
+    {
+        @Override
+        public void handle(ActionEvent event)
+        {
+            for (UINodeConnector c: uiNodeConnectors) {
+                if (event.getSource() == c.getBtnDelete()) {
+                    root.getChildren().removeAll(c.getNode(), c.getArrowHead(), c.getfCard(), c.gettCard());
+                    gridPaneNodes.getChildren().removeAll(c.getNodeNameLabel(), c.getBtnDelete());
+                    uiNodeConnectors.remove(c);
+                    break;
+                }
+            }
+        }
+    };
+
     public EventHandler<MouseEvent> canvasMousePress = new EventHandler<MouseEvent>()
     {
         @Override
@@ -368,45 +384,64 @@ public class Controller implements EventHandler<ActionEvent> {
         TitledPane tpTo = toClass.getTpClass();
         Bounds toBounds = tpTo.localToScene(tpTo.getBoundsInLocal());
         // get line to-from coordinates
-        double[] fCrd = getLineXY(fromBounds, anchorFrom);
-        double[] tCrd = getLineXY(toBounds, anchorTo);
+        double[] fCrds = getLineXY(fromBounds, anchorFrom);
+        double[] tCrds = getLineXY(toBounds, anchorTo);
         // get arrow line and head
-        Line node = new Line(fCrd[0], fCrd[1], tCrd[0], tCrd[1]);
-        Shape arrowHead = getArrowHead(nodeType, fCrd, tCrd);
+        Line node = new Line(fCrds[0], fCrds[1], tCrds[0], tCrds[1]);
+        Shape arrowHead = getArrowHead(nodeType, fCrds, tCrds);
 
-        root.getChildren().addAll(node, arrowHead);
+        Label fCardLabel = new Label(fCard);
+        AnchorPane.setLeftAnchor(fCardLabel, fCrds[0] + 10);
+        AnchorPane.setTopAnchor(fCardLabel, fCrds[1] - 10);
+        Label tCardLabel = new Label(tCard);
+        AnchorPane.setLeftAnchor(tCardLabel, tCrds[0] + 10);
+        AnchorPane.setTopAnchor(tCardLabel, tCrds[1] - 10);
+        // add node on the pane
+        root.getChildren().addAll(node, arrowHead, fCardLabel, tCardLabel);
+
+        Button btnNodeDelete = new Button("Delete");
+        btnNodeDelete.setOnAction(deleteNode);
+        // create place for new row
+        for (Node child : gridPaneNodes.getChildren()) {
+            GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+        }
+        // insert new node row
+        Label nameLabel = new Label(fromClass.getClassNameLabel().getText() + "->" + toClass.getClassNameLabel().getText());
+        gridPaneNodes.addRow(0, nameLabel, btnNodeDelete);
+
+        uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel, nameLabel, btnNodeDelete));
     }
 
-    private Shape getArrowHead(NodeType nodeType, double[] fCrd, double[] tCrd) {
+    private Shape getArrowHead(NodeType nodeType, double[] fCrds, double[] tCrds) {
         double L1 = 15;     // arrow head wings length
-        double L2 = Math.sqrt((tCrd[1] - fCrd[1]) * (tCrd[1] - fCrd[1]) + (tCrd[0] - fCrd[0]) * (tCrd[0] - fCrd[0]));
+        double L2 = Math.sqrt((tCrds[1] - fCrds[1]) * (tCrds[1] - fCrds[1]) + (tCrds[0] - fCrds[0]) * (tCrds[0] - fCrds[0]));
         // count arrow head coordinates
-        double arrowX1 = tCrd[0] + L1 * ((fCrd[0] - tCrd[0]) * (Math.sqrt(3)/2) + (fCrd[1] - tCrd[1]) * (Math.sqrt(1)/2)) / L2;
-        double arrowY1 = tCrd[1] + L1 * ((fCrd[1] - tCrd[1]) * (Math.sqrt(3)/2) - (fCrd[0] - tCrd[0]) * (Math.sqrt(1)/2)) / L2;
-        double arrowX2 = tCrd[0] + L1 * ((fCrd[0] - tCrd[0]) * (Math.sqrt(3)/2) - (fCrd[1] - tCrd[1]) * (Math.sqrt(1)/2)) / L2;
-        double arrowY2 = tCrd[1] + L1 * ((fCrd[1] - tCrd[1]) * (Math.sqrt(3)/2) + (fCrd[0] - tCrd[0]) * (Math.sqrt(1)/2)) / L2;
+        double arrowX1 = tCrds[0] + L1 * ((fCrds[0] - tCrds[0]) * (Math.sqrt(3)/2) + (fCrds[1] - tCrds[1]) * (Math.sqrt(1)/2)) / L2;
+        double arrowY1 = tCrds[1] + L1 * ((fCrds[1] - tCrds[1]) * (Math.sqrt(3)/2) - (fCrds[0] - tCrds[0]) * (Math.sqrt(1)/2)) / L2;
+        double arrowX2 = tCrds[0] + L1 * ((fCrds[0] - tCrds[0]) * (Math.sqrt(3)/2) - (fCrds[1] - tCrds[1]) * (Math.sqrt(1)/2)) / L2;
+        double arrowY2 = tCrds[1] + L1 * ((fCrds[1] - tCrds[1]) * (Math.sqrt(3)/2) + (fCrds[0] - tCrds[0]) * (Math.sqrt(1)/2)) / L2;
         // return arrow head base on the node type
         switch (nodeType.getNumVal()) {
             case 0:     // aggregation
                 // count point on the line
-                double aggX = arrowX1 - tCrd[0] + arrowX2;
-                double aggY = arrowY1 - tCrd[1] + arrowY2;
-                Polygon aggPolygon = new Polygon(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2, aggX, aggY);
+                double aggX = arrowX1 - tCrds[0] + arrowX2;
+                double aggY = arrowY1 - tCrds[1] + arrowY2;
+                Polygon aggPolygon = new Polygon(arrowX1, arrowY1, tCrds[0], tCrds[1], arrowX2, arrowY2, aggX, aggY);
                 aggPolygon.setFill(Color.WHITESMOKE);
                 aggPolygon.setStroke(Color.BLACK);
                 return aggPolygon;
             case 1:     // association
-                return new Polyline(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2);
+                return new Polyline(arrowX1, arrowY1, tCrds[0], tCrds[1], arrowX2, arrowY2);
             case 2:     // generalization
-                Polygon polygon = new Polygon(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2);
+                Polygon polygon = new Polygon(arrowX1, arrowY1, tCrds[0], tCrds[1], arrowX2, arrowY2);
                 polygon.setFill(Color.WHITESMOKE);
                 polygon.setStroke(Color.BLACK);
                 return polygon;
             default:    // composition
                 // count point on the line
-                double compX = arrowX1 - tCrd[0] + arrowX2;
-                double compY = arrowY1 - tCrd[1] + arrowY2;
-                Polygon compPolygon = new Polygon(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2, compX, compY);
+                double compX = arrowX1 - tCrds[0] + arrowX2;
+                double compY = arrowY1 - tCrds[1] + arrowY2;
+                Polygon compPolygon = new Polygon(arrowX1, arrowY1, tCrds[0], tCrds[1], arrowX2, arrowY2, compX, compY);
                 compPolygon.setFill(Color.BLACK);
                 return compPolygon;
         }

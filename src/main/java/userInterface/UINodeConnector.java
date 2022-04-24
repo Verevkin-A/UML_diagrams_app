@@ -1,6 +1,9 @@
 package userInterface;
 
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 
 /**
  * Connection between all single nodes objects on the pane
@@ -8,39 +11,54 @@ import javafx.scene.control.TitledPane;
  * @since 2022-04-12
  */
 public class UINodeConnector {
-    private Double axisX1, axisY1, axisX2, axisY2;
-    private TitledPane from, to;
+    private UIClassConnector from, to;
+    private Line node;
+    private Shape arrowHead;
+    private Label fCard, tCard, nodeNameLabel;
+    private Button btnDelete;
 
-    public UINodeConnector(Double axisX1, Double axisY1, Double axisX2, Double axisY2, TitledPane from, TitledPane to) {
-        this.axisX1 = axisX1;
-        this.axisY1 = axisY1;
-        this.axisX2 = axisX2;
-        this.axisY2 = axisY2;
+    public UINodeConnector(UIClassConnector from, UIClassConnector to, Line node, Shape arrowHead,
+                           Label fCard, Label tCard, Label nodeNameLabel, Button btnDelete) {
         this.from = from;
         this.to = to;
+        this.node = node;
+        this.arrowHead = arrowHead;
+        this.fCard = fCard;
+        this.tCard = tCard;
+        this.nodeNameLabel = nodeNameLabel;
+        this.btnDelete = btnDelete;
+
     }
 
-    public Double getAxisX1() {
-        return axisX1;
-    }
-
-    public Double getAxisY1() {
-        return axisY1;
-    }
-
-    public Double getAxisX2() {
-        return axisX2;
-    }
-
-    public Double getAxisY2() {
-        return axisY2;
-    }
-
-    public TitledPane getFrom() {
+    public UIClassConnector getFrom() {
         return from;
     }
 
-    public TitledPane getTo() {
+    public UIClassConnector getTo() {
         return to;
+    }
+
+    public Line getNode() {
+        return node;
+    }
+
+    public Shape getArrowHead() {
+        return arrowHead;
+    }
+
+    public Label getfCard() {
+        return fCard;
+    }
+
+    public Label gettCard() {
+        return tCard;
+    }
+
+    public Label getNodeNameLabel() {
+        return nodeNameLabel;
+    }
+
+    public Button getBtnDelete() {
+        return btnDelete;
     }
 }
