@@ -177,11 +177,23 @@ public class Controller implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event)
         {
-            for (UIClassConnector c: uiClassConnectors) {
-                if (event.getSource() == c.getBtnDelete()) {
-                    root.getChildren().remove(c.getTpClass());
-                    gridPaneClasses.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
-                    uiClassConnectors.remove(c);
+            for (UIClassConnector cClass: uiClassConnectors) {
+                if (event.getSource() == cClass.getBtnDelete()) {
+                    root.getChildren().remove(cClass.getTpClass());
+                    gridPaneClasses.getChildren().removeAll(cClass.getClassNameLabel(), cClass.getBtnEdit(), cClass.getBtnDelete());
+
+                    // delete all nodes, connected with deleting class
+                    ArrayList<UINodeConnector> nodesToDelete = new ArrayList<UINodeConnector>();
+                    for (UINodeConnector cNode: uiNodeConnectors) {
+                        if (cNode.getFrom() == cClass || cNode.getTo() == cClass) {
+                            root.getChildren().removeAll(cNode.getNode(), cNode.getArrowHead(), cNode.getfCard(), cNode.gettCard());
+                            gridPaneNodes.getChildren().removeAll(cNode.getNodeNameLabel(), cNode.getBtnDelete());
+                            nodesToDelete.add(cNode);
+                        }
+                    }
+                    uiNodeConnectors.removeAll(nodesToDelete);
+
+                    uiClassConnectors.remove(cClass);
                     break;
                 }
             }
@@ -241,11 +253,18 @@ public class Controller implements EventHandler<ActionEvent> {
     };
 
     public void clearScreen() {
-        for (UIClassConnector c: uiClassConnectors) {
-            root.getChildren().remove(c.getTpClass());
-            gridPaneClasses.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
+        // delete all classes
+        for (UIClassConnector cClass: uiClassConnectors) {
+            root.getChildren().remove(cClass.getTpClass());
+            gridPaneClasses.getChildren().removeAll(cClass.getClassNameLabel(), cClass.getBtnEdit(), cClass.getBtnDelete());
         }
         uiClassConnectors.clear();
+        // delete all nodes
+        for (UINodeConnector cNode: uiNodeConnectors) {
+            root.getChildren().removeAll(cNode.getNode(), cNode.getArrowHead(), cNode.getfCard(), cNode.gettCard());
+            gridPaneNodes.getChildren().removeAll(cNode.getNodeNameLabel(), cNode.getBtnDelete());
+        }
+        uiNodeConnectors.clear();
     }
 
     public void loadClasses(ClassDiagram cd) {
