@@ -15,7 +15,7 @@ public class NodeFormController {
     private ToggleGroup AnchorFrom, AnchorTo, NodeType;
 
     @FXML
-    private ComboBox<UIConnector> cbFromClass, cbToClass;
+    private ComboBox<UIClassConnector> cbFromClass, cbToClass;
 
     @FXML
     private RadioButton rbAggregation, rbAssociation, rbComposition, rbGeneralization;
@@ -37,7 +37,7 @@ public class NodeFormController {
      */
     @FXML
     public void initialize() {
-        ObservableList<UIConnector> classes = FXCollections.observableList(Controller.getController().uiConnectors);
+        ObservableList<UIClassConnector> classes = FXCollections.observableList(Controller.getController().uiClassConnectors);
         cbFromClass.setItems(classes);
         cbToClass.setItems(classes);
     }

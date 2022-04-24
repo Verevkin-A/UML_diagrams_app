@@ -7,11 +7,11 @@ import javafx.scene.control.TitledPane;
  * @author Aleksandr Verevkin (xverev00)
  * @since 2022-04-12
  */
-public class UINodesConnector {
+public class UINodeConnector {
     private Double axisX1, axisY1, axisX2, axisY2;
     private TitledPane from, to;
 
-    public UINodesConnector (Double axisX1, Double axisY1, Double axisX2, Double axisY2, TitledPane from, TitledPane to) {
+    public UINodeConnector(Double axisX1, Double axisY1, Double axisX2, Double axisY2, TitledPane from, TitledPane to) {
         this.axisX1 = axisX1;
         this.axisY1 = axisY1;
         this.axisX2 = axisX2;

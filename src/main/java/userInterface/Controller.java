@@ -7,9 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.lang.Math;
 
 import classDiagram.*;
-import javafx.animation.PauseTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -20,13 +20,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Polyline;
+import javafx.scene.shape.Shape;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import parser.Parser;
-
-import static java.lang.System.out;
 
 /**
  * Main window controller
@@ -47,12 +48,13 @@ public class Controller implements EventHandler<ActionEvent> {
 
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
     public final Button buttonCreateNode = new Button("New node");
-    public UIConnector connectorEditing = null;
+    public UIClassConnector connectorEditing = null;
 
     public double axisX = 0.0;
     public double axisY = 0.0;
 
-    public ArrayList<UIConnector> uiConnectors;
+    public ArrayList<UIClassConnector> uiClassConnectors;
+    public ArrayList<UINodeConnector> uiNodeConnectors;
     // controller singleton instance
     private static Controller _controller;
 
@@ -69,7 +71,8 @@ public class Controller implements EventHandler<ActionEvent> {
 
         this.buttonCreateNode.setOnAction(this);
 
-        uiConnectors = new ArrayList<>();
+        uiClassConnectors = new ArrayList<>();
+        uiNodeConnectors = new ArrayList<>();
     }
 
     public static Controller setController(AnchorPane root) {
@@ -160,11 +163,11 @@ public class Controller implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event)
         {
-            for (UIConnector c: uiConnectors) {
+            for (UIClassConnector c: uiClassConnectors) {
                 if (event.getSource() == c.getBtnDelete()) {
                     root.getChildren().remove(c.getTpClass());
                     gridPaneClasses.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
-                    uiConnectors.remove(c);
+                    uiClassConnectors.remove(c);
                     break;
                 }
             }
@@ -176,7 +179,7 @@ public class Controller implements EventHandler<ActionEvent> {
         @Override
         public void handle(ActionEvent event)
         {
-            for (UIConnector c: uiConnectors) {
+            for (UIClassConnector c: uiClassConnectors) {
                 if (event.getSource() == c.getBtnEdit()) {
                     editClass(c);
                     connectorEditing = c;
@@ -208,11 +211,11 @@ public class Controller implements EventHandler<ActionEvent> {
     };
 
     public void clearScreen() {
-        for (UIConnector c: uiConnectors) {
+        for (UIClassConnector c: uiClassConnectors) {
             root.getChildren().remove(c.getTpClass());
             gridPaneClasses.getChildren().removeAll(c.getClassNameLabel(), c.getBtnEdit(), c.getBtnDelete());
         }
-        uiConnectors.clear();
+        uiClassConnectors.clear();
     }
 
     public void loadClasses(ClassDiagram cd) {
@@ -243,7 +246,7 @@ public class Controller implements EventHandler<ActionEvent> {
 
     public ClassDiagram saveClasses() {
         ClassDiagram cd = new ClassDiagram();
-        for (UIConnector connector: uiConnectors) {
+        for (UIClassConnector connector: uiClassConnectors) {
             ArrayList<CDField> fields = new ArrayList<>();
             ArrayList<CDField> methods = new ArrayList<>();
             for (FormField ff: connector.getTableView().getItems()) {
@@ -262,7 +265,7 @@ public class Controller implements EventHandler<ActionEvent> {
         return cd;
     }
 
-    public void editClass(UIConnector uiConnector) {
+    public void editClass(UIClassConnector uiConnector) {
         // set class x and y
         axisX = uiConnector.getAxisX();
         axisY = uiConnector.getAxisY();
@@ -306,7 +309,7 @@ public class Controller implements EventHandler<ActionEvent> {
         if (connectorEditing != null) {
             root.getChildren().remove(connectorEditing.getTpClass());
             gridPaneClasses.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
-            uiConnectors.remove(connectorEditing);
+            uiClassConnectors.remove(connectorEditing);
             connectorEditing = null;
         }
         VBox vBox = new VBox(10.0);
@@ -340,7 +343,7 @@ public class Controller implements EventHandler<ActionEvent> {
         Label nameLabel = new Label(className);
         gridPaneClasses.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
 
-        uiConnectors.add(new UIConnector(titledPane, axisX, axisY, interface_, tableView, nameLabel, btnClassEdit, btnClassDelete));
+        uiClassConnectors.add(new UIClassConnector(titledPane, axisX, axisY, interface_, tableView, nameLabel, btnClassEdit, btnClassDelete));
     }
 
     public void addNode() {
@@ -357,25 +360,64 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
-    public void putNode(UIConnector fromClass, UIConnector toClass, AnchorType anchorFrom, AnchorType anchorTo,
+    public void putNode(UIClassConnector fromClass, UIClassConnector toClass, AnchorType anchorFrom, AnchorType anchorTo,
                         String fCard, String tCard, NodeType nodeType) {
+        TitledPane tpFrom = fromClass.getTpClass();
+        Bounds fromBounds = tpFrom.localToScene(tpFrom.getBoundsInLocal());
+        TitledPane tpTo = toClass.getTpClass();
+        Bounds toBounds = tpTo.localToScene(tpTo.getBoundsInLocal());
+        double[] fCrd = getLineXY(fromBounds, anchorFrom);
+        double[] tCrd = getLineXY(toBounds, anchorTo);
+        Line node = new Line(fCrd[0], fCrd[1], tCrd[0], tCrd[1]);
 
+        Shape arrowHead = getArrowHead(nodeType, fCrd, tCrd);
+
+        root.getChildren().addAll(node, arrowHead);
     }
+
+    private Shape getArrowHead(NodeType nodeType, double[] fCrd, double[] tCrd) {
+        double L1 = 15;     // arrow head wings length
+        double L2 = Math.sqrt((tCrd[1] - fCrd[1]) * (tCrd[1] - fCrd[1]) + (tCrd[0] - fCrd[0]) * (tCrd[0] - fCrd[0]));
+
+        double arrowX1 = tCrd[0] + L1 * ((fCrd[0] - tCrd[0]) * (Math.sqrt(3)/2) + (fCrd[1] - tCrd[1]) * (Math.sqrt(1)/2)) / L2;
+        double arrowY1 = tCrd[1] + L1 * ((fCrd[1] - tCrd[1]) * (Math.sqrt(3)/2) - (fCrd[0] - tCrd[0]) * (Math.sqrt(1)/2)) / L2;
+        double arrowX2 = tCrd[0] + L1 * ((fCrd[0] - tCrd[0]) * (Math.sqrt(3)/2) - (fCrd[1] - tCrd[1]) * (Math.sqrt(1)/2)) / L2;
+        double arrowY2 = tCrd[1] + L1 * ((fCrd[1] - tCrd[1]) * (Math.sqrt(3)/2) + (fCrd[0] - tCrd[0]) * (Math.sqrt(1)/2)) / L2;
+
+        switch (nodeType.getNumVal()) {
+            case 0:     // aggregation
+                return null;
+            case 1:     // association
+                return new Polyline(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2);
+            case 2:     // generalization
+                Polygon polygon = new Polygon(arrowX1, arrowY1, tCrd[0], tCrd[1], arrowX2, arrowY2);
+                polygon.setFill(Color.WHITESMOKE);
+                polygon.setStroke(Color.BLACK);
+                return polygon;
+            default:    // composition
+                return null;
+        }
+    }
+
+    private double[] getLineXY (Bounds bounds, AnchorType anchor) {
+        switch (anchor.getSymb()) {
+            case "LEFT":
+                return new double[] {bounds.getMinX(), bounds.getCenterY()};
+            case "RIGHT":
+                return new double[] {bounds.getMaxX(), bounds.getCenterY()};
+            case "DOWN":
+                return new double[] {bounds.getCenterX(), bounds.getMaxY()};
+            default:    // "UP"
+                return new double[] {bounds.getCenterX(), bounds.getMinY()};
+        }
+    }
+
+
 
 //    public void putClassAnchors(TitledPane titledPane) {
 //        PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
 //        wait.setOnFinished((e) -> {
 //            Bounds tpBounds = titledPane.localToScene(titledPane.getBoundsInLocal());
-//            ToggleButton btnAnchorUP = new ToggleButton("+");
-//            ToggleButton btnAnchorDOWN = new ToggleButton("+");
-//            ToggleButton btnAnchorLEFT = new ToggleButton("+");
-//            ToggleButton btnAnchorRIGHT = new ToggleButton("+");
-//
-//            ToggleGroup tgAnchors = new ToggleGroup();
-//            btnAnchorUP.setToggleGroup(tgAnchors);
-//            btnAnchorDOWN.setToggleGroup(tgAnchors);
-//            btnAnchorLEFT.setToggleGroup(tgAnchors);
-//            btnAnchorRIGHT.setToggleGroup(tgAnchors);
 //
 //            btnAnchorUP.setLayoutX(tpBounds.getCenterX() - 15);
 //            btnAnchorUP.setLayoutY(tpBounds.getMinY() - 20);

@@ -10,7 +10,7 @@ import javafx.scene.control.TitledPane;
  * @author Aleksandr Verevkin (xverev00)
  * @since 2022-04-02
  */
-public class UIConnector {
+public class UIClassConnector {
     private TitledPane tpClass;
     private Double axisX, axisY;
     private Boolean interface_;
@@ -30,8 +30,8 @@ public class UIConnector {
      * @param btnEdit class edit button object on grid pane
      * @param btnDelete class delete button object on grid pane
      */
-    public UIConnector(TitledPane tpClass, Double axisX, Double axisY, Boolean interface_, TableView<FormField> tableView,
-                       Label classNameLabel, Button btnEdit, Button btnDelete) {
+    public UIClassConnector(TitledPane tpClass, Double axisX, Double axisY, Boolean interface_, TableView<FormField> tableView,
+                            Label classNameLabel, Button btnEdit, Button btnDelete) {
 
         this.tpClass = tpClass;
         this.axisX = axisX;
