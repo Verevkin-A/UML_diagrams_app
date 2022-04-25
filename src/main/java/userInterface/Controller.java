@@ -37,6 +37,7 @@ import parser.Parser;
  * @since 2022-04-02
  */
 public class Controller implements EventHandler<ActionEvent> {
+    // main static objects
     public AnchorPane root;
     public GridPane gridPaneClasses;
     public GridPane gridPaneNodes;
@@ -47,14 +48,15 @@ public class Controller implements EventHandler<ActionEvent> {
     public MenuItem menuItemSave = new MenuItem("Save");
     public MenuItem menuItemHelp = new MenuItem("Help");
     public MenuItem menuItemCredits = new MenuItem("Credits");
-
+    // pane static buttons
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
     public final Button buttonCreateNode = new Button("New node");
+    // class editing flag
     public UIClassConnector connectorEditing = null;
-
+    // current class coordinates
     public double axisX = 0.0;
     public double axisY = 0.0;
-
+    // lists with depending on each other GUI objects
     public ArrayList<UIClassConnector> uiClassConnectors;
     public ArrayList<UINodeConnector> uiNodeConnectors;
     // controller singleton instance
@@ -149,6 +151,7 @@ public class Controller implements EventHandler<ActionEvent> {
     }
 
     private void openHelp() {
+        // open help window
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("helpWindow.fxml"));
             Stage stage = new Stage();
@@ -161,6 +164,7 @@ public class Controller implements EventHandler<ActionEvent> {
     }
 
     private void openCredits() {
+        // open credits window
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("creditsWindow.fxml"));
             Stage stage = new Stage();
@@ -240,7 +244,7 @@ public class Controller implements EventHandler<ActionEvent> {
             {
                 if (buttonCreateClass.isSelected()) {
                     if (event.getX() > 930) {
-                        System.out.println("canvas clicked, restricted section");
+                        System.out.println("Warning: pane clicked, restricted section");
                     } else {
                         axisX = event.getX();
                         axisY = event.getY();
@@ -272,6 +276,7 @@ public class Controller implements EventHandler<ActionEvent> {
             CDClass clsToAdd = cd.getCDClass(i);
             axisX = clsToAdd.getXposition();
             axisY = clsToAdd.getYposition();
+            // fill up each class with his attributes into TableView
             TableView<FormField> tableView = new TableView<FormField>();
             TableColumn<FormField, String> nameColumn = new TableColumn<FormField, String>("Name");
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -323,7 +328,7 @@ public class Controller implements EventHandler<ActionEvent> {
                     methods.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
                 }
             }
-            // TODO Parent, height, width
+            // TODO Parent
             // create and add new class to class diagram
             CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99,
                     fields, methods, connector.getInterface_(),
@@ -359,7 +364,7 @@ public class Controller implements EventHandler<ActionEvent> {
         // set class x and y
         axisX = uiConnector.getAxisX();
         axisY = uiConnector.getAxisY();
-        // open form window
+        // open form window and fill up it with class attributes
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
             Stage stage = new Stage();
@@ -397,6 +402,7 @@ public class Controller implements EventHandler<ActionEvent> {
 
     public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
         if (connectorEditing != null) {
+            // remove and put class, if editing
             root.getChildren().remove(connectorEditing.getTpClass());
             gridPaneClasses.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
             uiClassConnectors.remove(connectorEditing);
@@ -468,13 +474,11 @@ public class Controller implements EventHandler<ActionEvent> {
             fCard = "";
             tCard = "";
         }
-        // create cardinality labels
+        // create and put cardinality labels
         Label fCardLabel = new Label(fCard);
-        AnchorPane.setLeftAnchor(fCardLabel, fCrds[0] + 10);
-        AnchorPane.setTopAnchor(fCardLabel, fCrds[1] - 10);
+        putCard(fCardLabel, anchorFrom, fCrds);
         Label tCardLabel = new Label(tCard);
-        AnchorPane.setLeftAnchor(tCardLabel, tCrds[0] + 10);
-        AnchorPane.setTopAnchor(tCardLabel, tCrds[1] - 10);
+        putCard(tCardLabel, anchorTo, tCrds);
         // add node on the pane
         root.getChildren().addAll(node, arrowHead, fCardLabel, tCardLabel);
 
@@ -527,7 +531,7 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
-    private double[] getLineXY (Bounds bounds, AnchorType anchor) {
+    private double[] getLineXY(Bounds bounds, AnchorType anchor) {
         switch (anchor.getSymb()) {
             case "LEFT":
                 return new double[] {bounds.getMinX(), bounds.getCenterY()};
@@ -537,6 +541,26 @@ public class Controller implements EventHandler<ActionEvent> {
                 return new double[] {bounds.getCenterX(), bounds.getMaxY()};
             default:    // "UP"
                 return new double[] {bounds.getCenterX(), bounds.getMinY()};
+        }
+    }
+
+    private void putCard(Label cardLabel, AnchorType anchor, double[] crds) {
+        switch (anchor.getSymb()) {
+            case "LEFT":
+                AnchorPane.setLeftAnchor(cardLabel, crds[0] - 30);
+                AnchorPane.setTopAnchor(cardLabel, crds[1] - 20);
+                return;
+            case "RIGHT":
+                AnchorPane.setLeftAnchor(cardLabel, crds[0] + 20);
+                AnchorPane.setTopAnchor(cardLabel, crds[1] - 20);
+                return;
+            case "DOWN":
+                AnchorPane.setLeftAnchor(cardLabel, crds[0] + 5);
+                AnchorPane.setTopAnchor(cardLabel, crds[1] + 5);
+                return;
+            default:    // "UP"
+                AnchorPane.setLeftAnchor(cardLabel, crds[0] + 10);
+                AnchorPane.setTopAnchor(cardLabel, crds[1] - 20);
         }
     }
 }
