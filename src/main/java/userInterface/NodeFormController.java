@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 public class NodeFormController {
 
     @FXML
@@ -44,12 +46,32 @@ public class NodeFormController {
 
     @FXML
     void doneAction(ActionEvent event) {
+        // check if every required field is selected
+        // if not show warning message
+        if (cbFromClass.getValue() == null || cbToClass.getValue() == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Unselected class");
+            alert.setHeaderText(null);
+            alert.setContentText("One or both classes are not selected");
+
+            alert.showAndWait();
+            return;
+        }
+        if (!Objects.equals(((RadioButton) NodeType.getSelectedToggle()).getText(), "Generalization") &&
+                (Objects.equals(tfFromCardinality.getText(), "") || Objects.equals(tfToCardinality.getText(), ""))) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Unselected cardinality");
+            alert.setHeaderText(null);
+            alert.setContentText("One or both cardinality fields are empty, but required for the selected type of node");
+
+            alert.showAndWait();
+            return;
+        }
         Controller.getController().putNode(cbFromClass.getValue(), cbToClass.getValue(),
                 getFromAnchorType((RadioButton) AnchorFrom.getSelectedToggle()),
                 getToAnchorType((RadioButton) AnchorTo.getSelectedToggle()),
                 tfFromCardinality.getText(), tfToCardinality.getText(),
                 getNodeType((RadioButton) NodeType.getSelectedToggle()));
-
         ((Stage) btnDone.getScene().getWindow()).close();
     }
 
