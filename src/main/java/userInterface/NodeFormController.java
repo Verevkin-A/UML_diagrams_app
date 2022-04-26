@@ -67,6 +67,16 @@ public class NodeFormController {
             alert.showAndWait();
             return;
         }
+        if (Objects.equals(((RadioButton) NodeType.getSelectedToggle()).getText(), "Generalization") &&
+                cbFromClass.getValue() == cbToClass.getValue()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Unary generalization");
+            alert.setHeaderText(null);
+            alert.setContentText("Unary generalization is not supported");
+
+            alert.showAndWait();
+            return;
+        }
         Controller.getController().putNode(cbFromClass.getValue(), cbToClass.getValue(),
                 getFromAnchorType((RadioButton) AnchorFrom.getSelectedToggle()),
                 getToAnchorType((RadioButton) AnchorTo.getSelectedToggle()),
