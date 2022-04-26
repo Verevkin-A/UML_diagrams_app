@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import classDiagram.*;
 import org.json.*;
+import sequenceDiagram.*;
 
 /**
  * Encodes and decodes a JSON file with a class diagram and a sequence diagram.
@@ -19,7 +20,7 @@ public class Parser {
      * @param diagString The string containing a JSON class diagram
      * @return a filled ClassDiagram object
      */
-    public static ClassDiagram decodeJSON(String diagString) {
+    public static ClassDiagram decodeJSONclassDiag(String diagString) {
         ClassDiagram classDiagram = new ClassDiagram();
 
         JSONObject obj = new JSONObject(diagString);
@@ -81,16 +82,84 @@ public class Parser {
     }
 
     /**
-     * Encodes a ClassDiagram object into a JSON String.
-     * @param cd The ClassDiagram to be encoded
-     * @return The encoded JSON String.
+     * Decodes a sequence diagram from a JSON file.
+     * @param diagString The input JSON file
+     * @param cd The class diagram against which inconsistencies are checked
+     * @return An ArrayList of sequence diagrams
      */
-    public static String encodeJSON(ClassDiagram cd) {
-        JSONObject obj = new JSONObject();
+    public static ArrayList<SequenceDiagram> decodeJSONseqDiag(String diagString, ClassDiagram cd) {
+        ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<>();
+
+        JSONObject obj = new JSONObject(diagString);
+        JSONArray seqDiagsJSON = obj.getJSONArray("sequenceDiagrams");
+
+        // Diagrams
+        for (int i = 0; i < seqDiagsJSON.length(); i++) {
+            JSONObject seqDiagJSON = seqDiagsJSON.getJSONObject(i);
+            SequenceDiagram seqDiag = new SequenceDiagram();
+
+            // Objects
+            JSONArray objectsJSON = seqDiagJSON.getJSONArray("objects");
+            for (int j = 0; j < objectsJSON.length(); j++) {
+                JSONObject objectJSON = objectsJSON.getJSONObject(j);
+                SDObject object = new SDObject(
+                        objectJSON.getString("objName"),
+                        objectJSON.getString("className"),
+                        objectJSON.getInt("timePos")
+                );
+
+                // Activations
+                JSONArray activationsJSON = objectJSON.getJSONArray("activations");
+                ArrayList<SDActivation> activations = new ArrayList<>();
+                for (int k = 0; k < activationsJSON.length(); k++) {
+                    JSONObject activationJSON = activationsJSON.getJSONObject(k);
+                    SDActivation activation = new SDActivation(
+                            activationJSON.getInt("timeBegin"),
+                            activationJSON.getInt("timeEnd")
+                    );
+                    activations.add(activation);
+                }
+                object.setActivations(activations);
+
+                // Class name inconsistency
+                object.setInconsistentClassOnLoad(cd);
+
+                // Add object
+                seqDiag.getObjects().add(object);
+            }
+
+            // Messages
+            JSONArray msgsJSON = seqDiagJSON.getJSONArray("messages");
+            for (int j = 0; j < msgsJSON.length(); j++) {
+                JSONObject msgJSON = msgsJSON.getJSONObject(i);
+                SDMessage msg = new SDMessage(
+                        msgJSON.getString("name"),
+                        msgJSON.getInt("from"),
+                        msgJSON.getInt("to"),
+                        seqDiag,
+                        MessageType.valueOfLabel(msgJSON.getString("type")),
+                        msgJSON.getInt("timePos")
+                );
+
+                // Inconsistency with nodes.
+                msg.setInconsistentFromLoad(cd);
+                seqDiag.getMessages().add(msg);
+            }
+            sequenceDiagrams.add(seqDiag);
+        }
+
+        return sequenceDiagrams;
+    }
+
+    /**
+     * Encodes a ClassDiagram object into a JSONObject.
+     * @param cd The ClassDiagram to be encoded
+     * @return The encoded JSONObject
+     */
+    private static JSONObject encodeJSONclassDiag(ClassDiagram cd) {
         JSONObject classDiagram = new JSONObject();
         JSONArray classes = new JSONArray();
         JSONArray nodes = new JSONArray();
-        obj.put("classDiagram", classDiagram);
         classDiagram.put("classes", classes);
         classDiagram.put("nodes", nodes);
 
@@ -141,6 +210,68 @@ public class Parser {
             node.put("type", cd.getCDNode(i).getType());
             nodes.put(node);
         }
+        return classDiagram;
+    }
+
+    /**
+     * Encodes an ArrayList of sequence diagrams into a JSONArray
+     * @param seqDiags an ArrayList of sequence diagrams to be encoded
+     * @return encoded JSONArray
+     */
+    private static JSONArray encodeJSONseqDiags(ArrayList<SequenceDiagram> seqDiags) {
+        JSONArray seqDiagsJSON = new JSONArray();
+        JSONObject seqDiagJSON = new JSONObject();
+        for (SequenceDiagram sd : seqDiags) {
+            JSONArray objsJSON = new JSONArray();
+            for (SDObject obj : sd.getObjects()) {
+                JSONObject objJSON = new JSONObject();
+                JSONArray actsJSON = new JSONArray();
+                for (SDActivation act : obj.getActivations()) {
+                    JSONObject actJSON = new JSONObject();
+                    actJSON.put("timeBegin", act.getTimeBegin());
+                    actJSON.put("timeEnd", act.getTimeEnd());
+
+                    actsJSON.put(actJSON);
+                }
+                objJSON.put("objName", obj.getObjName());
+                objJSON.put("className", obj.getClassName());
+                objJSON.put("activations", actsJSON);
+                objJSON.put("timePos", obj.getTimePos());
+
+                objsJSON.put(objJSON);
+            }
+            seqDiagJSON.put("objects", objsJSON);
+
+            // Messages
+            JSONArray msgsJSON = new JSONArray();
+            for (SDMessage msg : sd.getMessages()) {
+                JSONObject msgJSON = new JSONObject();
+                msgJSON.put("name", msg.getName());
+                msgJSON.put("from", msg.getFrom(sd));
+                msgJSON.put("to", msg.getTo(sd));
+                msgJSON.put("type", msg.getTypeAsString());
+                msgJSON.put("timePos", msg.getTimePos());
+
+                msgsJSON.put(msgJSON);
+            }
+            seqDiagJSON.put("messages", msgsJSON);
+            seqDiagsJSON.put(seqDiagJSON);
+        }
+        return seqDiagsJSON;
+    }
+
+    /**
+     * Encodes a class diagram and its sequence diagrams as JSON.
+     * @param cd The class diagram to be encoded
+     * @param sds An ArrayList of sequence diagrams to be encoded.
+     * @return A String representing a JSONObject
+     */
+    public static String encodeJSON(ClassDiagram cd, ArrayList<SequenceDiagram> sds) {
+        JSONObject obj = new JSONObject();
+        obj.put("classDiagram", encodeJSONclassDiag(cd));
+        obj.put("sequenceDiagrams", encodeJSONseqDiags(sds));
+
         return obj.toString(4);
     }
+
 }

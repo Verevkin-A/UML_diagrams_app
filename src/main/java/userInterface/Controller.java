@@ -24,6 +24,7 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import parser.Parser;
+import sequenceDiagram.SequenceDiagram;
 
 import static java.lang.System.out;
 
@@ -87,11 +88,13 @@ public class Controller implements EventHandler<ActionEvent> {
         if (actionEvent.getSource() == menuItemLoad) {
             File file = this.fileChooser.showOpenDialog(null);
             ClassDiagram cd = new ClassDiagram();
+            ArrayList<SequenceDiagram> sds = new ArrayList<>();
             // read input
             try {
                 String filepath = file.getAbsolutePath();
                 String diagString = Files.readString(Paths.get(filepath));
-                cd = Parser.decodeJSON(diagString);
+                cd = Parser.decodeJSONclassDiag(diagString);
+                sds = Parser.decodeJSONseqDiag(diagString, cd);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -100,7 +103,8 @@ public class Controller implements EventHandler<ActionEvent> {
             loadClasses(cd);      // load class diagram
         } else if (actionEvent.getSource() == this.menuItemSave) {
             ClassDiagram classes = saveClasses();
-
+            // TODO: Save sequence diagrams
+            ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<>();
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
             if (!file.getName().contains(".")) {
@@ -110,7 +114,7 @@ public class Controller implements EventHandler<ActionEvent> {
             System.out.println(file.getAbsolutePath());
             try {
                 FileWriter outFile = new FileWriter(file.getAbsolutePath());
-                String output = Parser.encodeJSON(classes);
+                String output = Parser.encodeJSON(classes, sequenceDiagrams);
                 outFile.write(output);
                 outFile.close();
             } catch (IOException e) {

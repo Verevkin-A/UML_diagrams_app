@@ -16,7 +16,7 @@ public class SDObject {
     /// When the classes of objects are inconsistent directly after being loaded
     /// from a file, they need to be differentiated (in GUI they need to change colour for example)
     /// TRUE if className is inconsistent, FALSE otherwise.
-    private boolean inconsistentFromLoad;
+    private boolean inconsistentClassOnLoad;
     /// timePos is -1 when the object was not created by a message.
     /// if object is at timePos position it can be activated at position timePos + 1, no sooner than that.
     private int timePos;
@@ -32,7 +32,7 @@ public class SDObject {
         this.className = className;
         activations = new ArrayList<>();
         timePos = -1;
-        this.inconsistentFromLoad = false;
+        this.inconsistentClassOnLoad = false;
     }
 
     /**
@@ -47,7 +47,7 @@ public class SDObject {
         this.className = className;
         activations = new ArrayList<>();
         this.timePos = timePos;
-        this.inconsistentFromLoad = false;
+        this.inconsistentClassOnLoad = false;
     }
 
     /**
@@ -65,8 +65,8 @@ public class SDObject {
         return false;
     }
 
-    public void setInconsistentFromLoad(boolean inconsistentFromLoad) {
-        this.inconsistentFromLoad = inconsistentFromLoad;
+    public void setInconsistentClassOnLoad(ClassDiagram cd) {
+        this.inconsistentClassOnLoad = !checkClassName(cd);
     }
 
     public void setActivations(ArrayList<SDActivation> activations) {
@@ -83,7 +83,7 @@ public class SDObject {
      */
     public void setClassName(String className) {
         this.className = className;
-        this.inconsistentFromLoad = false;
+        this.inconsistentClassOnLoad = false;
     }
 
     public ArrayList<SDActivation> getActivations() {
@@ -105,8 +105,8 @@ public class SDObject {
         this.timePos = timePos;
     }
 
-    public boolean isInconsistentFromLoad() {
-        return inconsistentFromLoad;
+    public boolean isInconsistentClassOnLoad() {
+        return inconsistentClassOnLoad;
     }
 
     public String getObjName() {

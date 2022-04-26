@@ -3,6 +3,8 @@ package sequenceDiagram;
 import classDiagram.ClassDiagram;
 import classDiagram.NodeType;
 
+import java.util.ListIterator;
+
 /**
  * Represents a message in a sequence diagram.
  * @author Marek Dohnal
@@ -16,12 +18,24 @@ public class SDMessage {
     private int timePos;
     private boolean inconsistentFromLoad;
 
-    public SDMessage(String name, SDObject from, SDObject to, MessageType type, int timePos) {
+    public SDMessage(String name, int fromIdx, int toIdx, SequenceDiagram sd, MessageType type, int timePos) {
         this.name = name;
-        this.from = from;
-        this.to = to;
+        setFrom(fromIdx, sd);
+        setTo(toIdx, sd);
         this.type = type;
         this.timePos = timePos;
+    }
+
+    public void setFrom(int fromIdx, SequenceDiagram sd) {
+        this.from = sd.getObjects().get(fromIdx);
+    }
+
+    public void setTo(int toIdx, SequenceDiagram sd) {
+        this.to = sd.getObjects().get(toIdx);
+    }
+
+    public void setInconsistentFromLoad(ClassDiagram cd) {
+        inconsistentFromLoad = !checkFromAndTo(cd);
     }
 
     public boolean checkFromAndTo(ClassDiagram cd) {
@@ -41,5 +55,29 @@ public class SDMessage {
 
     public boolean checkTimePos() {
         return timePos < 100 && timePos > 0;
+    }
+
+    public int getTimePos() {
+        return timePos;
+    }
+
+    public int getFrom(SequenceDiagram sd) {
+        return sd.getObjects().indexOf(this.from);
+    }
+
+    public int getTo(SequenceDiagram sd) {
+        return sd.getObjects().indexOf(this.to);
+    }
+
+    public MessageType getType() {
+        return type;
+    }
+
+    public String getTypeAsString() {
+        return type.getSymb();
+    }
+
+    public String getName() {
+        return name;
     }
 }

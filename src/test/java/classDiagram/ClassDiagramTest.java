@@ -23,7 +23,7 @@ public class ClassDiagramTest {
         try {
             String filepath = "data/format.json";
             diagString = Files.readString(Paths.get(filepath));
-            cd = Parser.decodeJSON(diagString);
+            cd = Parser.decodeJSONclassDiag(diagString);
         } catch (IOException e) {
             e.printStackTrace();
         }
