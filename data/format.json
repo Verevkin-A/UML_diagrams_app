@@ -96,8 +96,8 @@
         "fAnchor": "UP",
         "to": 0,
         "tAnchor": "DOWN",
-        "fCard": "0..*",
-        "tCard": "1",
+        "fCard": "",
+        "tCard": "",
         "type": 2
       },
       {

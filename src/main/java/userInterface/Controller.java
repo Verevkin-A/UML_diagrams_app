@@ -401,13 +401,6 @@ public class Controller implements EventHandler<ActionEvent> {
     }
 
     public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
-        if (connectorEditing != null) {
-            // remove and put class, if editing
-            root.getChildren().remove(connectorEditing.getTpClass());
-            gridPaneClasses.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
-            uiClassConnectors.remove(connectorEditing);
-            connectorEditing = null;
-        }
         VBox vBox = new VBox(10.0);
         for (FormField ff: tableView.getItems()) {
             if (Objects.equals(ff.getType(), "Field")) {
@@ -438,8 +431,55 @@ public class Controller implements EventHandler<ActionEvent> {
         // insert new class row
         Label nameLabel = new Label(className);
         gridPaneClasses.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
+
+        UIClassConnector newCon = new UIClassConnector(titledPane, axisX, axisY, interface_,
+                tableView, nameLabel, btnClassEdit, btnClassDelete);
+        // if class is edited, delete old one and redraw his nodes
+        if (connectorEditing != null) {
+            ArrayList<UINodeConnector> nodesToChange = new ArrayList<>();
+            ArrayList<UIClassConnector> classesNewFrom = new ArrayList<>(), classesNewTo = new ArrayList<>();
+            // check if edited class has any connected nodes
+            for (UINodeConnector cNode: uiNodeConnectors) {
+                UIClassConnector newFrom = cNode.getFrom(), newTo = cNode.getTo();
+                boolean change = false;
+                if (cNode.getFrom() == connectorEditing) {
+                    newFrom = newCon;
+                    change = true;
+                }
+                if (cNode.getTo() == connectorEditing) {
+                    newTo = newCon;
+                    change = true;
+                }
+                if (change) {
+                    nodesToChange.add(cNode);
+                    classesNewFrom.add(newFrom);
+                    classesNewTo.add(newTo);
+                }
+            }
+            // rewrite edited class nodes (for new nodes positions)
+            PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
+            wait.setOnFinished((e) -> {
+                for (int i = 0; i < nodesToChange.size(); i++) {
+                    UINodeConnector node = nodesToChange.get(i);
+                    putNode(classesNewFrom.get(i), classesNewTo.get(i),
+                            node.getfAnchor(), node.gettAnchor(),
+                            node.getfCard().getText(), node.gettCard().getText(),
+                            node.getNodeType());
+                    root.getChildren().removeAll(node.getNode(), node.getArrowHead(), node.getfCard(), node.gettCard());
+                    gridPaneNodes.getChildren().removeAll(node.getNodeNameLabel(), node.getBtnDelete());
+                    uiNodeConnectors.remove(node);
+                }
+            });
+            wait.play();
+
+            // remove previous class state, if editing
+            root.getChildren().remove(connectorEditing.getTpClass());
+            gridPaneClasses.getChildren().removeAll(connectorEditing.getClassNameLabel(), connectorEditing.getBtnEdit(), connectorEditing.getBtnDelete());
+            uiClassConnectors.remove(connectorEditing);
+            connectorEditing = null;
+        }
         // save class objects in list with classes
-        uiClassConnectors.add(new UIClassConnector(titledPane, axisX, axisY, interface_, tableView, nameLabel, btnClassEdit, btnClassDelete));
+        uiClassConnectors.add(newCon);
     }
 
     public void addNode() {
