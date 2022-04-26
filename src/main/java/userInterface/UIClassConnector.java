@@ -11,12 +11,12 @@ import javafx.scene.control.TitledPane;
  * @since 2022-04-02
  */
 public class UIClassConnector {
-    private TitledPane tpClass;
-    private Double axisX, axisY;
-    private Boolean interface_;
-    private TableView<FormField> tableView;
-    private Label classNameLabel;
-    private Button btnEdit, btnDelete;
+    private final TitledPane tpClass;
+    private final Double axisX, axisY;
+    private final Boolean interface_;
+    private final TableView<FormField> tableView;
+    private final Label classNameLabel;
+    private final Button btnEdit, btnDelete;
 
     /**
      * Class connection constructor

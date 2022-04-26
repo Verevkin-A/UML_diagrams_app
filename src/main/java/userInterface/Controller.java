@@ -116,9 +116,7 @@ public class Controller implements EventHandler<ActionEvent> {
             // wait before all classes are saved and load nodes
             PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
             ClassDiagram finalCd = cd;
-            wait.setOnFinished((e) -> {
-                loadNodes(finalCd);
-            });
+            wait.setOnFinished((e) -> loadNodes(finalCd));
             wait.play();
         } else if (actionEvent.getSource() == this.menuItemSave) {
             // save class diagram into .json
@@ -176,19 +174,17 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     }
 
-    public EventHandler<ActionEvent> deleteClass = new EventHandler<ActionEvent>()
-    {
+    public EventHandler<ActionEvent> deleteClass = new EventHandler<>() {
         @Override
-        public void handle(ActionEvent event)
-        {
-            for (UIClassConnector cClass: uiClassConnectors) {
+        public void handle(ActionEvent event) {
+            for (UIClassConnector cClass : uiClassConnectors) {
                 if (event.getSource() == cClass.getBtnDelete()) {
                     root.getChildren().remove(cClass.getTpClass());
                     gridPaneClasses.getChildren().removeAll(cClass.getClassNameLabel(), cClass.getBtnEdit(), cClass.getBtnDelete());
 
                     // delete all nodes, connected with deleting class
-                    ArrayList<UINodeConnector> nodesToDelete = new ArrayList<UINodeConnector>();
-                    for (UINodeConnector cNode: uiNodeConnectors) {
+                    ArrayList<UINodeConnector> nodesToDelete = new ArrayList<>();
+                    for (UINodeConnector cNode : uiNodeConnectors) {
                         if (cNode.getFrom() == cClass || cNode.getTo() == cClass) {
                             root.getChildren().removeAll(cNode.getNode(), cNode.getArrowHead(), cNode.getfCard(), cNode.gettCard());
                             gridPaneNodes.getChildren().removeAll(cNode.getNodeNameLabel(), cNode.getBtnDelete());
@@ -204,12 +200,10 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     };
 
-    public EventHandler<ActionEvent> editClass = new EventHandler<ActionEvent>()
-    {
+    public EventHandler<ActionEvent> editClass = new EventHandler<>() {
         @Override
-        public void handle(ActionEvent event)
-        {
-            for (UIClassConnector c: uiClassConnectors) {
+        public void handle(ActionEvent event) {
+            for (UIClassConnector c : uiClassConnectors) {
                 if (event.getSource() == c.getBtnEdit()) {
                     editClass(c);
                     connectorEditing = c;
@@ -219,12 +213,10 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     };
 
-    public EventHandler<ActionEvent> deleteNode = new EventHandler<ActionEvent>()
-    {
+    public EventHandler<ActionEvent> deleteNode = new EventHandler<>() {
         @Override
-        public void handle(ActionEvent event)
-        {
-            for (UINodeConnector c: uiNodeConnectors) {
+        public void handle(ActionEvent event) {
+            for (UINodeConnector c : uiNodeConnectors) {
                 if (event.getSource() == c.getBtnDelete()) {
                     root.getChildren().removeAll(c.getNode(), c.getArrowHead(), c.getfCard(), c.gettCard());
                     gridPaneNodes.getChildren().removeAll(c.getNodeNameLabel(), c.getBtnDelete());
@@ -235,22 +227,17 @@ public class Controller implements EventHandler<ActionEvent> {
         }
     };
 
-    public EventHandler<MouseEvent> canvasMousePress = new EventHandler<MouseEvent>()
-    {
-        @Override
-        public void handle(MouseEvent event)
+    public EventHandler<MouseEvent> canvasMousePress = event -> {
+        if (event.getTarget() == event.getSource())
         {
-            if (event.getTarget() == event.getSource())
-            {
-                if (buttonCreateClass.isSelected()) {
-                    if (event.getX() > 930) {
-                        System.out.println("Warning: pane clicked, restricted section");
-                    } else {
-                        axisX = event.getX();
-                        axisY = event.getY();
-                        addClass();
-                        buttonCreateClass.setSelected(false);
-                    }
+            if (buttonCreateClass.isSelected()) {
+                if (event.getX() > 930) {
+                    System.out.println("Warning: pane clicked, restricted section");
+                } else {
+                    axisX = event.getX();
+                    axisY = event.getY();
+                    addClass();
+                    buttonCreateClass.setSelected(false);
                 }
             }
         }
@@ -277,12 +264,12 @@ public class Controller implements EventHandler<ActionEvent> {
             axisX = clsToAdd.getXposition();
             axisY = clsToAdd.getYposition();
             // fill up each class with his attributes into TableView
-            TableView<FormField> tableView = new TableView<FormField>();
-            TableColumn<FormField, String> nameColumn = new TableColumn<FormField, String>("Name");
+            TableView<FormField> tableView = new TableView<>();
+            TableColumn<FormField, String> nameColumn = new TableColumn<>("Name");
             nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-            TableColumn<FormField, String> typeColumn = new TableColumn<FormField, String>("Type");
+            TableColumn<FormField, String> typeColumn = new TableColumn<>("Type");
             typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
-            TableColumn<FormField, String> visibilityColumn = new TableColumn<FormField, String>("Visibility");
+            TableColumn<FormField, String> visibilityColumn = new TableColumn<>("Visibility");
             visibilityColumn.setCellValueFactory(new PropertyValueFactory<>("visibility"));
 
             tableView.getColumns().add(nameColumn);

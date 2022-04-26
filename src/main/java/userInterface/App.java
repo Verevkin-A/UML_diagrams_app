@@ -6,8 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 
 /**
  * Graphical user interface starter
@@ -22,10 +20,9 @@ public class App extends Application {
      * Executed on the app start
      *
      * @param stage application main stage
-     * @throws IOException
      */
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) {
         this.stage = stage;
         // create and initialize starting window
         window = new SetWindow();

@@ -13,13 +13,13 @@ import javafx.scene.shape.Shape;
  * @since 2022-04-12
  */
 public class UINodeConnector {
-    private UIClassConnector from, to;
-    private Line node;
-    private Shape arrowHead;
-    private Label fCard, tCard, nodeNameLabel;
-    private Button btnDelete;
-    private AnchorType fAnchor, tAnchor;
-    private NodeType nodeType;
+    private final UIClassConnector from, to;
+    private final Line node;
+    private final Shape arrowHead;
+    private final Label fCard, tCard, nodeNameLabel;
+    private final Button btnDelete;
+    private final AnchorType fAnchor, tAnchor;
+    private final NodeType nodeType;
 
     public UINodeConnector(UIClassConnector from, UIClassConnector to, Line node, Shape arrowHead,
                            Label fCard, Label tCard, Label nodeNameLabel, Button btnDelete,
