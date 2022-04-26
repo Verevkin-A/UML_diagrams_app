@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -26,6 +27,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -103,8 +105,7 @@ public class Controller implements EventHandler<ActionEvent> {
             ClassDiagram cd = new ClassDiagram();
             // read input
             try {
-                String filepath = file.getAbsolutePath();
-                String diagString = Files.readString(Paths.get(filepath));
+                String diagString = Files.readString(Paths.get(file.getAbsolutePath()));
                 cd = Parser.decodeJSON(diagString);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -130,8 +131,7 @@ public class Controller implements EventHandler<ActionEvent> {
             // generate output json
             try {
                 FileWriter outFile = new FileWriter(file.getAbsolutePath());
-                String output = Parser.encodeJSON(cd);
-                outFile.write(output);
+                outFile.write(Parser.encodeJSON(cd));
                 outFile.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -388,18 +388,18 @@ public class Controller implements EventHandler<ActionEvent> {
     }
 
     public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
-        VBox vBox = new VBox(10.0);
+        VBox vbFields = new VBox(10.0);
         for (FormField ff: tableView.getItems()) {
             if (Objects.equals(ff.getType(), "Field")) {
-                vBox.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName()));
+                vbFields.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName()));
             }
         }
         for (FormField ff: tableView.getItems()) {
             if (Objects.equals(ff.getType(), "Method")) {
-                vBox.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName() + "()"));
+                vbFields.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName() + "()"));
             }
         }
-        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_? "<<interface>>\n" : ""), className), vBox);
+        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_? "<<interface>>\n" : ""), className), vbFields);
         titledPane.setCollapsible(false);
 
         AnchorPane.setLeftAnchor(titledPane, axisX);
@@ -419,7 +419,7 @@ public class Controller implements EventHandler<ActionEvent> {
         Label nameLabel = new Label(className);
         gridPaneClasses.addRow(0, nameLabel, btnClassEdit, btnClassDelete);
 
-        UIClassConnector newCon = new UIClassConnector(titledPane, axisX, axisY, interface_,
+        UIClassConnector newCon = new UIClassConnector(titledPane, vbFields, axisX, axisY, interface_,
                 tableView, nameLabel, btnClassEdit, btnClassDelete);
         // if class is edited, delete old one and redraw his nodes
         if (connectorEditing != null) {
@@ -444,7 +444,7 @@ public class Controller implements EventHandler<ActionEvent> {
                 }
             }
             // rewrite edited class nodes (for new nodes positions)
-            PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
+            PauseTransition wait = new PauseTransition(Duration.seconds(0.1));
             wait.setOnFinished((e) -> {
                 for (int i = 0; i < nodesToChange.size(); i++) {
                     UINodeConnector node = nodesToChange.get(i);
@@ -485,6 +485,28 @@ public class Controller implements EventHandler<ActionEvent> {
 
     public void putNode(UIClassConnector fromClass, UIClassConnector toClass, AnchorType anchorFrom, AnchorType anchorTo,
                         String fCard, String tCard, NodeType nodeType) {
+        if (nodeType == NodeType.GENERALIZATION) {
+            // if node type is generalization, cardinality is empty
+            fCard = "";
+            tCard = "";
+            // check for inherited methods
+            for (Node fromField: fromClass.getVbFields().getChildren()) {
+                if (((Label) fromField).getText().endsWith("()")) {
+                    boolean inherit = false;
+                    for (Node toField : toClass.getVbFields().getChildren()) {
+                        if (Objects.equals(((Label) toField).getText(), ((Label) fromField).getText())) {
+                            inherit = true;
+                            break;
+                        }
+                    }
+                    if (inherit) {
+                        ((Label) fromField).setTextFill(Color.RED);
+                    } else {
+                        ((Label) fromField).setTextFill(Color.BLACK);
+                    }
+                }
+            }
+        }
         // get titled panes bounds
         TitledPane tpFrom = fromClass.getTpClass();
         Bounds fromBounds = tpFrom.localToScene(tpFrom.getBoundsInLocal());
@@ -496,11 +518,6 @@ public class Controller implements EventHandler<ActionEvent> {
         // get arrow line and head
         Line node = new Line(fCrds[0], fCrds[1], tCrds[0], tCrds[1]);
         Shape arrowHead = getArrowHead(nodeType, fCrds, tCrds);
-        // if node type is generalization, cardinality is empty
-        if (nodeType == NodeType.GENERALIZATION) {
-            fCard = "";
-            tCard = "";
-        }
         // create and put cardinality labels
         Label fCardLabel = new Label(fCard);
         putCard(fCardLabel, anchorFrom, fCrds);

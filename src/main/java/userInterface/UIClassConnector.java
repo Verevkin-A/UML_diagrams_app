@@ -4,6 +4,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.VBox;
 
 /**
  * Connection between all single class objects on the pane
@@ -12,6 +13,7 @@ import javafx.scene.control.TitledPane;
  */
 public class UIClassConnector {
     private final TitledPane tpClass;
+    private final VBox vbFields;
     private final Double axisX, axisY;
     private final Boolean interface_;
     private final TableView<FormField> tableView;
@@ -30,10 +32,11 @@ public class UIClassConnector {
      * @param btnEdit class edit button object on grid pane
      * @param btnDelete class delete button object on grid pane
      */
-    public UIClassConnector(TitledPane tpClass, Double axisX, Double axisY, Boolean interface_, TableView<FormField> tableView,
+    public UIClassConnector(TitledPane tpClass, VBox vbFields, Double axisX, Double axisY, Boolean interface_, TableView<FormField> tableView,
                             Label classNameLabel, Button btnEdit, Button btnDelete) {
 
         this.tpClass = tpClass;
+        this.vbFields = vbFields;
         this.axisX = axisX;
         this.axisY = axisY;
         this.tableView = tableView;
@@ -50,6 +53,10 @@ public class UIClassConnector {
      */
     public TitledPane getTpClass() {
         return tpClass;
+    }
+
+    public VBox getVbFields() {
+        return vbFields;
     }
 
     /**
