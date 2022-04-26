@@ -128,4 +128,23 @@ public class ParserTest {
         JSONAssert.assertEquals(exptString, Parser.encodeJSON(cd), JSONCompareMode.STRICT);
 
     }
+
+    @Test
+    public void emptyDiagram() {
+        ClassDiagram cd = new ClassDiagram();
+        String inString = "";
+        String exptString = "";
+        try {
+            String inPath = "data/test/emptyDiagramIn.json";
+            inString = Files.readString(Paths.get(inPath));
+            cd = Parser.decodeJSON(inString);
+            String exptPath = "data/test/emptyDiagramExpt.json";
+            exptString = Files.readString(Paths.get(exptPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONAssert.assertEquals(exptString, Parser.encodeJSON(cd), JSONCompareMode.STRICT);
+
+    }
 }

@@ -6,8 +6,8 @@ package sequenceDiagram;
  * @since 25/04/2022
  */
 public enum MessageType {
-    NORMAL("NORMAL"),
-    CALLBACK("CALLBACK"),
+    CALL("CALL"),
+    RETURN("RETURN"),
     CREATE_OBJ("CREATE_OBJ"),
     DESTROY_OBJ("DESTROY_OBJ");
 

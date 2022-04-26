@@ -18,6 +18,7 @@ public class SDObject {
     /// TRUE if className is inconsistent, FALSE otherwise.
     private boolean inconsistentFromLoad;
     /// timePos is -1 when the object was not created by a message.
+    /// if object is at timePos position it can be activated at position timePos + 1, no sooner than that.
     private int timePos;
 
     /**
@@ -51,13 +52,13 @@ public class SDObject {
 
     /**
      * Performs a consistency check on a user entered class name.
-     * @param className the class name a user enters
      * @param cd a class diagram containing a CDClass which should correspond to className
      * @return true if cd contains a CDClass with a name, that equals className, false otherwise.
      */
-    public boolean checkClassName(String className, ClassDiagram cd) {
+    public boolean checkClassName(ClassDiagram cd) {
         for (int i = 0; i < cd.classesLen(); i++) {
-            if (cd.getCDClass(i).getName().equals(className)) {
+            // Interface cannot be instantiated
+            if (cd.getCDClass(i).getName().equals(this.className) && !cd.getCDClass(i).getInterface()) {
                 return true;
             }
         }
@@ -70,14 +71,6 @@ public class SDObject {
 
     public void setActivations(ArrayList<SDActivation> activations) {
         this.activations = activations;
-    }
-
-    public void addActivation(SDActivation activation) {
-        this.activations.add(activation);
-    }
-
-    public void addActivation(int idx, SDActivation activation) {
-        this.activations.add(idx, activation);
     }
 
     public void setObjName(String objName) {
@@ -95,6 +88,17 @@ public class SDObject {
 
     public ArrayList<SDActivation> getActivations() {
         return activations;
+    }
+
+    /**
+     * Checks whether the activation we wish to add to the object is within the objects lifeline.
+     * For example, we cannot add an activation from time 0 to time 50, when the object's lifeline
+     * starts at timePos = 30.
+     * @param activation The activation we want to check
+     * @return True if the activation is within the bounds of the object's lifeline, false otherwise.
+     */
+    public boolean checkActivation(SDActivation activation) {
+        return activation.getTimeBegin() > this.timePos && activation.getTimeEnd() <= 100;
     }
 
     public void setTimePos(int timePos) {
