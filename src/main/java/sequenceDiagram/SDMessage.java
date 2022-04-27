@@ -16,7 +16,7 @@ public class SDMessage {
     private SDObject to;
     private MessageType type;
     private int timePos;
-    private boolean inconsistentFromLoad;
+    private boolean markedInconsistent;
 
     public SDMessage(String name, int fromIdx, int toIdx, SequenceDiagram sd, MessageType type, int timePos) {
         this.name = name;
@@ -34,8 +34,12 @@ public class SDMessage {
         this.to = sd.getObjects().get(toIdx);
     }
 
-    public void setInconsistentFromLoad(ClassDiagram cd) {
-        inconsistentFromLoad = !checkFromAndTo(cd);
+    public void setMarkedInconsistent(ClassDiagram cd) {
+        markedInconsistent = !checkFromAndTo(cd);
+    }
+
+    public void setMarkedInconsistent(boolean markedInconsistent) {
+        this.markedInconsistent = markedInconsistent;
     }
 
     public boolean checkFromAndTo(ClassDiagram cd) {
@@ -59,6 +63,14 @@ public class SDMessage {
 
     public int getTimePos() {
         return timePos;
+    }
+
+    public SDObject getFrom() {
+        return from;
+    }
+
+    public SDObject getTo() {
+        return to;
     }
 
     public int getFrom(SequenceDiagram sd) {

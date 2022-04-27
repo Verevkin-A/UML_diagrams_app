@@ -16,7 +16,7 @@ public class SDObject {
     /// When the classes of objects are inconsistent directly after being loaded
     /// from a file, they need to be differentiated (in GUI they need to change colour for example)
     /// TRUE if className is inconsistent, FALSE otherwise.
-    private boolean inconsistentClassOnLoad;
+    private boolean markedInconsistent;
     /// timePos is -1 when the object was not created by a message.
     /// if object is at timePos position it can be activated at position timePos + 1, no sooner than that.
     private int timePos;
@@ -32,7 +32,7 @@ public class SDObject {
         this.className = className;
         activations = new ArrayList<>();
         timePos = -1;
-        this.inconsistentClassOnLoad = false;
+        this.markedInconsistent = false;
     }
 
     /**
@@ -47,15 +47,17 @@ public class SDObject {
         this.className = className;
         activations = new ArrayList<>();
         this.timePos = timePos;
-        this.inconsistentClassOnLoad = false;
+        this.markedInconsistent = false;
     }
 
     /**
-     * Performs a consistency check on a user entered class name.
+     * Performs a consistency check on a user entered class name, also checks
+     * if a user wants to instantiate an interface.
      * @param cd a class diagram containing a CDClass which should correspond to className
-     * @return true if cd contains a CDClass with a name, that equals className, false otherwise.
+     * @return true if cd contains a CDClass with a name, that equals className AND is NOT an interface,
+     * false otherwise.
      */
-    public boolean checkClassName(ClassDiagram cd) {
+    public boolean checkClsNameAndInt(ClassDiagram cd) {
         for (int i = 0; i < cd.classesLen(); i++) {
             // Interface cannot be instantiated
             if (cd.getCDClass(i).getName().equals(this.className) && !cd.getCDClass(i).getInterface()) {
@@ -65,8 +67,12 @@ public class SDObject {
         return false;
     }
 
-    public void setInconsistentClassOnLoad(ClassDiagram cd) {
-        this.inconsistentClassOnLoad = !checkClassName(cd);
+    public void setMarkedInconsistent(ClassDiagram cd) {
+        this.markedInconsistent = !checkClsNameAndInt(cd);
+    }
+
+    public void setMarkedInconsistent(boolean markedInconsistent) {
+        this.markedInconsistent = markedInconsistent;
     }
 
     public void setActivations(ArrayList<SDActivation> activations) {
@@ -83,7 +89,7 @@ public class SDObject {
      */
     public void setClassName(String className) {
         this.className = className;
-        this.inconsistentClassOnLoad = false;
+        this.markedInconsistent = false;
     }
 
     public ArrayList<SDActivation> getActivations() {
@@ -105,8 +111,8 @@ public class SDObject {
         this.timePos = timePos;
     }
 
-    public boolean isInconsistentClassOnLoad() {
-        return inconsistentClassOnLoad;
+    public boolean isMarkedInconsistent() {
+        return markedInconsistent;
     }
 
     public String getObjName() {

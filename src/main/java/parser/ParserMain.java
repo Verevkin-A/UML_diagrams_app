@@ -21,8 +21,7 @@ public class ParserMain {
         try {
             String filepath = "data/format.json";
             String diagString = Files.readString(Paths.get(filepath));
-            cd = Parser.decodeJSONclassDiag(diagString);
-            sds = Parser.decodeJSONseqDiag(diagString, cd);
+            cd = Parser.decodeJSON(diagString);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -30,7 +29,7 @@ public class ParserMain {
 
         try {
             FileWriter file = new FileWriter("data/output.json");
-            String output = Parser.encodeJSON(cd, sds);
+            String output = Parser.encodeJSON(cd);
             file.write(output);
             file.close();
         } catch (IOException e) {

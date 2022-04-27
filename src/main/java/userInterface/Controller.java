@@ -93,8 +93,7 @@ public class Controller implements EventHandler<ActionEvent> {
             try {
                 String filepath = file.getAbsolutePath();
                 String diagString = Files.readString(Paths.get(filepath));
-                cd = Parser.decodeJSONclassDiag(diagString);
-                sds = Parser.decodeJSONseqDiag(diagString, cd);
+                cd = Parser.decodeJSON(diagString);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -103,8 +102,6 @@ public class Controller implements EventHandler<ActionEvent> {
             loadClasses(cd);      // load class diagram
         } else if (actionEvent.getSource() == this.menuItemSave) {
             ClassDiagram classes = saveClasses();
-            // TODO: Save sequence diagrams
-            ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<>();
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
             if (!file.getName().contains(".")) {
@@ -114,7 +111,7 @@ public class Controller implements EventHandler<ActionEvent> {
             System.out.println(file.getAbsolutePath());
             try {
                 FileWriter outFile = new FileWriter(file.getAbsolutePath());
-                String output = Parser.encodeJSON(classes, sequenceDiagrams);
+                String output = Parser.encodeJSON(classes);
                 outFile.write(output);
                 outFile.close();
             } catch (IOException e) {
@@ -252,7 +249,7 @@ public class Controller implements EventHandler<ActionEvent> {
             }
             // TODO Parent
             CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99, fields, methods,
-                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue(), 99, 99);
+                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue(), cd);
             cd.addClass(cdClass);
         }
         return cd;

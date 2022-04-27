@@ -1,6 +1,4 @@
 {
-  "sequenceDiagrams": [],
-
   "classDiagram": {
     "classes": [
       {
@@ -36,9 +34,7 @@
         ],
         "isInterface": false,
         "xPos": 5,
-        "yPos": 5,
-        "width": 50,
-        "height": 100
+        "yPos": 5
       },
       {
         "name": "testClass2",
@@ -57,9 +53,7 @@
         ],
         "isInterface": false,
         "xPos": 5,
-        "yPos": 5,
-        "width": 50,
-        "height": 100
+        "yPos": 5
       }
     ],
     "nodes": [
@@ -72,6 +66,7 @@
         "tCard": "1",
         "type": 3
       }
-    ]
+    ],
+    "sequenceDiagrams": []
   }
 }

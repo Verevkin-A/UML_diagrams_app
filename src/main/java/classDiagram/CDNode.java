@@ -1,5 +1,9 @@
 package classDiagram;
 
+import sequenceDiagram.SDMessage;
+import sequenceDiagram.SDObject;
+import sequenceDiagram.SequenceDiagram;
+
 /**
  * A node of a class diagram
  * @author Marek Dohnal (xdohna48)
@@ -35,6 +39,50 @@ public class CDNode {
         this.tAnchor = tAnchor;
         this.fCard = fCard;
         this.tCard = tCard;
+        this.type = type;
+    }
+
+    public void setfAnchor(AnchorType fAnchor) {
+        this.fAnchor = fAnchor;
+    }
+
+    public void settAnchor(AnchorType tAnchor) {
+        this.tAnchor = tAnchor;
+    }
+
+    public void setfCard(String fCard) {
+        this.fCard = fCard;
+    }
+
+    public void setFrom(CDClass from, ClassDiagram cd) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDMessage msg : sd.getMessages()) {
+                if (!msg.getFrom().getClassName().equals(from.getName()) &&
+                        !msg.getTo().getClassName().equals(from.getName())) {
+                    msg.setMarkedInconsistent(true);
+                }
+            }
+        }
+        this.from = from;
+    }
+
+    public void settCard(String tCard) {
+        this.tCard = tCard;
+    }
+
+    public void setTo(CDClass to, ClassDiagram cd) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDMessage msg : sd.getMessages()) {
+                if (!msg.getFrom().getClassName().equals(to.getName()) &&
+                        !msg.getTo().getClassName().equals(to.getName())) {
+                    msg.setMarkedInconsistent(true);
+                }
+            }
+        }
+        this.to = to;
+    }
+
+    public void setType(NodeType type) {
         this.type = type;
     }
 

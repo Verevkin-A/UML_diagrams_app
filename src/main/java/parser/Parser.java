@@ -20,7 +20,7 @@ public class Parser {
      * @param diagString The string containing a JSON class diagram
      * @return a filled ClassDiagram object
      */
-    public static ClassDiagram decodeJSONclassDiag(String diagString) {
+    public static ClassDiagram decodeJSON(String diagString) {
         ClassDiagram classDiagram = new ClassDiagram();
 
         JSONObject obj = new JSONObject(diagString);
@@ -52,12 +52,10 @@ public class Parser {
             }
 
 
-            newClass.setName(classJSON.getString("name"));
+            newClass.setName(classJSON.getString("name"), classDiagram);
             newClass.setParent(classJSON.getInt("parent"));
-            newClass.setInterface(classJSON.getBoolean("isInterface"));
+            newClass.setInterface(classJSON.getBoolean("isInterface"), classDiagram);
             newClass.setPosition(classJSON.getInt("xPos"), classJSON.getInt("yPos"));
-            newClass.setWidth(classJSON.getInt("width"));
-            newClass.setHeight(classJSON.getInt("height"));
 
             classDiagram.addClass(newClass);
         }
@@ -78,20 +76,10 @@ public class Parser {
             classDiagram.addNode(newNode);
         }
 
-        return classDiagram;
-    }
-
-    /**
-     * Decodes a sequence diagram from a JSON file.
-     * @param diagString The input JSON file
-     * @param cd The class diagram against which inconsistencies are checked
-     * @return An ArrayList of sequence diagrams
-     */
-    public static ArrayList<SequenceDiagram> decodeJSONseqDiag(String diagString, ClassDiagram cd) {
+        // Sequence diagrams parsing
         ArrayList<SequenceDiagram> sequenceDiagrams = new ArrayList<>();
 
-        JSONObject obj = new JSONObject(diagString);
-        JSONArray seqDiagsJSON = obj.getJSONArray("sequenceDiagrams");
+        JSONArray seqDiagsJSON = cdJSON.getJSONArray("sequenceDiagrams");
 
         // Diagrams
         for (int i = 0; i < seqDiagsJSON.length(); i++) {
@@ -122,7 +110,7 @@ public class Parser {
                 object.setActivations(activations);
 
                 // Class name inconsistency
-                object.setInconsistentClassOnLoad(cd);
+                object.setMarkedInconsistent(classDiagram);
 
                 // Add object
                 seqDiag.getObjects().add(object);
@@ -142,21 +130,22 @@ public class Parser {
                 );
 
                 // Inconsistency with nodes.
-                msg.setInconsistentFromLoad(cd);
+                msg.setMarkedInconsistent(classDiagram);
                 seqDiag.getMessages().add(msg);
             }
             sequenceDiagrams.add(seqDiag);
         }
-
-        return sequenceDiagrams;
+        classDiagram.setSequenceDiagrams(sequenceDiagrams);
+        return classDiagram;
     }
 
     /**
-     * Encodes a ClassDiagram object into a JSONObject.
+     * Encodes a ClassDiagram object into a JSONObject String.
      * @param cd The ClassDiagram to be encoded
-     * @return The encoded JSONObject
+     * @return The encoded JSONObject String
      */
-    private static JSONObject encodeJSONclassDiag(ClassDiagram cd) {
+    public static String encodeJSON(ClassDiagram cd) {
+        JSONObject rootObj = new JSONObject();
         JSONObject classDiagram = new JSONObject();
         JSONArray classes = new JSONArray();
         JSONArray nodes = new JSONArray();
@@ -171,8 +160,6 @@ public class Parser {
             classJSON.put("isInterface", cdClass.getInterface());
             classJSON.put("xPos", cdClass.getXposition());
             classJSON.put("yPos", cdClass.getYposition());
-            classJSON.put("width", cdClass.getWidth());
-            classJSON.put("height", cdClass.getHeight());
 
             JSONArray fields = new JSONArray();
             classJSON.put("fields", fields);
@@ -210,18 +197,11 @@ public class Parser {
             node.put("type", cd.getCDNode(i).getType());
             nodes.put(node);
         }
-        return classDiagram;
-    }
 
-    /**
-     * Encodes an ArrayList of sequence diagrams into a JSONArray
-     * @param seqDiags an ArrayList of sequence diagrams to be encoded
-     * @return encoded JSONArray
-     */
-    private static JSONArray encodeJSONseqDiags(ArrayList<SequenceDiagram> seqDiags) {
+        // Sequence diagrams
         JSONArray seqDiagsJSON = new JSONArray();
         JSONObject seqDiagJSON = new JSONObject();
-        for (SequenceDiagram sd : seqDiags) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             JSONArray objsJSON = new JSONArray();
             for (SDObject obj : sd.getObjects()) {
                 JSONObject objJSON = new JSONObject();
@@ -257,21 +237,8 @@ public class Parser {
             seqDiagJSON.put("messages", msgsJSON);
             seqDiagsJSON.put(seqDiagJSON);
         }
-        return seqDiagsJSON;
+        classDiagram.put("sequenceDiagrams", seqDiagsJSON);
+        rootObj.put("classDiagram", classDiagram);
+        return rootObj.toString(4);
     }
-
-    /**
-     * Encodes a class diagram and its sequence diagrams as JSON.
-     * @param cd The class diagram to be encoded
-     * @param sds An ArrayList of sequence diagrams to be encoded.
-     * @return A String representing a JSONObject
-     */
-    public static String encodeJSON(ClassDiagram cd, ArrayList<SequenceDiagram> sds) {
-        JSONObject obj = new JSONObject();
-        obj.put("classDiagram", encodeJSONclassDiag(cd));
-        obj.put("sequenceDiagrams", encodeJSONseqDiags(sds));
-
-        return obj.toString(4);
-    }
-
 }
