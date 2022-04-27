@@ -55,15 +55,12 @@ public class CDNode {
     }
 
     public void setFrom(CDClass from, ClassDiagram cd) {
+        this.from = from;
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDMessage msg : sd.getMessages()) {
-                if (!msg.getFrom().getClassName().equals(from.getName()) &&
-                        !msg.getTo().getClassName().equals(from.getName())) {
-                    msg.setMarkedInconsistent(true);
-                }
+                msg.setMarkedInconsistent(cd);
             }
         }
-        this.from = from;
     }
 
     public void settCard(String tCard) {
@@ -71,15 +68,12 @@ public class CDNode {
     }
 
     public void setTo(CDClass to, ClassDiagram cd) {
+        this.to = to;
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDMessage msg : sd.getMessages()) {
-                if (!msg.getFrom().getClassName().equals(to.getName()) &&
-                        !msg.getTo().getClassName().equals(to.getName())) {
-                    msg.setMarkedInconsistent(true);
-                }
+                msg.setMarkedInconsistent(cd);
             }
         }
-        this.to = to;
     }
 
     public void setType(NodeType type) {

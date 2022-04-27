@@ -42,13 +42,20 @@ public class SDMessage {
         this.markedInconsistent = markedInconsistent;
     }
 
+    /**
+     * Checks the start and end objects of a message.
+     * If the objects are instances of classes with no association, aggregation or composition,
+     * they are not consistent.
+     * @param cd The class diagram against which to check.
+     * @return True if the message is consistent, false otherwise.
+     */
     public boolean checkFromAndTo(ClassDiagram cd) {
         for (int i = 0; i < cd.nodesLen(); i++) {
             if ((this.from.getClassName().equals(cd.getCDNode(i).getFrom().getName()) ||
-                this.from.getClassName().equals(cd.getCDNode(i).getTo().getName()))
+                this.to.getClassName().equals(cd.getCDNode(i).getTo().getName()))
                     &&
-                (this.to.getClassName().equals(cd.getCDNode(i).getTo().getName()) ||
-                this.to.getClassName().equals(cd.getCDNode(i).getTo().getName()))) {
+                (this.from.getClassName().equals(cd.getCDNode(i).getTo().getName()) ||
+                this.to.getClassName().equals(cd.getCDNode(i).getFrom().getName()))) {
                 if (cd.getCDNode(i).getType() != NodeType.GENERALIZATION.getNumVal()) {
                     return true;
                 }
