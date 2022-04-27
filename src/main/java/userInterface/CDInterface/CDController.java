@@ -1,4 +1,4 @@
-package userInterface;
+package userInterface.CDInterface;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,7 +16,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,18 +26,18 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Polyline;
 import javafx.scene.shape.Shape;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import parser.Parser;
+import userInterface.App;
 
 /**
- * Main window controller
+ * Main window CDController
  * @author Aleksandr Verevkin (xverev00)
  * @since 2022-04-02
  */
-public class Controller implements EventHandler<ActionEvent> {
+public class CDController implements EventHandler<ActionEvent> {
     // main static objects
     public AnchorPane root;
     public GridPane gridPaneClasses;
@@ -61,10 +60,10 @@ public class Controller implements EventHandler<ActionEvent> {
     // lists with depending on each other GUI objects
     public ArrayList<UIClassConnector> uiClassConnectors;
     public ArrayList<UINodeConnector> uiNodeConnectors;
-    // controller singleton instance
-    private static Controller _controller;
+    // CDController singleton instance
+    private static CDController CD_controller;
 
-    private Controller(AnchorPane root) {
+    private CDController(AnchorPane root) {
         this.root = root;
         this.root.setOnMouseClicked(this.canvasMousePress);
         // set json extension filter
@@ -81,15 +80,15 @@ public class Controller implements EventHandler<ActionEvent> {
         uiNodeConnectors = new ArrayList<>();
     }
 
-    public static Controller setController(AnchorPane root) {
-        if (_controller == null) {
-            _controller = new Controller(root);
+    public static CDController setController(AnchorPane root) {
+        if (CD_controller == null) {
+            CD_controller = new CDController(root);
         }
-        return _controller;
+        return CD_controller;
     }
 
-    public static Controller getController() {
-        return _controller;
+    public static CDController getController() {
+        return CD_controller;
     }
 
     public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes) {

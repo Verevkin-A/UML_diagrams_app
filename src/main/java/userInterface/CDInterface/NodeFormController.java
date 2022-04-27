@@ -1,4 +1,4 @@
-package userInterface;
+package userInterface.CDInterface;
 
 import classDiagram.NodeType;
 import classDiagram.AnchorType;
@@ -39,7 +39,7 @@ public class NodeFormController {
      */
     @FXML
     public void initialize() {
-        ObservableList<UIClassConnector> classes = FXCollections.observableList(Controller.getController().uiClassConnectors);
+        ObservableList<UIClassConnector> classes = FXCollections.observableList(CDController.getController().uiClassConnectors);
         cbFromClass.setItems(classes);
         cbToClass.setItems(classes);
     }
@@ -77,7 +77,7 @@ public class NodeFormController {
             alert.showAndWait();
             return;
         }
-        Controller.getController().putNode(cbFromClass.getValue(), cbToClass.getValue(),
+        CDController.getController().putNode(cbFromClass.getValue(), cbToClass.getValue(),
                 getFromAnchorType((RadioButton) AnchorFrom.getSelectedToggle()),
                 getToAnchorType((RadioButton) AnchorTo.getSelectedToggle()),
                 tfFromCardinality.getText(), tfToCardinality.getText(),

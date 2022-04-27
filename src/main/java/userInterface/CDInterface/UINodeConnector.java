@@ -1,4 +1,4 @@
-package userInterface;
+package userInterface.CDInterface;
 
 import classDiagram.AnchorType;
 import classDiagram.NodeType;
