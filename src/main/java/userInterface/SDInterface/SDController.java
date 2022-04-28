@@ -11,13 +11,13 @@ import javafx.scene.layout.GridPane;
 
 public class SDController {
 
-    private GridPane gpActivations, gpMessages, gpObjects;
-
     @FXML
     private AnchorPane root;
 
     @FXML
     private ScrollPane spActivations, spMessages, spObjects;
+
+    private GridPane gpActivations, gpMessages, gpObjects;
 
     /**
      * Sequence diagram window initialization
@@ -57,13 +57,11 @@ public class SDController {
 
     @FXML
     void saveAction(ActionEvent event) {
-
+        System.out.println("Save");
     }
 
     @FXML
     void undoAction(ActionEvent event) {
 
     }
-
 }
-

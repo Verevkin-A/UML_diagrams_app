@@ -49,6 +49,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public MenuItem menuItemSave = new MenuItem("Save");
     public MenuItem menuItemHelp = new MenuItem("Help");
     public MenuItem menuItemCredits = new MenuItem("Credits");
+    public MenuItem menuItemUndo = new MenuItem("Undo");
     // pane static buttons
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
     public final Button buttonCreateNode = new Button("New node");
@@ -73,8 +74,8 @@ public class CDController implements EventHandler<ActionEvent> {
         this.menuItemSave.setOnAction(this);
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
-
         this.buttonCreateNode.setOnAction(this);
+        this.menuItemUndo.setOnAction(this);
 
         uiClassConnectors = new ArrayList<>();
         uiNodeConnectors = new ArrayList<>();
@@ -136,20 +137,19 @@ public class CDController implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
-            // help menu
-            openAbout("Help", "helpWindow.fxml");
+            openAbout("Help", "helpWindow.fxml");       // help menu
         } else if (actionEvent.getSource() == this.menuItemCredits) {
-            // credits menu
-            openAbout("Credits", "creditsWindow.fxml");
+            openAbout("Credits", "creditsWindow.fxml");     // credits menu
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
-            // add new node button
-            addNode();
+            addNode();      // add new node button
+        } else if (actionEvent.getSource() == this.menuItemUndo) {
+            undo();     // undo last action
         }
     }
 
     private void openAbout(String name, String fxml) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SDWindow.fxml"));
             Stage stage = new Stage();
             stage.setTitle(name);
             stage.setScene(new Scene(fxmlLoader.load()));
@@ -227,6 +227,10 @@ public class CDController implements EventHandler<ActionEvent> {
             }
         }
     };
+
+    public void undo() {
+
+    }
 
     public void clearScreen() {
         // delete all classes

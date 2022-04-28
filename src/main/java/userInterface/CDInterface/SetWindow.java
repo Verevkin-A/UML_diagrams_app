@@ -29,7 +29,7 @@ public class SetWindow {
      */
     public AnchorPane createWindow() {
         Menu menuFile = new Menu("File");
-        menuFile.getItems().addAll(this.CDController.menuItemLoad, this.CDController.menuItemSave);
+        menuFile.getItems().addAll(this.CDController.menuItemLoad, this.CDController.menuItemSave, this.CDController.menuItemUndo);
         Menu menuAbout = new Menu("About");
         menuAbout.getItems().addAll(this.CDController.menuItemHelp, this.CDController.menuItemCredits);
         // configure menu title bar
@@ -39,27 +39,16 @@ public class SetWindow {
         AnchorPane.setRightAnchor(menuBar, 0.0);
         // set up classes and nodes grid panes
         GridPane gridPaneClasses = new GridPane();
-        gridPaneClasses.setPadding(new Insets(10));
-        gridPaneClasses.setVgap(5);
-        gridPaneClasses.setHgap(5);
-
+        gpInit(gridPaneClasses);
         GridPane gridPaneNodes = new GridPane();
-        gridPaneNodes.setPadding(new Insets(10));
-        gridPaneNodes.setVgap(5);
-        gridPaneNodes.setHgap(5);
+        gpInit(gridPaneNodes);
+
         userInterface.CDInterface.CDController.getController().setGridPanes(gridPaneClasses, gridPaneNodes);
         // set up classes and nodes scroll panes
         ScrollPane scrollPaneClasses = new ScrollPane(gridPaneClasses);
-        AnchorPane.setTopAnchor(scrollPaneClasses, 70.0);
-        AnchorPane.setLeftAnchor(scrollPaneClasses, 950.0);
-        AnchorPane.setRightAnchor(scrollPaneClasses, 20.0);
-        AnchorPane.setBottomAnchor(scrollPaneClasses, 400.0);
-
+        spInit(scrollPaneClasses, 70.0, 950.0, 20.0, 400.0);
         ScrollPane scrollPaneNodes = new ScrollPane(gridPaneNodes);
-        AnchorPane.setTopAnchor(scrollPaneNodes, 440.0);
-        AnchorPane.setLeftAnchor(scrollPaneNodes, 950.0);
-        AnchorPane.setRightAnchor(scrollPaneNodes, 20.0);
-        AnchorPane.setBottomAnchor(scrollPaneNodes, 15.0);
+        spInit(scrollPaneNodes, 440.0, 950.0, 20.0, 15.0);
         // set up classes and nodes labels
         Label labelClasses = new Label("Classes:");
         AnchorPane.setTopAnchor(labelClasses, 45.0);
@@ -78,5 +67,32 @@ public class SetWindow {
                 this.CDController.buttonCreateClass, this.CDController.buttonCreateNode);
 
         return this.root;
+    }
+
+    /**
+     * Grid Pane initialization
+     *
+     * @param gridPane Grid Pane to initialize
+     */
+    private void gpInit(GridPane gridPane) {
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(5);
+        gridPane.setHgap(5);
+    }
+
+    /**
+     * Setting up position of Scroll Pane
+     *
+     * @param scrollPane Scroll Pane to initialize
+     * @param spTop length from the top of Anchor Pane
+     * @param spLeft length from the left of Anchor Pane
+     * @param spRight length from the right of Anchor Pane
+     * @param spBottom length from the bottom of Anchor Pane
+     */
+    private void spInit(ScrollPane scrollPane, Double spTop, Double spLeft, Double spRight, Double spBottom) {
+        AnchorPane.setTopAnchor(scrollPane, spTop);
+        AnchorPane.setLeftAnchor(scrollPane, spLeft);
+        AnchorPane.setRightAnchor(scrollPane, spRight);
+        AnchorPane.setBottomAnchor(scrollPane, spBottom);
     }
 }
