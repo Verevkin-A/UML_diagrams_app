@@ -57,10 +57,17 @@ public class CDClass {
     }
 
     /**
-     * Sets the name of the class, update the name in sequence diagrams as well.
+     * Sets the name of the class, updates the name in sequence diagrams as well.
      * @param name the name of the class
      */
-    public void setName(String name) {
+    public void setName(ClassDiagram cd, String name) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDObject obj : sd.getObjects()) {
+                if (obj.getClassName().equals(this.name)) {
+                    obj.setClassName(name);
+                }
+            }
+        }
         this.name = name;
 
     }
@@ -71,7 +78,7 @@ public class CDClass {
      * @param name The name of the class you want to set.
      * @return TRUE if an inconsistency is not caused, FALSE otherwise.
      */
-    public boolean checkName(ClassDiagram cd, String name) {
+    private boolean checkName(ClassDiagram cd, String name) {
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDObject obj : sd.getObjects()) {
                 if (obj.getClassName().equals(name)) {

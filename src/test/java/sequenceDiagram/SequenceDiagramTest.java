@@ -49,14 +49,13 @@ public class SequenceDiagramTest {
 
         Assertions.assertTrue(testObj.checkClassName(cd, "testClass"));
 
-        testClass.setName("SDo2className");
+        testObj.setClassName("testClass");
+        testClass.setName(cd, "randomNamme");
+        Assertions.assertEquals(testClass.getName(), testObj.getClassName());
+
         Assertions.assertFalse(testClass.checkInterface(cd, true));
 
         Assertions.assertTrue(testClass.checkInterface(cd, false));
-
-        Assertions.assertFalse(testClass.checkName(cd, "nonsense"));
-
-        Assertions.assertTrue(testClass.checkName(cd, "SDo1className"));
     }
 
     @Test
@@ -86,15 +85,18 @@ public class SequenceDiagramTest {
         Assertions.assertTrue(testNode0.checkType(cd, NodeType.GENERALIZATION));
         Assertions.assertTrue(testNode1.checkType(cd, NodeType.GENERALIZATION));
 
-        testClassFrom.setName("nonsense1");
-        testClassTo.setName("nonsense2");
+        testObjFrom.setClassName("nonsens");
+        testObjTo.setClassName("nonsens1");
         Assertions.assertFalse(testNode0.checkFromAndTo(cd, testClassFrom, testClassTo));
         Assertions.assertFalse(testNode0.checkFromAndTo(cd, testClassTo, testClassFrom));
         Assertions.assertFalse(testNode1.checkFromAndTo(cd, testClassFrom, testClassTo));
         Assertions.assertFalse(testNode1.checkFromAndTo(cd, testClassTo, testClassFrom));
 
-        testClassFrom.setName("testClass");
-        testClassTo.setName("testClass3");
+        testObjFrom.setClassName("testClass");
+        testObjTo.setClassName("testClass3");
+
+        testClassFrom.setName(cd, "nonsens1");
+        testClassTo.setName(cd, "nonsens2");
         Assertions.assertTrue(testNode0.checkFromAndTo(cd, testClassFrom, testClassTo));
         Assertions.assertTrue(testNode0.checkFromAndTo(cd, testClassTo, testClassFrom));
         Assertions.assertTrue(testNode1.checkFromAndTo(cd, testClassFrom, testClassTo));
