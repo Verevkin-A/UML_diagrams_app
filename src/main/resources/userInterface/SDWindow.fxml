@@ -6,64 +6,17 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Line?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SDInterface.SDController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SDInterface.SDController">
    <children>
-      <ScrollPane layoutX="868.0" layoutY="511.0" prefHeight="176.0" prefWidth="218.0">
-         <content>
-            <GridPane>
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-            </GridPane>
-         </content>
-      </ScrollPane>
-      <ScrollPane layoutX="868.0" layoutY="289.0" prefHeight="182.0" prefWidth="218.0">
-         <content>
-            <GridPane>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-            </GridPane>
-         </content>
-      </ScrollPane>
-      <ScrollPane layoutX="868.0" layoutY="67.0" prefHeight="182.0" prefWidth="218.0">
-         <content>
-            <GridPane prefHeight="120.0" prefWidth="216.0">
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-            </GridPane>
-         </content>
-      </ScrollPane>
+      <ScrollPane fx:id="spMessages" layoutX="868.0" layoutY="511.0" prefHeight="176.0" prefWidth="218.0" />
+      <ScrollPane fx:id="spActivations" layoutX="868.0" layoutY="289.0" prefHeight="182.0" prefWidth="218.0" />
       <Line endX="-100.0" endY="500.0" layoutX="141.0" layoutY="183.0" startX="-100.0" startY="-100.0" />
       <MenuBar layoutY="1.0" prefHeight="27.0" prefWidth="1100.0">
         <menus>
-          <Menu mnemonicParsing="false" text="Save" />
-          <Menu mnemonicParsing="false" text="Undo" />
+          <Menu mnemonicParsing="false" onAction="#saveAction" text="Save" />
+          <Menu mnemonicParsing="false" onAction="#undoAction" text="Undo" />
         </menus>
       </MenuBar>
       <Line endX="-99.0" endY="-100.0" layoutX="148.0" layoutY="183.0" startX="-115.0" startY="-100.0" />
@@ -109,11 +62,12 @@
       <Line endX="655.0" endY="-0.5" layoutX="206.0" layoutY="563.0" startX="-143.0" startY="-0.5" strokeWidth="0.3" style="-fx-stroke-dash-array: 5;" />
       <Line endX="655.0" endY="-0.5" layoutX="206.0" layoutY="623.0" startX="-143.0" startY="-0.5" strokeWidth="0.3" style="-fx-stroke-dash-array: 5;" />
       <Line endX="655.0" endY="-0.5" layoutX="206.0" layoutY="683.0" startX="-143.0" startY="-0.5" strokeWidth="0.3" style="-fx-stroke-dash-array: 5;" />
-      <Button layoutX="989.0" layoutY="35.0" mnemonicParsing="false" text="New Object " />
-      <Button layoutX="977.0" layoutY="478.0" mnemonicParsing="false" text="New message" />
-      <Button layoutX="970.0" layoutY="256.0" mnemonicParsing="false" text="New Activation" />
+      <Button layoutX="989.0" layoutY="35.0" mnemonicParsing="false" onAction="#addObject" text="New Object " />
+      <Button layoutX="977.0" layoutY="478.0" mnemonicParsing="false" onAction="#addMessage" text="New message" />
+      <Button layoutX="970.0" layoutY="256.0" mnemonicParsing="false" onAction="#addActivation" text="New Activation" />
       <Label layoutX="868.0" layoutY="43.0" text="Objects:" />
       <Label layoutX="868.0" layoutY="486.0" text="Messages:" />
       <Label layoutX="868.0" layoutY="264.0" text="Activations:" />
+      <ScrollPane fx:id="spObjects" layoutX="868.0" layoutY="66.0" prefHeight="182.0" prefWidth="218.0" />
    </children>
 </AnchorPane>

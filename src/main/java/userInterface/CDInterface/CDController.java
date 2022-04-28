@@ -137,35 +137,21 @@ public class CDController implements EventHandler<ActionEvent> {
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
             // help menu
-            openHelp();
+            openAbout("Help", "helpWindow.fxml");
         } else if (actionEvent.getSource() == this.menuItemCredits) {
             // credits menu
-            openCredits();
+            openAbout("Credits", "creditsWindow.fxml");
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             // add new node button
             addNode();
         }
     }
 
-    private void openHelp() {
-        // open help window
+    private void openAbout(String name, String fxml) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("helpWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
             Stage stage = new Stage();
-            stage.setTitle("Help");
-            stage.setScene(new Scene(fxmlLoader.load()));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void openCredits() {
-        // open credits window
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("creditsWindow.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Credits");
+            stage.setTitle(name);
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.show();
         } catch (IOException e) {

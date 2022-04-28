@@ -45,7 +45,7 @@
             "visibility": "-"
           },
           {
-            "name": "tc3m2",
+            "name": "myTestMethod",
             "visibility": "+"
           },
           {
