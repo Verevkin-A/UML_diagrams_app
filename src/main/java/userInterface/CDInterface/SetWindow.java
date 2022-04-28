@@ -38,33 +38,41 @@ public class SetWindow {
         AnchorPane.setLeftAnchor(menuBar, 0.0);
         AnchorPane.setRightAnchor(menuBar, 0.0);
         // set up classes and nodes grid panes
-        GridPane gridPaneClasses = new GridPane();
-        gpInit(gridPaneClasses);
-        GridPane gridPaneNodes = new GridPane();
-        gpInit(gridPaneNodes);
+        GridPane gpClasses = new GridPane();
+        gpInit(gpClasses);
+        GridPane gpNodes = new GridPane();
+        gpInit(gpNodes);
+        GridPane gpSD = new GridPane();
+        gpInit(gpSD);
 
-        userInterface.CDInterface.CDController.getController().setGridPanes(gridPaneClasses, gridPaneNodes);
+        userInterface.CDInterface.CDController.getController().setGridPanes(gpClasses, gpNodes, gpSD);
         // set up classes and nodes scroll panes
-        ScrollPane scrollPaneClasses = new ScrollPane(gridPaneClasses);
-        spInit(scrollPaneClasses, 70.0, 950.0, 20.0, 400.0);
-        ScrollPane scrollPaneNodes = new ScrollPane(gridPaneNodes);
-        spInit(scrollPaneNodes, 440.0, 950.0, 20.0, 15.0);
+        ScrollPane spClasses = new ScrollPane(gpClasses);
+        spInit(spClasses, 70.0, 950.0, 20.0, 400.0);
+        ScrollPane spNodes = new ScrollPane(gpNodes);
+        spInit(spNodes, 440.0, 950.0, 20.0, 15.0);
+        ScrollPane spSD = new ScrollPane(gpSD);
+        spInit(spSD, 650.0, 20.0, 950.0, 15.0);
         // set up classes and nodes labels
         Label labelClasses = new Label("Classes:");
-        AnchorPane.setTopAnchor(labelClasses, 45.0);
-        AnchorPane.setLeftAnchor(labelClasses, 950.0);
+        labelInit(labelClasses, 45.0, 950.0);
         Label labelNodes = new Label("Nodes:");
-        AnchorPane.setTopAnchor(labelNodes, 415.0);
-        AnchorPane.setLeftAnchor(labelNodes, 950.0);
-        // position add class and node buttons
+        labelInit(labelNodes, 415.0, 950.0);
+        Label labelSequenceDiagrams = new Label("Sequence Diagrams:");
+        labelInit(labelSequenceDiagrams, 625.0, 20.0);
+        // position buttons
         AnchorPane.setTopAnchor(this.CDController.buttonCreateClass, 37.0);
         AnchorPane.setLeftAnchor(this.CDController.buttonCreateClass, 1095.0);
 
         AnchorPane.setTopAnchor(this.CDController.buttonCreateNode, 407.0);
         AnchorPane.setLeftAnchor(this.CDController.buttonCreateNode, 1095.0);
+
+        AnchorPane.setTopAnchor(this.CDController.buttonCreateSD, 617.0);
+        AnchorPane.setLeftAnchor(this.CDController.buttonCreateSD, 180.0);
         // add all objects on the main pane
-        this.root.getChildren().addAll(menuBar, scrollPaneClasses, scrollPaneNodes, labelClasses, labelNodes,
-                this.CDController.buttonCreateClass, this.CDController.buttonCreateNode);
+        this.root.getChildren().addAll(menuBar, spClasses, spNodes, spSD,
+                labelClasses, labelNodes, labelSequenceDiagrams,
+                this.CDController.buttonCreateClass, this.CDController.buttonCreateNode, this.CDController.buttonCreateSD);
 
         return this.root;
     }
@@ -94,5 +102,10 @@ public class SetWindow {
         AnchorPane.setLeftAnchor(scrollPane, spLeft);
         AnchorPane.setRightAnchor(scrollPane, spRight);
         AnchorPane.setBottomAnchor(scrollPane, spBottom);
+    }
+
+    private void labelInit(Label label, Double lTop, Double lLeft) {
+        AnchorPane.setTopAnchor(label, lTop);
+        AnchorPane.setLeftAnchor(label, lLeft);
     }
 }

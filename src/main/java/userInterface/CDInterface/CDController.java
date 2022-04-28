@@ -42,6 +42,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public AnchorPane root;
     public GridPane gridPaneClasses;
     public GridPane gridPaneNodes;
+    public GridPane gridPaneCD;
 
     private final FileChooser fileChooser = new FileChooser();
     // Menu buttons
@@ -53,6 +54,7 @@ public class CDController implements EventHandler<ActionEvent> {
     // pane static buttons
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
     public final Button buttonCreateNode = new Button("New node");
+    public final Button buttonCreateSD = new Button("New SD");
     // class editing flag
     public UIClassConnector connectorEditing = null;
     // current class coordinates
@@ -74,8 +76,10 @@ public class CDController implements EventHandler<ActionEvent> {
         this.menuItemSave.setOnAction(this);
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
-        this.buttonCreateNode.setOnAction(this);
         this.menuItemUndo.setOnAction(this);
+
+        this.buttonCreateNode.setOnAction(this);
+        this.buttonCreateSD.setOnAction(this);
 
         uiClassConnectors = new ArrayList<>();
         uiNodeConnectors = new ArrayList<>();
@@ -92,9 +96,10 @@ public class CDController implements EventHandler<ActionEvent> {
         return CD_controller;
     }
 
-    public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes) {
+    public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes, GridPane gridPaneCD) {
         this.gridPaneClasses = gridPaneClasses;
         this.gridPaneNodes = gridPaneNodes;
+        this.gridPaneCD = gridPaneCD;
     }
 
     @Override
@@ -137,21 +142,23 @@ public class CDController implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
-            openAbout("Help", "helpWindow.fxml");       // help menu
+            openFXML("helpWindow.fxml", "Help");       // help menu
         } else if (actionEvent.getSource() == this.menuItemCredits) {
-            openAbout("Credits", "creditsWindow.fxml");     // credits menu
+            openFXML("creditsWindow.fxml", "Credits");     // credits menu
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             addNode();      // add new node button
+        } else if (actionEvent.getSource() == this.buttonCreateSD) {
+            openFXML("SDWindow.fxml", "Sequence Diagram");        // add new sequence diagram
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
         }
     }
 
-    private void openAbout(String name, String fxml) {
+    private void openFXML(String fxml, String title) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SDWindow.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
             Stage stage = new Stage();
-            stage.setTitle(name);
+            stage.setTitle(title);
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.show();
         } catch (IOException e) {
@@ -216,7 +223,7 @@ public class CDController implements EventHandler<ActionEvent> {
         if (event.getTarget() == event.getSource())
         {
             if (buttonCreateClass.isSelected()) {
-                if (event.getX() > 930) {
+                if (event.getX() > 930 || (event.getX() < 260 && event.getY() > 610)) {
                     System.out.println("Warning: pane clicked, restricted section");
                 } else {
                     axisX = event.getX();
@@ -229,7 +236,7 @@ public class CDController implements EventHandler<ActionEvent> {
     };
 
     public void undo() {
-
+        // TODO
     }
 
     public void clearScreen() {
