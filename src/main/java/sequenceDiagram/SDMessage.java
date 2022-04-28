@@ -16,7 +16,12 @@ public class SDMessage {
     private SDObject to;
     private MessageType type;
     private int timePos;
-    private boolean markedInconsistent;
+    /**
+     * Is set to TRUE if a message is inconsistent with the class diagram on load.
+     * The GUI should mark the message accordingly (change colour for example) if
+     * the message is inconsistent.
+     */
+    private boolean isInconsistentOnLoad;
 
     public SDMessage(String name, int fromIdx, int toIdx, SequenceDiagram sd, MessageType type, int timePos) {
         this.name = name;
@@ -24,6 +29,7 @@ public class SDMessage {
         setTo(toIdx, sd);
         this.type = type;
         this.timePos = timePos;
+        isInconsistentOnLoad = false;
     }
 
     public void setFrom(int fromIdx, SequenceDiagram sd) {
@@ -34,12 +40,20 @@ public class SDMessage {
         this.to = sd.getObjects().get(toIdx);
     }
 
-    public void setMarkedInconsistent(ClassDiagram cd) {
-        markedInconsistent = !checkFromAndTo(cd);
+    /**
+     * Should only be used by the parser.
+     * @param cd The class diagram against which to check inconsistencies
+     */
+    public void setInconsistentOnLoad(ClassDiagram cd) {
+        isInconsistentOnLoad = !checkFromAndTo(cd, this.from, this.to);
     }
 
-    public void setMarkedInconsistent(boolean markedInconsistent) {
-        this.markedInconsistent = markedInconsistent;
+    /**
+     * Should only be used by the parser.
+     * @param isInconsistentOnLoad TRUE if msg is incosistent, false otherwise
+     */
+    public void setInconsistentOnLoad(boolean isInconsistentOnLoad) {
+        this.isInconsistentOnLoad = isInconsistentOnLoad;
     }
 
     /**
@@ -49,12 +63,12 @@ public class SDMessage {
      * @param cd The class diagram against which to check.
      * @return True if the message is consistent, false otherwise.
      */
-    public boolean checkFromAndTo(ClassDiagram cd) {
+    public boolean checkFromAndTo(ClassDiagram cd, SDObject from, SDObject to) {
         for (int i = 0; i < cd.nodesLen(); i++) {
-            if ((this.from.getClassName().equals(cd.getCDNode(i).getFrom().getName()) ||
+            if ((this.from.getClassName().equals(cd.getCDNode(i).getFrom().getName()) &&
                 this.to.getClassName().equals(cd.getCDNode(i).getTo().getName()))
-                    &&
-                (this.from.getClassName().equals(cd.getCDNode(i).getTo().getName()) ||
+                    ||
+                (this.from.getClassName().equals(cd.getCDNode(i).getTo().getName()) &&
                 this.to.getClassName().equals(cd.getCDNode(i).getFrom().getName()))) {
                 if (cd.getCDNode(i).getType() != NodeType.GENERALIZATION.getNumVal()) {
                     return true;
@@ -98,5 +112,9 @@ public class SDMessage {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isInconsistentOnLoad() {
+        return isInconsistentOnLoad;
     }
 }

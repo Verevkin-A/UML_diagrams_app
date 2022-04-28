@@ -249,7 +249,7 @@ public class Controller implements EventHandler<ActionEvent> {
             }
             // TODO Parent
             CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99, fields, methods,
-                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue(), cd);
+                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue());
             cd.addClass(cdClass);
         }
         return cd;

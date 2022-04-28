@@ -52,9 +52,9 @@ public class Parser {
             }
 
 
-            newClass.setName(classJSON.getString("name"), classDiagram);
+            newClass.setName(classJSON.getString("name"));
             newClass.setParent(classJSON.getInt("parent"));
-            newClass.setInterface(classJSON.getBoolean("isInterface"), classDiagram);
+            newClass.setInterface(classJSON.getBoolean("isInterface"));
             newClass.setPosition(classJSON.getInt("xPos"), classJSON.getInt("yPos"));
 
             classDiagram.addClass(newClass);
@@ -110,7 +110,7 @@ public class Parser {
                 object.setActivations(activations);
 
                 // Class name inconsistency
-                object.setMarkedInconsistent(classDiagram);
+                object.setInconsistentOnLoad(classDiagram);
 
                 // Add object
                 seqDiag.getObjects().add(object);
@@ -130,7 +130,7 @@ public class Parser {
                 );
 
                 // Inconsistency with nodes.
-                msg.setMarkedInconsistent(classDiagram);
+                msg.setInconsistentOnLoad(classDiagram);
                 seqDiag.getMessages().add(msg);
             }
             sequenceDiagrams.add(seqDiag);

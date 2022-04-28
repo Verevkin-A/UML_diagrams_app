@@ -29,8 +29,8 @@ public class CDClass {
     public CDClass() {
         this.name = "defaultName";
         this.isInterface = false;
-        this.fields = new ArrayList<CDField>();
-        this.methods = new ArrayList<CDField>();
+        this.fields = new ArrayList<>();
+        this.methods = new ArrayList<>();
         this.parent = -1;
         this.position = new Point(0,0);
     }
@@ -44,14 +44,13 @@ public class CDClass {
      * @param isInterface true if the class in an interface, false otherwise
      * @param x the x coordinate of the upper-left corner
      * @param y the y coordinate of the upper-left corner
-     * @param cd the class diagram against which to perform a check
      */
     public CDClass(String name, int parent,
                    ArrayList<CDField> fields, ArrayList<CDField> methods, boolean isInterface,
-                   int x, int y, ClassDiagram cd) {
-        setName(name, cd);
+                   int x, int y) {
+        this.name = name;
         this.parent = parent;
-        setInterface(isInterface, cd);
+        this.isInterface = isInterface;
         this.fields = fields;
         this.methods = methods;
         this.position = new Point(x, y);
@@ -61,16 +60,26 @@ public class CDClass {
      * Sets the name of the class, update the name in sequence diagrams as well.
      * @param name the name of the class
      */
-    public void setName(String name, ClassDiagram cd) {
+    public void setName(String name) {
+        this.name = name;
+
+    }
+
+    /**
+     * Checks whether changing a class to a different name causes an inconsistency in the sequence diagram.
+     * @param cd The class diagram containing a sequence diagram against which to check inconsistencies.
+     * @param name The name of the class you want to set.
+     * @return TRUE if an inconsistency is not caused, FALSE otherwise.
+     */
+    public boolean checkName(ClassDiagram cd, String name) {
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDObject obj : sd.getObjects()) {
-                if (obj.getClassName().equals(this.name)) {
-                    obj.setClassName(name);
+                if (obj.getClassName().equals(name)) {
+                    return true;
                 }
             }
         }
-        this.name = name;
-
+        return false;
     }
 
     /**
@@ -139,18 +148,30 @@ public class CDClass {
     }
 
     /**
-     * Sets the isInterface property, propagates the change to sequence diagrams.
+     * Sets the isInterface property.
      * @param isInterface true if class is an interface, false otherwise
      */
-    public void setInterface(boolean isInterface, ClassDiagram cd) {
+    public void setInterface(boolean isInterface) {
+        this.isInterface = isInterface;
+    }
+
+    /**
+     * Check if setting a class to the interface specified by the parameter would cause an inconsistency
+     * in a sequential diagram.
+     * Should be called before setting the interface.
+     * @param cd The class diagram against which to check inconsistencies.
+     * @param isInterface The interface value we want to use in setInterface or the CDClass constructor.
+     * @return TRUE if the change is consistent, FALSE otherwise
+     */
+    public boolean checkInterface(ClassDiagram cd, boolean isInterface) {
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDObject obj : sd.getObjects()) {
                 if (obj.getClassName().equals(this.name)) {
-                    obj.setMarkedInconsistent(isInterface);
+                    return !isInterface;
                 }
             }
         }
-        this.isInterface = isInterface;
+        return true;
     }
 
     /**

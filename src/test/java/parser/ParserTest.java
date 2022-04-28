@@ -36,11 +36,11 @@ public class ParserTest {
         }
 
         CDClass addedClass = new CDClass();
-        addedClass.setName("addedClass", cd);
+        addedClass.setName("addedClass");
         addedClass.setParent(2);
         addedClass.addField(new CDField("addedAttr", Visibility.PRIVATE));
         addedClass.addMethod(new CDField("addedMeth()", Visibility.PUBLIC));
-        addedClass.setInterface(false, cd);
+        addedClass.setInterface(false);
         addedClass.setPosition(20,20);
 
         cd.addClass(addedClass);
