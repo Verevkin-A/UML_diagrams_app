@@ -1,5 +1,8 @@
 package classDiagram;
 
+import sequenceDiagram.SDObject;
+import sequenceDiagram.SequenceDiagram;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +19,7 @@ public class CDClass {
     private ArrayList<CDField> fields;
     private ArrayList<CDField> methods;
     private boolean isInterface;
-    private HashMap<AnchorType, Point> anchors;
     private Point position;
-    private int width;
-    private int height;
 
     /**
      * Constructs an empty class with a name = "defaultName",
@@ -29,18 +29,14 @@ public class CDClass {
     public CDClass() {
         this.name = "defaultName";
         this.isInterface = false;
-        this.fields = new ArrayList<CDField>();
-        this.methods = new ArrayList<CDField>();
+        this.fields = new ArrayList<>();
+        this.methods = new ArrayList<>();
         this.parent = -1;
         this.position = new Point(0,0);
-        this.width = 10;
-        this.height = 10;
-        this.anchors = new HashMap<>();
-        setAnchors();
     }
 
     /**
-     * Constructs a filled class
+     * Constructs a filled class, performs a check against sequence diagrams.
      * @param name the name of the class
      * @param parent the index od the parent class (superclass) in a class diagram
      * @param fields the fields, which the class contains
@@ -48,30 +44,42 @@ public class CDClass {
      * @param isInterface true if the class in an interface, false otherwise
      * @param x the x coordinate of the upper-left corner
      * @param y the y coordinate of the upper-left corner
-     * @param width the width of the class
-     * @param height the height of the class
      */
     public CDClass(String name, int parent,
                    ArrayList<CDField> fields, ArrayList<CDField> methods, boolean isInterface,
-                   int x, int y, int width, int height) {
+                   int x, int y) {
         this.name = name;
         this.parent = parent;
         this.isInterface = isInterface;
         this.fields = fields;
         this.methods = methods;
         this.position = new Point(x, y);
-        this.width = width;
-        this.height = height;
-        this.anchors = new HashMap<>();
-        setAnchors();
     }
 
     /**
-     * Sets the name of the class
+     * Sets the name of the class, update the name in sequence diagrams as well.
      * @param name the name of the class
      */
     public void setName(String name) {
         this.name = name;
+
+    }
+
+    /**
+     * Checks whether changing a class to a different name causes an inconsistency in the sequence diagram.
+     * @param cd The class diagram containing a sequence diagram against which to check inconsistencies.
+     * @param name The name of the class you want to set.
+     * @return TRUE if an inconsistency is not caused, FALSE otherwise.
+     */
+    public boolean checkName(ClassDiagram cd, String name) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDObject obj : sd.getObjects()) {
+                if (obj.getClassName().equals(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -140,11 +148,30 @@ public class CDClass {
     }
 
     /**
-     * Sets the isInterface property
+     * Sets the isInterface property.
      * @param isInterface true if class is an interface, false otherwise
      */
     public void setInterface(boolean isInterface) {
         this.isInterface = isInterface;
+    }
+
+    /**
+     * Check if setting a class to the interface specified by the parameter would cause an inconsistency
+     * in a sequential diagram.
+     * Should be called before setting the interface.
+     * @param cd The class diagram against which to check inconsistencies.
+     * @param isInterface The interface value we want to use in setInterface or the CDClass constructor.
+     * @return TRUE if the change is consistent, FALSE otherwise
+     */
+    public boolean checkInterface(ClassDiagram cd, boolean isInterface) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDObject obj : sd.getObjects()) {
+                if (obj.getClassName().equals(this.name)) {
+                    return !isInterface;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -154,41 +181,8 @@ public class CDClass {
      */
     public void setPosition(int x, int y) {
         this.position = new Point(x, y);
-        setAnchors();
     }
 
-    public void setWidth(int width) {
-        this.width = width;
-        setAnchors();
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-        setAnchors();
-    }
-
-    private void setAnchors() {
-        Point upPoint = new Point(
-                this.position.x + this.width/2,
-                this.position.y
-        );
-        Point rightPoint = new Point(
-                this.position.x + this.width,
-                this.position.y + this.height/2
-        );
-        Point downPoint = new Point(
-                this.position.x + this.width/2,
-                this.position.y + this.height
-        );
-        Point leftPoint = new Point(
-                this.position.x,
-                this.position.y + this.height/2
-        );
-        this.anchors.put(AnchorType.UP, upPoint);
-        this.anchors.put(AnchorType.RIGHT, rightPoint);
-        this.anchors.put(AnchorType.DOWN, downPoint);
-        this.anchors.put(AnchorType.LEFT, leftPoint);
-    }
     /**
      *
      * @return the name of the class
@@ -264,31 +258,7 @@ public class CDClass {
         return this.position.y;
     }
 
-    public int getWidth() {
-        return this.width;
-    }
-
-    public int getHeight() {
-        return this.height;
-    }
-
     public boolean getInterface() {
         return this.isInterface;
-    }
-    /**
-     * Returns the anchors as a HashMap
-     * @return the HashMap of anchors
-     */
-    public HashMap<AnchorType, Point> getAnchors() {
-        return this.anchors;
-    }
-
-    /**
-     * Returns the point of an anchor as specified by its type.
-     * @param anchorType The type of an anchor
-     * @return The coordinates at which the anchor lies.
-     */
-    public Point getAnchorByKey(AnchorType anchorType) {
-        return this.anchors.get(anchorType);
     }
 }

@@ -1,5 +1,10 @@
 package classDiagram;
 
+import javafx.geometry.NodeOrientation;
+import sequenceDiagram.SDMessage;
+import sequenceDiagram.SDObject;
+import sequenceDiagram.SequenceDiagram;
+
 /**
  * A node of a class diagram
  * @author Marek Dohnal (xdohna48)
@@ -36,6 +41,81 @@ public class CDNode {
         this.fCard = fCard;
         this.tCard = tCard;
         this.type = type;
+    }
+
+    public void setfAnchor(AnchorType fAnchor) {
+        this.fAnchor = fAnchor;
+    }
+
+    public void settAnchor(AnchorType tAnchor) {
+        this.tAnchor = tAnchor;
+    }
+
+    public void setfCard(String fCard) {
+        this.fCard = fCard;
+    }
+
+    public void setFrom(CDClass from) {
+        this.from = from;
+    }
+
+    public void settCard(String tCard) {
+        this.tCard = tCard;
+    }
+
+    public void setTo(CDClass to, ClassDiagram cd) {
+        this.to = to;
+    }
+
+    /**
+     * Checks, whether an originating and terminating class to be assigned to a CDNode is consistent with the sequence diagrams.
+     * @param cd The class diagram against which to check consistency
+     * @param from The originating class to be assigned
+     * @param to The terminating node to be assigned
+     * @return TRUE if the type is consistent, false otherwise.
+     */
+    public boolean checkFromAndTo(ClassDiagram cd, CDClass from, CDClass to) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDMessage msg : sd.getMessages()) {
+                if ((msg.getFrom().getClassName().equals(from.getName()) &&
+                        msg.getTo().getClassName().equals(to.getName()))
+                        ||
+                        (msg.getFrom().getClassName().equals(to.getName()) &&
+                                msg.getTo().getClassName().equals(from.getName()))) {
+
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public void setType(NodeType type) {
+        this.type = type;
+    }
+
+    /**
+     * Checks, whether a type to be assigned to a CDNode is consistent with the sequence diagrams.
+     * @param cd The class diagram against which to check consistency
+     * @param type The type to set to the node.
+     * @return TRUE if the type is consistent, false otherwise.
+     */
+    public boolean checkType(ClassDiagram cd, NodeType type) {
+        if (type == NodeType.GENERALIZATION) {
+            for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+                for (SDMessage msg : sd.getMessages()) {
+                    if ((msg.getFrom().getClassName().equals(this.from.getName()) &&
+                            msg.getTo().getClassName().equals(this.to.getName()))
+                            ||
+                            (msg.getFrom().getClassName().equals(this.to.getName()) &&
+                                    msg.getTo().getClassName().equals(this.from.getName()))) {
+
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     /**

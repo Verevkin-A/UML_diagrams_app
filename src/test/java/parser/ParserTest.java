@@ -3,10 +3,12 @@ import classDiagram.*;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import sequenceDiagram.SequenceDiagram;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * A test suite for the Parser class.
@@ -40,8 +42,6 @@ public class ParserTest {
         addedClass.addMethod(new CDField("addedMeth()", Visibility.PUBLIC));
         addedClass.setInterface(false);
         addedClass.setPosition(20,20);
-        addedClass.setHeight(25);
-        addedClass.setWidth(25);
 
         cd.addClass(addedClass);
 
@@ -124,6 +124,25 @@ public class ParserTest {
         }
 
         cd.removeNode(2);
+
+        JSONAssert.assertEquals(exptString, Parser.encodeJSON(cd), JSONCompareMode.STRICT);
+
+    }
+
+    @Test
+    public void emptyDiagram() {
+        ClassDiagram cd = new ClassDiagram();
+        String inString = "";
+        String exptString = "";
+        try {
+            String inPath = "data/test/emptyDiagramIn.json";
+            inString = Files.readString(Paths.get(inPath));
+            cd = Parser.decodeJSON(inString);
+            String exptPath = "data/test/emptyDiagramExpt.json";
+            exptString = Files.readString(Paths.get(exptPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         JSONAssert.assertEquals(exptString, Parser.encodeJSON(cd), JSONCompareMode.STRICT);
 

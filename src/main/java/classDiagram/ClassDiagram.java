@@ -1,5 +1,7 @@
 package classDiagram;
 
+import sequenceDiagram.SequenceDiagram;
+
 import java.util.ArrayList;
 
 /**
@@ -10,6 +12,7 @@ import java.util.ArrayList;
 public class ClassDiagram {
     private ArrayList<CDClass> classes;
     private ArrayList<CDNode> nodes;
+    private ArrayList<SequenceDiagram> sequenceDiagrams;
 
     /**
      * Constructs an empty class diagram.
@@ -17,6 +20,7 @@ public class ClassDiagram {
     public ClassDiagram() {
         this.classes = new ArrayList<>();
         this.nodes = new ArrayList<>();
+        this.sequenceDiagrams = new ArrayList<>();
     }
 
     /**
@@ -114,4 +118,11 @@ public class ClassDiagram {
         return false;
     }
 
+    public void setSequenceDiagrams(ArrayList<SequenceDiagram> sequenceDiagrams) {
+        this.sequenceDiagrams = sequenceDiagrams;
+    }
+
+    public ArrayList<SequenceDiagram> getSequenceDiagrams() {
+        return sequenceDiagrams;
+    }
 }

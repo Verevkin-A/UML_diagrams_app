@@ -18,9 +18,7 @@
         ],
         "isInterface": false,
         "xPos": 10,
-        "yPos": 15,
-        "width": 20,
-        "height": 30
+        "yPos": 15
       },
       {
         "name": "testClass3",
@@ -55,9 +53,7 @@
         ],
         "isInterface": false,
         "xPos": 5,
-        "yPos": 5,
-        "width": 50,
-        "height": 100
+        "yPos": 5
       },
       {
         "name": "testClass2",
@@ -76,9 +72,7 @@
         ],
         "isInterface": false,
         "xPos": 5,
-        "yPos": 5,
-        "width": 50,
-        "height": 100
+        "yPos": 5
       }
     ],
     "nodes": [
@@ -118,6 +112,7 @@
         "tCard": "0",
         "type": 1
       }
-    ]
+    ],
+    "sequenceDiagrams": []
   }
 }

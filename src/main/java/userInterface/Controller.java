@@ -24,6 +24,7 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import parser.Parser;
+import sequenceDiagram.SequenceDiagram;
 
 import static java.lang.System.out;
 
@@ -87,6 +88,7 @@ public class Controller implements EventHandler<ActionEvent> {
         if (actionEvent.getSource() == menuItemLoad) {
             File file = this.fileChooser.showOpenDialog(null);
             ClassDiagram cd = new ClassDiagram();
+            ArrayList<SequenceDiagram> sds = new ArrayList<>();
             // read input
             try {
                 String filepath = file.getAbsolutePath();
@@ -100,7 +102,6 @@ public class Controller implements EventHandler<ActionEvent> {
             loadClasses(cd);      // load class diagram
         } else if (actionEvent.getSource() == this.menuItemSave) {
             ClassDiagram classes = saveClasses();
-
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
             if (!file.getName().contains(".")) {
@@ -248,7 +249,7 @@ public class Controller implements EventHandler<ActionEvent> {
             }
             // TODO Parent
             CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99, fields, methods,
-                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue(), 99, 99);
+                    connector.getInterface_(), connector.getAxisX().intValue(), connector.getAxisY().intValue());
             cd.addClass(cdClass);
         }
         return cd;

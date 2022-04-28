@@ -1,11 +1,13 @@
 package parser;
 
 import classDiagram.ClassDiagram;
+import sequenceDiagram.SequenceDiagram;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * A temporary class to demonstrate Parser functionality.
@@ -15,6 +17,7 @@ import java.nio.file.Paths;
 public class ParserMain {
     public static void main(String[] args) {
         ClassDiagram cd = new ClassDiagram();
+        ArrayList<SequenceDiagram> sds = new ArrayList<>();
         try {
             String filepath = "data/format.json";
             String diagString = Files.readString(Paths.get(filepath));
