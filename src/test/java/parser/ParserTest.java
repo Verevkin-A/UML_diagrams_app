@@ -36,7 +36,7 @@ public class ParserTest {
         }
 
         CDClass addedClass = new CDClass();
-        addedClass.setName("addedClass");
+        addedClass.setName(cd, "addedClass");
         addedClass.setParent(2);
         addedClass.addField(new CDField("addedAttr", Visibility.PRIVATE));
         addedClass.addMethod(new CDField("addedMeth()", Visibility.PUBLIC));

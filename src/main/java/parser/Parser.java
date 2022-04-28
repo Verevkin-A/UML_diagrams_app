@@ -52,7 +52,7 @@ public class Parser {
             }
 
 
-            newClass.setName(classJSON.getString("name"));
+            newClass.setName(classDiagram, classJSON.getString("name"));
             newClass.setParent(classJSON.getInt("parent"));
             newClass.setInterface(classJSON.getBoolean("isInterface"));
             newClass.setPosition(classJSON.getInt("xPos"), classJSON.getInt("yPos"));
