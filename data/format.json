@@ -12,7 +12,7 @@
         ],
         "methods": [
           {
-            "name": "myTestMethod()",
+            "name": "myTestMethod",
             "visibility": "+"
           }
         ],
@@ -43,7 +43,7 @@
             "visibility": "-"
           },
           {
-            "name": "tc3m2",
+            "name": "myTestMethod",
             "visibility": "+"
           },
           {
@@ -66,7 +66,7 @@
         ],
         "methods": [
           {
-            "name": "myTestMethod2()",
+            "name": "myTestMethod2",
             "visibility": "+"
           }
         ],
@@ -90,8 +90,8 @@
         "fAnchor": "UP",
         "to": 0,
         "tAnchor": "DOWN",
-        "fCard": "0..*",
-        "tCard": "1",
+        "fCard": "",
+        "tCard": "",
         "type": 2
       },
       {

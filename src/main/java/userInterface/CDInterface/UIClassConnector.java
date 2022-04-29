@@ -1,22 +1,24 @@
-package userInterface;
+package userInterface.CDInterface;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.VBox;
 
 /**
  * Connection between all single class objects on the pane
  * @author Aleksandr Verevkin (xverev00)
  * @since 2022-04-02
  */
-public class UIConnector {
-    private TitledPane tpClass;
-    private Double axisX, axisY;
-    private Boolean interface_;
-    private TableView<FormField> tableView;
-    private Label classNameLabel;
-    private Button btnEdit, btnDelete;
+public class UIClassConnector {
+    private final TitledPane tpClass;
+    private final VBox vbFields;
+    private final Double axisX, axisY;
+    private final Boolean interface_;
+    private final TableView<FormField> tableView;
+    private final Label classNameLabel;
+    private final Button btnEdit, btnDelete;
 
     /**
      * Class connection constructor
@@ -30,10 +32,11 @@ public class UIConnector {
      * @param btnEdit class edit button object on grid pane
      * @param btnDelete class delete button object on grid pane
      */
-    public UIConnector(TitledPane tpClass, Double axisX, Double axisY, Boolean interface_, TableView<FormField> tableView,
-                       Label classNameLabel, Button btnEdit, Button btnDelete) {
+    public UIClassConnector(TitledPane tpClass, VBox vbFields, Double axisX, Double axisY, Boolean interface_, TableView<FormField> tableView,
+                            Label classNameLabel, Button btnEdit, Button btnDelete) {
 
         this.tpClass = tpClass;
+        this.vbFields = vbFields;
         this.axisX = axisX;
         this.axisY = axisY;
         this.tableView = tableView;
@@ -50,6 +53,10 @@ public class UIConnector {
      */
     public TitledPane getTpClass() {
         return tpClass;
+    }
+
+    public VBox getVbFields() {
+        return vbFields;
     }
 
     /**
@@ -113,5 +120,10 @@ public class UIConnector {
      */
     public Button getBtnDelete() {
         return btnDelete;
+    }
+
+    @Override
+    public String toString() {
+        return classNameLabel.getText();
     }
 }
