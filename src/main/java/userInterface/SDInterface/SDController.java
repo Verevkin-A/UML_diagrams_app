@@ -4,6 +4,7 @@ import classDiagram.NodeType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -13,6 +14,11 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import sequenceDiagram.*;
+import userInterface.CDInterface.UIClassConnector;
+import userInterface.CDInterface.UINodeConnector;
+import userInterface.CDInterface.UISDConnector;
+
+import java.util.ArrayList;
 
 public class SDController {
 
@@ -30,6 +36,10 @@ public class SDController {
     public double timeLineEndY = 683.0;
     public double timeLineOneUnit = (timeLineEndY - timeLineStartY) / 100;
 
+    public ArrayList<UIObjectConnector> uiObjectConnectors;
+    public ArrayList<UIActivationConnector> uiActivationConnectors;
+    public ArrayList<UIMessageConnector> uiMessageConnectors;
+
     /**
      * Sequence diagram window initialization
      */
@@ -42,6 +52,10 @@ public class SDController {
         gpInit(spMessages, gpMessages);
         gpObjects = new GridPane();
         gpInit(spObjects, gpObjects);
+        // declare empty connector lists
+        uiObjectConnectors = new ArrayList<>();
+        uiActivationConnectors = new ArrayList<>();
+        uiMessageConnectors = new ArrayList<>();
     }
 
     private void gpInit(ScrollPane scrollPane, GridPane gridPane) {
@@ -71,7 +85,18 @@ public class SDController {
             timeLine.getStrokeDashArray().addAll(25d, 10d);
 
             root.getChildren().addAll(timeLine, stackPaneObj);
+            // create object entry and add him on the grid pane
+            Label lObject = new Label(o.getObjName() + ":" + o.getClassName());
+            Button bEditObject = new Button("Edit");
+            Button bDeleteObject = new Button("Delete");
+            // TODO onaction
+            for (Node child : gpObjects.getChildren()) {
+                GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+            }
+            gpObjects.addRow(0, lObject, bEditObject, bDeleteObject);
+            uiObjectConnectors.add(new UIObjectConnector(o, lObject, bEditObject, bDeleteObject));
 
+            // load object activations
             for (SDActivation a: o.getActivations()) {
                 double timeBegin = a.getTimeBegin();
                 double timeEnd = a.getTimeEnd();
@@ -80,6 +105,16 @@ public class SDController {
                 AnchorPane.setTopAnchor(recActivation, timeLineStartY + (timeBegin * timeLineOneUnit));
                 AnchorPane.setLeftAnchor(recActivation, inc + 110.0);
                 root.getChildren().add(recActivation);
+
+                // create activation entry and add it on the grid pane
+                Label lActivation = new Label("Todo");
+                Button bDeleteActivation = new Button("Delete");
+                // TODO onaction
+                for (Node child : gpActivations.getChildren()) {
+                    GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+                }
+                gpActivations.addRow(0, lActivation, bDeleteActivation);
+                uiActivationConnectors.add(new UIActivationConnector(a, lActivation, bDeleteActivation));
             }
             // add next object X error
             inc += 135;
@@ -103,6 +138,16 @@ public class SDController {
             Shape arrowHead = getArrowHead(fromX, toX, Y);
 
             root.getChildren().addAll(lineMessage, arrowHead);
+
+            // create activation entry and add it on the grid pane
+            Label lMessage = new Label(m.getName());
+            Button bDeleteMessage = new Button("Delete");
+            // TODO onaction
+            for (Node child : gpMessages.getChildren()) {
+                GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+            }
+            gpMessages.addRow(0, lMessage, bDeleteMessage);
+            uiMessageConnectors.add(new UIMessageConnector(m, lMessage, bDeleteMessage));
         }
     }
 
