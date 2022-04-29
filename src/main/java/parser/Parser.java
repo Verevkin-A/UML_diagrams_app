@@ -119,7 +119,7 @@ public class Parser {
             // Messages
             JSONArray msgsJSON = seqDiagJSON.getJSONArray("messages");
             for (int j = 0; j < msgsJSON.length(); j++) {
-                JSONObject msgJSON = msgsJSON.getJSONObject(i);
+                JSONObject msgJSON = msgsJSON.getJSONObject(j);
                 SDMessage msg = new SDMessage(
                         msgJSON.getString("name"),
                         msgJSON.getInt("from"),

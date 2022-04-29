@@ -147,4 +147,23 @@ public class ParserTest {
         JSONAssert.assertEquals(exptString, Parser.encodeJSON(cd), JSONCompareMode.STRICT);
 
     }
+
+    @Test
+    public void moreSeqDiags() {
+        ClassDiagram cd = new ClassDiagram();
+        String inString = "";
+        String exptString = "";
+        try {
+            String inPath = "data/test/seqDiagTest/moreSeqDiagsIn.json";
+            inString = Files.readString(Paths.get(inPath));
+            cd = Parser.decodeJSON(inString);
+            String exptPath = "data/test/seqDiagTest/moreSeqDiagsExpt.json";
+            exptString = Files.readString(Paths.get(exptPath));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONAssert.assertEquals(exptString, Parser.encodeJSON(cd), JSONCompareMode.STRICT);
+
+    }
 }

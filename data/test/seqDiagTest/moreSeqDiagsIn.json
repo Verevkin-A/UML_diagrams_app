@@ -1,0 +1,180 @@
+{
+  "classDiagram": {
+    "classes": [
+      {
+        "name": "testClass",
+        "parent": -1,
+        "fields": [
+          {
+            "name": "firstAttr",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "myTestMethod()",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false,
+        "xPos": 500,
+        "yPos": 30
+      },
+      {
+        "name": "testClass3",
+        "parent": 1,
+        "fields": [
+          {
+            "name": "tc3a1",
+            "visibility": "-"
+          },
+          {
+            "name": "tc3a2",
+            "visibility": "+"
+          },
+          {
+            "name": "tc3a0",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "tc3m0",
+            "visibility": "-"
+          },
+          {
+            "name": "tc3m2",
+            "visibility": "+"
+          },
+          {
+            "name": "tc3m1",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false,
+        "xPos": 100,
+        "yPos": 30
+      },
+      {
+        "name": "testClass2",
+        "parent": 0,
+        "fields": [
+          {
+            "name": "firstAttr2",
+            "visibility": "-"
+          }
+        ],
+        "methods": [
+          {
+            "name": "myTestMethod2()",
+            "visibility": "+"
+          }
+        ],
+        "isInterface": false,
+        "xPos": 200,
+        "yPos": 300
+      }
+    ],
+    "nodes": [
+      {
+        "from": 0,
+        "fAnchor": "LEFT",
+        "to": 1,
+        "tAnchor": "RIGHT",
+        "fCard": "0..*",
+        "tCard": "1",
+        "type": 1
+      },
+      {
+        "from": 1,
+        "fAnchor": "UP",
+        "to": 0,
+        "tAnchor": "DOWN",
+        "fCard": "0..*",
+        "tCard": "1",
+        "type": 2
+      },
+      {
+        "from": 2,
+        "fAnchor": "LEFT",
+        "to": 1,
+        "tAnchor": "UP",
+        "fCard": "0..*",
+        "tCard": "1",
+        "type": 3
+      }
+    ],
+    "sequenceDiagrams": [
+      {
+        "objects": [
+          {
+            "objName": "SDo1objName",
+            "className": "SDo1className",
+            "activations": [
+              {
+                "timeBegin": 10,
+                "timeEnd": 15
+              }
+            ],
+            "timePos": -1
+          },
+          {
+            "objName": "SDo2objName",
+            "className": "SDo2className",
+            "activations": [
+              {
+                "timeBegin": 15,
+                "timeEnd": 20
+              }
+            ],
+            "timePos": 5
+          }
+        ],
+        "messages": [
+          {
+            "name": "SDm1Name",
+            "from": 0,
+            "to": 1,
+            "type": "RETURN",
+            "timePos": 25
+          }
+        ]
+      },
+      {
+          "objects": [
+            {
+              "objName": "SDo1objName",
+              "className": "SDo1className",
+              "activations": [
+                {
+                  "timeBegin": 10,
+                  "timeEnd": 15
+                }
+              ],
+              "timePos": -1
+            },
+            {
+              "objName": "SDo2objName",
+              "className": "SDo2className",
+              "activations": [
+                {
+                  "timeBegin": 15,
+                  "timeEnd": 20
+                }
+              ],
+              "timePos": 5
+            }
+          ],
+          "messages": [
+            {
+              "name": "SDm1Name",
+              "from": 0,
+              "to": 1,
+              "type": "RETURN",
+              "timePos": 25
+            }
+          ]
+        }
+    ]
+  }
+}
