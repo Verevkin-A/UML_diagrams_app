@@ -299,8 +299,7 @@ public class CDController implements EventHandler<ActionEvent> {
                         stage.setTitle(c.getlName().getText());
                         Parent root = fxmlLoader.load();
                         // initialize diagram
-                        SDController sdController = fxmlLoader.getController();
-                        sdController.loadSD(c.getSequenceDiagram());
+                        ((SDController) fxmlLoader.getController()).loadSD(c.getSequenceDiagram());
 
                         stage.setScene(new Scene(root));
                         stage.show();
@@ -510,7 +509,7 @@ public class CDController implements EventHandler<ActionEvent> {
                 vbFields.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName() + "()"));
             }
         }
-        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_? "<<interface>>\n" : ""), className), vbFields);
+        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_ ? "<<interface>>\n" : ""), className), vbFields);
         titledPane.setCollapsible(false);
 
         AnchorPane.setLeftAnchor(titledPane, axisX);

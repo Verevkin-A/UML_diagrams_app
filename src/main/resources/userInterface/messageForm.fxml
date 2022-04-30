@@ -8,7 +8,6 @@
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.AnchorPane?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="336.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SDInterface.MessageFormController">
    <children>
       <TextField fx:id="tfMessageName" alignment="CENTER" layoutX="85.0" layoutY="15.0" />
@@ -23,7 +22,7 @@
       <RadioButton fx:id="rbDestroy" layoutX="175.0" layoutY="245.0" mnemonicParsing="false" text="DESTROY" toggleGroup="$tgMessageType" />
       <RadioButton fx:id="rbCreate" layoutX="175.0" layoutY="215.0" mnemonicParsing="false" text="CREATE" toggleGroup="$tgMessageType" />
       <RadioButton fx:id="rbReturn" layoutX="86.0" layoutY="245.0" mnemonicParsing="false" text="RETURN" toggleGroup="$tgMessageType" />
-      <Button fx:id="bDelete" layoutX="194.0" layoutY="295.0" mnemonicParsing="false" text="Button" />
+      <Button layoutX="194.0" layoutY="295.0" mnemonicParsing="false" onAction="#doneAction" text="Button" />
       <Label layoutX="17.0" layoutY="18.0" text="Name:" />
       <Label layoutX="17.0" layoutY="68.0" text="From:" />
       <Label layoutX="17.0" layoutY="118.0" text="To:" />

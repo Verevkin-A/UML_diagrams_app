@@ -6,7 +6,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -202,12 +204,31 @@ public class SDController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("objectForm.fxml"));
             Stage stage = new Stage();
+            Parent root = fxmlLoader.load();
             stage.setTitle("Object form");
-            stage.setScene(new Scene(fxmlLoader.load()));
+            ((ObjectFormController) fxmlLoader.getController()).setSDController(this);
+
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void putObject(String objectName, String className, Integer timePos) {
+        // throw warning if there are no place for the new object in diagram
+        if (sequenceDiagram.getObjects().size() >= 6) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Diagram is full");
+            alert.setHeaderText(null);
+            alert.setContentText("There are no space for the new object.\n");
+
+            alert.showAndWait();
+            return;
+        }
+        // add new object and reload diagram
+        sequenceDiagram.getObjects().add(new SDObject(objectName, className, timePos));
+        loadSD(sequenceDiagram);
     }
 
     @FXML
@@ -223,6 +244,10 @@ public class SDController {
         }
     }
 
+    public void putActivation() {
+        // TODO
+    }
+
     @FXML
     void addMessage(ActionEvent event) {
         try {
@@ -236,6 +261,10 @@ public class SDController {
         }
     }
 
+    public void putMessage() {
+        // TODO
+    }
+
     @FXML
     void saveAction(ActionEvent event) {
         CDController.getController().saveSD(sequenceDiagram);
@@ -243,7 +272,7 @@ public class SDController {
 
     @FXML
     void undoAction(ActionEvent event) {
-
+        // TODO
     }
 
     public EventHandler<ActionEvent> editObject = new EventHandler<>() {

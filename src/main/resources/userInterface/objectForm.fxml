@@ -13,6 +13,6 @@
       <Label layoutX="17.0" layoutY="68.0" text="Class name:" />
       <TextField fx:id="tfTimePosition" alignment="CENTER" layoutX="187.0" layoutY="114.0" prefHeight="24.0" prefWidth="68.0" promptText="0-100" />
       <Label layoutX="17.0" layoutY="118.0" text="Time position: &#10;(-1 or empty for above&#10;the timeline)" />
-      <Button fx:id="bDone" layoutX="203.0" layoutY="165.0" mnemonicParsing="false" text="Done" />
+      <Button layoutX="203.0" layoutY="165.0" mnemonicParsing="false" onAction="#doneAction" text="Done" />
    </children>
 </AnchorPane>

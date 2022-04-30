@@ -11,7 +11,7 @@
       <ComboBox fx:id="cbObjects" layoutX="104.0" layoutY="15.0" prefWidth="150.0" />
       <TextField fx:id="tfBeginTime" alignment="CENTER" layoutX="144.0" layoutY="65.0" prefHeight="24.0" prefWidth="70.0" promptText="0-100" />
       <TextField fx:id="tdEndTime" alignment="CENTER" layoutX="144.0" layoutY="115.0" prefHeight="24.0" prefWidth="70.0" promptText="0-100" />
-      <Button fx:id="bDone" layoutX="203.0" layoutY="165.0" mnemonicParsing="false" text="Done" />
+      <Button layoutX="203.0" layoutY="165.0" mnemonicParsing="false" onAction="#doneAction" text="Done" />
       <Label layoutX="17.0" layoutY="18.0" text="Object:" />
       <Label layoutX="17.0" layoutY="68.0" text="Begin time:" />
       <Label layoutX="17.0" layoutY="118.0" text="End time:" />
