@@ -67,6 +67,8 @@ public class CDController implements EventHandler<ActionEvent> {
     public ArrayList<UIClassConnector> uiClassConnectors;
     public ArrayList<UINodeConnector> uiNodeConnectors;
     public ArrayList<UISDConnector> uiSDConnectors;
+    // sequence diagrams counter
+    private int SDIdentifNum = 1;
     // CDController singleton instance
     private static CDController CD_controller;
 
@@ -156,7 +158,7 @@ public class CDController implements EventHandler<ActionEvent> {
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             addNode();      // add new node button
         } else if (actionEvent.getSource() == this.buttonCreateSD) {
-            openFXML("SDWindow.fxml", "Sequence Diagram");        // add new sequence diagram
+            openFXML("SDWindow.fxml", "New Sequence Diagram");      // add new sequence diagram
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
         }
@@ -294,7 +296,7 @@ public class CDController implements EventHandler<ActionEvent> {
                     try {
                         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SDWindow.fxml"));
                         Stage stage = new Stage();
-                        stage.setTitle("Sequence diagram");
+                        stage.setTitle(c.getlName().getText());
                         Parent root = fxmlLoader.load();
                         // initialize diagram
                         SDController sdController = fxmlLoader.getController();
@@ -310,6 +312,22 @@ public class CDController implements EventHandler<ActionEvent> {
             }
         }
     };
+
+    public void saveSD(SequenceDiagram sd) {
+        // create row elements
+        Label lName = new Label("SD #" + SDIdentifNum++);
+        Button bEdit = new Button("Edit");
+        bEdit.setOnAction(editSD);
+        Button bDelete = new Button("Delete");
+        bDelete.setOnAction(deleteSD);
+        // push all rows, creating place for the new sequence diagram
+        for (Node child : gridPaneSD.getChildren()) {
+            GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+        }
+        gridPaneSD.addRow(0, lName, bEdit, bDelete);
+        // save diagram and his UI attributes in the memory
+        uiSDConnectors.add(new UISDConnector(sd, lName, bEdit, bDelete));
+    }
 
     public void undo() {
         // TODO
@@ -333,23 +351,13 @@ public class CDController implements EventHandler<ActionEvent> {
             gridPaneSD.getChildren().removeAll(cSD.getlName(), cSD.getbEditSD(), cSD.getbDeleteSD());
         }
         uiSDConnectors.clear();
+        // update sequence diagrams counter
+        SDIdentifNum = 1;
     }
 
     private void loadSDs(ArrayList<SequenceDiagram> sds) {
         for (SequenceDiagram sd: sds) {
-            // create row elements
-            Label lName = new Label("TODO");
-            Button bEdit = new Button("Edit");
-            bEdit.setOnAction(editSD);
-            Button bDelete = new Button("Delete");
-            bDelete.setOnAction(deleteSD);
-            // push all rows, creating place for the new sequence diagram
-            for (Node child : gridPaneSD.getChildren()) {
-                GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
-            }
-            gridPaneSD.addRow(0, lName, bEdit, bDelete);
-            // save diagram and his UI attributes in the memory
-            uiSDConnectors.add(new UISDConnector(sd, lName, bEdit, bDelete));
+            saveSD(sd);
         }
     }
 

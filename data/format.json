@@ -132,8 +132,8 @@
             "className": "SDo1className",
             "activations": [
               {
-                "timeBegin": 10,
-                "timeEnd": 15
+                "timeBegin": 5,
+                "timeEnd": 20
               }
             ],
             "timePos": -1
@@ -144,7 +144,51 @@
             "activations": [
               {
                 "timeBegin": 15,
-                "timeEnd": 20
+                "timeEnd": 40
+              }
+            ],
+            "timePos": 5
+          },
+          {
+            "objName": "SDo2objName",
+            "className": "SDo2className",
+            "activations": [
+              {
+                "timeBegin": 15,
+                "timeEnd": 40
+              }
+            ],
+            "timePos": 5
+          },
+          {
+            "objName": "SDo2objName",
+            "className": "SDo2className",
+            "activations": [
+              {
+                "timeBegin": 15,
+                "timeEnd": 40
+              }
+            ],
+            "timePos": 5
+          },
+          {
+            "objName": "SDo2objName",
+            "className": "SDo2className",
+            "activations": [
+              {
+                "timeBegin": 15,
+                "timeEnd": 40
+              }
+            ],
+            "timePos": 5
+          },
+          {
+            "objName": "SDo2objName",
+            "className": "SDo2className",
+            "activations": [
+              {
+                "timeBegin": 15,
+                "timeEnd": 40
               }
             ],
             "timePos": 5
@@ -153,10 +197,31 @@
         "messages": [
           {
             "name": "SDm1Name",
-            "from": 0,
+            "from": 1,
+            "to": 2,
+            "type": "CALL",
+            "timePos": 15
+          },
+          {
+            "name": "SDm1Name",
+            "from": 2,
             "to": 1,
             "type": "RETURN",
-            "timePos": 25
+            "timePos": 18
+          },
+          {
+            "name": "SDm1Name",
+            "from": 2,
+            "to": 3,
+            "type": "CREATE_OBJ",
+            "timePos": 16
+          },
+          {
+            "name": "SDm1Name",
+            "from": 3,
+            "to": 2,
+            "type": "DESTROY_OBJ",
+            "timePos": 20
           }
         ]
       }

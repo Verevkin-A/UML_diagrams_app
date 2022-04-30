@@ -14,6 +14,7 @@ import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import sequenceDiagram.*;
+import userInterface.CDInterface.CDController;
 import userInterface.CDInterface.UIClassConnector;
 import userInterface.CDInterface.UINodeConnector;
 import userInterface.CDInterface.UISDConnector;
@@ -56,6 +57,8 @@ public class SDController {
         uiObjectConnectors = new ArrayList<>();
         uiActivationConnectors = new ArrayList<>();
         uiMessageConnectors = new ArrayList<>();
+
+        sequenceDiagram = new SequenceDiagram();
     }
 
     private void gpInit(ScrollPane scrollPane, GridPane gridPane) {
@@ -179,7 +182,8 @@ public class SDController {
 
     @FXML
     void saveAction(ActionEvent event) {
-        System.out.println("Save");
+        // save sequence diagram into memory
+        CDController.getController().saveSD(sequenceDiagram);
     }
 
     @FXML
