@@ -1,7 +1,7 @@
 package userInterface.SDInterface;
 
-import classDiagram.NodeType;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -15,9 +15,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import sequenceDiagram.*;
 import userInterface.CDInterface.CDController;
-import userInterface.CDInterface.UIClassConnector;
-import userInterface.CDInterface.UINodeConnector;
-import userInterface.CDInterface.UISDConnector;
 
 import java.util.ArrayList;
 
@@ -57,7 +54,7 @@ public class SDController {
         uiObjectConnectors = new ArrayList<>();
         uiActivationConnectors = new ArrayList<>();
         uiMessageConnectors = new ArrayList<>();
-
+        // define new sequence diagram
         sequenceDiagram = new SequenceDiagram();
     }
 
@@ -70,6 +67,9 @@ public class SDController {
 
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
+        // reset sequence diagram
+        clearPane();
+        clearGPs();
         int inc = 0;    // X position error
         // load objects
         for (SDObject o: sd.getObjects()) {
@@ -92,7 +92,8 @@ public class SDController {
             Label lObject = new Label(o.getObjName() + ":" + o.getClassName());
             Button bEditObject = new Button("Edit");
             Button bDeleteObject = new Button("Delete");
-            // TODO onaction
+            bDeleteObject.setOnAction(deleteObject);
+
             for (Node child : gpObjects.getChildren()) {
                 GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
             }
@@ -112,12 +113,13 @@ public class SDController {
                 // create activation entry and add it on the grid pane
                 Label lActivation = new Label("Todo");
                 Button bDeleteActivation = new Button("Delete");
-                // TODO onaction
+                bDeleteActivation.setOnAction(deleteActivation);
+
                 for (Node child : gpActivations.getChildren()) {
                     GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
                 }
                 gpActivations.addRow(0, lActivation, bDeleteActivation);
-                uiActivationConnectors.add(new UIActivationConnector(a, lActivation, bDeleteActivation));
+                uiActivationConnectors.add(new UIActivationConnector(a, o, lActivation, bDeleteActivation));
             }
             // add next object X error
             inc += 135;
@@ -145,13 +147,38 @@ public class SDController {
             // create activation entry and add it on the grid pane
             Label lMessage = new Label(m.getName());
             Button bDeleteMessage = new Button("Delete");
-            // TODO onaction
+            bDeleteMessage.setOnAction(deleteMessage);
             for (Node child : gpMessages.getChildren()) {
                 GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
             }
             gpMessages.addRow(0, lMessage, bDeleteMessage);
             uiMessageConnectors.add(new UIMessageConnector(m, lMessage, bDeleteMessage));
         }
+    }
+
+    private void clearPane() {
+        ArrayList<Node> nodesToDelete = new ArrayList<>();
+        for (Node child: root.getChildren()) {
+            if (child.getId() == null) {
+                nodesToDelete.add(child);
+            }
+        }
+        root.getChildren().removeAll(nodesToDelete);
+    }
+
+    private void clearGPs() {
+        for (UIObjectConnector cObj: uiObjectConnectors) {
+            gpObjects.getChildren().removeAll(cObj.getlObject(), cObj.getbEditObject(), cObj.getbDeleteObject());
+        }
+        uiObjectConnectors.clear();
+        for (UIActivationConnector cAct: uiActivationConnectors) {
+            gpActivations.getChildren().removeAll(cAct.getlActivation(), cAct.getbDeleteActivation());
+        }
+        uiActivationConnectors.clear();
+        for (UIMessageConnector cMsg: uiMessageConnectors) {
+            gpMessages.getChildren().removeAll(cMsg.getlMessage(), cMsg.getbDeleteMessage());
+        }
+        uiMessageConnectors.clear();
     }
 
     private Shape getArrowHead(double fromX, double toX, double Y) {
@@ -182,7 +209,6 @@ public class SDController {
 
     @FXML
     void saveAction(ActionEvent event) {
-        // save sequence diagram into memory
         CDController.getController().saveSD(sequenceDiagram);
     }
 
@@ -190,4 +216,63 @@ public class SDController {
     void undoAction(ActionEvent event) {
 
     }
+
+    public EventHandler<ActionEvent> editObject = new EventHandler<>() {
+        @Override
+        public void handle(ActionEvent event) {
+            for (UIObjectConnector c: uiObjectConnectors) {
+                if (event.getSource() == c.getbEditObject()) {
+                    // TODO
+                    break;
+                }
+            }
+        }
+    };
+
+    public EventHandler<ActionEvent> deleteObject = new EventHandler<>() {
+        @Override
+        public void handle(ActionEvent event) {
+            for (UIObjectConnector cObj: uiObjectConnectors) {
+                if (event.getSource() == cObj.getbDeleteObject()) {
+                    // reload sequence diagram
+                    sequenceDiagram.getObjects().remove(cObj.getObject());
+                    loadSD(sequenceDiagram);
+                    break;
+                }
+            }
+        }
+    };
+
+    public EventHandler<ActionEvent> deleteActivation = new EventHandler<>() {
+        @Override
+        public void handle(ActionEvent event) {
+            for (UIActivationConnector cAct: uiActivationConnectors) {
+                if (event.getSource() == cAct.getbDeleteActivation()) {
+                    for (SDObject o: sequenceDiagram.getObjects()) {
+                        if (o == cAct.getsdObject()) {
+                            // reload sequence diagram
+                            o.getActivations().remove(cAct.getsdActivation());
+                            loadSD(sequenceDiagram);
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    };
+
+    public EventHandler<ActionEvent> deleteMessage = new EventHandler<>() {
+        @Override
+        public void handle(ActionEvent event) {
+            for (UIMessageConnector cMsg: uiMessageConnectors) {
+                if (event.getSource() == cMsg.getbDeleteMessage()) {
+                    // reload sequence diagram
+                    sequenceDiagram.getMessages().remove(cMsg.getsdMessage());
+                    loadSD(sequenceDiagram);
+                    break;
+                }
+            }
+        }
+    };
 }

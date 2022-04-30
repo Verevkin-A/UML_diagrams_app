@@ -179,14 +179,14 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> deleteClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UIClassConnector cClass : uiClassConnectors) {
+            for (UIClassConnector cClass: uiClassConnectors) {
                 if (event.getSource() == cClass.getBtnDelete()) {
                     root.getChildren().remove(cClass.getTpClass());
                     gridPaneClasses.getChildren().removeAll(cClass.getClassNameLabel(), cClass.getBtnEdit(), cClass.getBtnDelete());
 
                     // delete all nodes, connected with deleting class
                     ArrayList<UINodeConnector> nodesToDelete = new ArrayList<>();
-                    for (UINodeConnector cNode : uiNodeConnectors) {
+                    for (UINodeConnector cNode: uiNodeConnectors) {
                         if (cNode.getFrom() == cClass || cNode.getTo() == cClass) {
                             root.getChildren().removeAll(cNode.getNode(), cNode.getArrowHead(), cNode.getfCard(), cNode.gettCard());
                             gridPaneNodes.getChildren().removeAll(cNode.getNodeNameLabel(), cNode.getBtnDelete());
@@ -197,9 +197,9 @@ public class CDController implements EventHandler<ActionEvent> {
                     for (UINodeConnector cNode: nodesToDelete) {
                         // if deleted node type is generalization, remove possible highlighting on inherited methods
                         if (cNode.getNodeType() == NodeType.GENERALIZATION) {
-                            for (Node fromField : cNode.getFrom().getVbFields().getChildren()) {
+                            for (Node fromField: cNode.getFrom().getVbFields().getChildren()) {
                                 if (((Label) fromField).getText().endsWith("()") && ((Label) fromField).getTextFill() == Color.RED) {
-                                    for (Node toField : cNode.getTo().getVbFields().getChildren())
+                                    for (Node toField: cNode.getTo().getVbFields().getChildren())
                                         if (Objects.equals(((Label) fromField).getText(), ((Label) toField).getText())) {
                                             ((Label) fromField).setTextFill(Color.BLACK);
                                             break;
@@ -221,7 +221,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> editClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UIClassConnector c : uiClassConnectors) {
+            for (UIClassConnector c: uiClassConnectors) {
                 if (event.getSource() == c.getBtnEdit()) {
                     editClass(c);
                     connectorEditing = c;
@@ -234,7 +234,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> deleteNode = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UINodeConnector c : uiNodeConnectors) {
+            for (UINodeConnector c: uiNodeConnectors) {
                 if (event.getSource() == c.getBtnDelete()) {
                     root.getChildren().removeAll(c.getNode(), c.getArrowHead(), c.getfCard(), c.gettCard());
                     gridPaneNodes.getChildren().removeAll(c.getNodeNameLabel(), c.getBtnDelete());
@@ -278,7 +278,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> deleteSD = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UISDConnector c : uiSDConnectors) {
+            for (UISDConnector c: uiSDConnectors) {
                 if (event.getSource() == c.getbDeleteSD()) {
                     gridPaneSD.getChildren().removeAll(c.getlName(), c.getbEditSD(), c.getbDeleteSD());
                     uiSDConnectors.remove(c);
@@ -291,7 +291,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> editSD = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UISDConnector c : uiSDConnectors) {
+            for (UISDConnector c: uiSDConnectors) {
                 if (event.getSource() == c.getbEditSD()) {
                     try {
                         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SDWindow.fxml"));
@@ -321,7 +321,7 @@ public class CDController implements EventHandler<ActionEvent> {
         Button bDelete = new Button("Delete");
         bDelete.setOnAction(deleteSD);
         // push all rows, creating place for the new sequence diagram
-        for (Node child : gridPaneSD.getChildren()) {
+        for (Node child: gridPaneSD.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
         gridPaneSD.addRow(0, lName, bEdit, bDelete);
@@ -523,7 +523,7 @@ public class CDController implements EventHandler<ActionEvent> {
         btnClassEdit.setOnAction(editClass);
         btnClassDelete.setOnAction(deleteClass);
         // create place for new row
-        for (Node child : gridPaneClasses.getChildren()) {
+        for (Node child: gridPaneClasses.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
         // insert new class row
@@ -604,7 +604,7 @@ public class CDController implements EventHandler<ActionEvent> {
             for (Node fromField: fromClass.getVbFields().getChildren()) {
                 if (((Label) fromField).getText().endsWith("()")) {
                     boolean inherit = false;
-                    for (Node toField : toClass.getVbFields().getChildren()) {
+                    for (Node toField: toClass.getVbFields().getChildren()) {
                         if (Objects.equals(((Label) toField).getText(), ((Label) fromField).getText())) {
                             inherit = true;
                             break;
@@ -640,7 +640,7 @@ public class CDController implements EventHandler<ActionEvent> {
         Button btnNodeDelete = new Button("Delete");
         btnNodeDelete.setOnAction(deleteNode);
         // create place for new row
-        for (Node child : gridPaneNodes.getChildren()) {
+        for (Node child: gridPaneNodes.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
         // insert new node row

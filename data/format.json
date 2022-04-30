@@ -132,8 +132,8 @@
             "className": "SDo1className",
             "activations": [
               {
-                "timeBegin": 5,
-                "timeEnd": 20
+                "timeBegin": 10,
+                "timeEnd": 15
               }
             ],
             "timePos": -1
@@ -144,7 +144,7 @@
             "activations": [
               {
                 "timeBegin": 15,
-                "timeEnd": 40
+                "timeEnd": 20
               }
             ],
             "timePos": 5
@@ -155,7 +155,7 @@
             "activations": [
               {
                 "timeBegin": 15,
-                "timeEnd": 40
+                "timeEnd": 20
               }
             ],
             "timePos": 5
@@ -166,7 +166,7 @@
             "activations": [
               {
                 "timeBegin": 15,
-                "timeEnd": 40
+                "timeEnd": 20
               }
             ],
             "timePos": 5
@@ -177,7 +177,7 @@
             "activations": [
               {
                 "timeBegin": 15,
-                "timeEnd": 40
+                "timeEnd": 20
               }
             ],
             "timePos": 5
@@ -188,7 +188,7 @@
             "activations": [
               {
                 "timeBegin": 15,
-                "timeEnd": 40
+                "timeEnd": 20
               }
             ],
             "timePos": 5
@@ -211,17 +211,17 @@
           },
           {
             "name": "SDm1Name",
-            "from": 2,
-            "to": 3,
+            "from": 0,
+            "to": 1,
             "type": "CREATE_OBJ",
-            "timePos": 16
+            "timePos": 25
           },
           {
             "name": "SDm1Name",
-            "from": 3,
-            "to": 2,
+            "from": 0,
+            "to": 1,
             "type": "DESTROY_OBJ",
-            "timePos": 20
+            "timePos": 25
           }
         ]
       }
