@@ -20,7 +20,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import sequenceDiagram.*;
 import userInterface.App;
-import userInterface.CDInterface.CDController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -263,11 +262,6 @@ public class SDController {
 
     public void putMessage() {
         // TODO
-    }
-
-    @FXML
-    void saveAction(ActionEvent event) {
-        CDController.getController().saveSD(sequenceDiagram);
     }
 
     @FXML

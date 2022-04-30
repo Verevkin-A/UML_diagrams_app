@@ -158,7 +158,15 @@ public class CDController implements EventHandler<ActionEvent> {
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             addNode();      // add new node button
         } else if (actionEvent.getSource() == this.buttonCreateSD) {
-            openFXML("SDWindow.fxml", "New Sequence Diagram");      // add new sequence diagram
+            // add new sequence diagram and window with it
+            SequenceDiagram sd = new SequenceDiagram();
+            saveSD(sd);
+            for (UISDConnector c: uiSDConnectors) {
+                if (c.getSequenceDiagram() == sd) {
+                    c.getbEditSD().fire();
+                    break;
+                }
+            }
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
         }
