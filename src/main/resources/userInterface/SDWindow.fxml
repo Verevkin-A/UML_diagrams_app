@@ -66,9 +66,9 @@
       <Line fx:id="dashed80" endX="655.0" endY="-0.5" layoutX="206.0" layoutY="566.0" startX="-143.0" startY="-0.5" strokeWidth="0.3" style="-fx-stroke-dash-array: 5;" />
       <Line fx:id="dashed90" endX="655.0" endY="-0.5" layoutX="206.0" layoutY="625.0" startX="-143.0" startY="-0.5" strokeWidth="0.3" style="-fx-stroke-dash-array: 5;" />
       <Line fx:id="dashed100" endX="655.0" endY="-0.5" layoutX="206.0" layoutY="684.0" startX="-143.0" startY="-0.5" strokeWidth="0.3" style="-fx-stroke-dash-array: 5;" />
-      <Button layoutX="989.0" layoutY="35.0" mnemonicParsing="false" onAction="#addObject" text="New Object " />
-      <Button layoutX="977.0" layoutY="478.0" mnemonicParsing="false" onAction="#addMessage" text="New message" />
-      <Button layoutX="970.0" layoutY="256.0" mnemonicParsing="false" onAction="#addActivation" text="New Activation" />
+      <Button fx:id="bAddObject" layoutX="989.0" layoutY="35.0" mnemonicParsing="false" onAction="#addObject" text="New Object " />
+      <Button fx:id="bAddMessage" layoutX="977.0" layoutY="478.0" mnemonicParsing="false" onAction="#addMessage" text="New message" />
+      <Button fx:id="bAddActivation" layoutX="970.0" layoutY="256.0" mnemonicParsing="false" onAction="#addActivation" text="New Activation" />
       <Label fx:id="lObjects" layoutX="868.0" layoutY="43.0" text="Objects:" />
       <Label fx:id="lMessages" layoutX="868.0" layoutY="486.0" text="Messages:" />
       <Label fx:id="lActivations" layoutX="868.0" layoutY="264.0" text="Activations:" />

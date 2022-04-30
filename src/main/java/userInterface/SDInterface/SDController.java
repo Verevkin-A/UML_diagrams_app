@@ -3,8 +3,10 @@ package userInterface.SDInterface;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -13,9 +15,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
 import sequenceDiagram.*;
+import userInterface.App;
 import userInterface.CDInterface.CDController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SDController {
@@ -193,18 +198,42 @@ public class SDController {
     }
 
     @FXML
-    void addActivation(ActionEvent event) {
+    void addObject(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("objectForm.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Object form");
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @FXML
+    void addActivation(ActionEvent event) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("activationForm.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Activation form");
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void addMessage(ActionEvent event) {
-
-    }
-
-    @FXML
-    void addObject(ActionEvent event) {
-
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("messageForm.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Message form");
+            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="203.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SDInterface.ActivationFormController">
+   <children>
+      <ComboBox fx:id="cbObjects" layoutX="104.0" layoutY="15.0" prefWidth="150.0" />
+      <TextField fx:id="tfBeginTime" alignment="CENTER" layoutX="144.0" layoutY="65.0" prefHeight="24.0" prefWidth="70.0" promptText="0-100" />
+      <TextField fx:id="tdEndTime" alignment="CENTER" layoutX="144.0" layoutY="115.0" prefHeight="24.0" prefWidth="70.0" promptText="0-100" />
+      <Button fx:id="bDone" layoutX="203.0" layoutY="165.0" mnemonicParsing="false" text="Done" />
+      <Label layoutX="17.0" layoutY="18.0" text="Object:" />
+      <Label layoutX="17.0" layoutY="68.0" text="Begin time:" />
+      <Label layoutX="17.0" layoutY="118.0" text="End time:" />
+   </children>
+</AnchorPane>
