@@ -236,6 +236,16 @@ public class SDController {
                 if (event.getSource() == cObj.getbDeleteObject()) {
                     // reload sequence diagram
                     sequenceDiagram.getObjects().remove(cObj.getObject());
+
+                    // delete any bounded with object messages
+                    ArrayList<SDMessage> messagesToDelete = new ArrayList<>();
+                    for (SDMessage m: sequenceDiagram.getMessages()) {
+                        if (m.getFrom(sequenceDiagram) == -1 || m.getTo(sequenceDiagram) == -1) {
+                            messagesToDelete.add(m);
+                        }
+                    }
+                    sequenceDiagram.getMessages().removeAll(messagesToDelete);
+
                     loadSD(sequenceDiagram);
                     break;
                 }
