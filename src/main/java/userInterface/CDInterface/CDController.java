@@ -185,6 +185,22 @@ public class CDController implements EventHandler<ActionEvent> {
                             nodesToDelete.add(cNode);
                         }
                     }
+
+                    for (UINodeConnector cNode: nodesToDelete) {
+                        // if deleted node type is generalization, remove possible highlighting on inherited methods
+                        if (cNode.getNodeType() == NodeType.GENERALIZATION) {
+                            for (Node fromField : cNode.getFrom().getVbFields().getChildren()) {
+                                if (((Label) fromField).getText().endsWith("()") && ((Label) fromField).getTextFill() == Color.RED) {
+                                    for (Node toField : cNode.getTo().getVbFields().getChildren())
+                                        if (Objects.equals(((Label) fromField).getText(), ((Label) toField).getText())) {
+                                            ((Label) fromField).setTextFill(Color.BLACK);
+                                            break;
+                                        }
+                                }
+                            }
+                        }
+                    }
+
                     uiNodeConnectors.removeAll(nodesToDelete);
 
                     uiClassConnectors.remove(cClass);
@@ -214,6 +230,20 @@ public class CDController implements EventHandler<ActionEvent> {
                 if (event.getSource() == c.getBtnDelete()) {
                     root.getChildren().removeAll(c.getNode(), c.getArrowHead(), c.getfCard(), c.gettCard());
                     gridPaneNodes.getChildren().removeAll(c.getNodeNameLabel(), c.getBtnDelete());
+
+                    // if deleted node type is generalization, remove possible highlighting on inherited methods
+                    if (c.getNodeType() == NodeType.GENERALIZATION) {
+                        for (Node fromField: c.getFrom().getVbFields().getChildren()) {
+                            if (((Label) fromField).getText().endsWith("()") && ((Label) fromField).getTextFill() == Color.RED) {
+                                for (Node toField: c.getTo().getVbFields().getChildren())
+                                    if (Objects.equals(((Label) fromField).getText(), ((Label) toField).getText())) {
+                                        ((Label) fromField).setTextFill(Color.BLACK);
+                                        break;
+                                    }
+                            }
+                        }
+                    }
+
                     uiNodeConnectors.remove(c);
                     break;
                 }
