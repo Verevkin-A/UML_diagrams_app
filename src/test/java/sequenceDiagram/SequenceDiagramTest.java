@@ -67,39 +67,33 @@ public class SequenceDiagramTest {
 
     @Test
     public void checkCausedInconsistencyOnMsg() {
-        CDClass testClassFrom = cd.getCDClass(0);
         CDClass testClassTo = cd.getCDClass(1);
-        CDNode testNode0 = cd.getCDNode(0);
-        CDNode testNode1 = cd.getCDNode(1);
 
-        SDObject testObjFrom = cd.getSequenceDiagrams().get(0).getObjects().get(0);
         SDObject testObjTo = cd.getSequenceDiagrams().get(0).getObjects().get(1);
         SDMessage testMsg = cd.getSequenceDiagrams().get(0).getMessages().get(0);
 
-        Assertions.assertFalse(testMsg.checkFromAndTo(cd, testObjFrom, testObjTo));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, testMsg.getName()));
 
-        testObjFrom.setClassName("testClass");
         testObjTo.setClassName("testClass3");
 
-        Assertions.assertTrue(testMsg.checkFromAndTo(cd, testObjFrom, testObjTo));
-        Assertions.assertTrue(testNode0.checkType(cd, NodeType.GENERALIZATION));
-        Assertions.assertTrue(testNode1.checkType(cd, NodeType.GENERALIZATION));
+        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
+        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
+        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod5()"));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod3()"));
 
-        testObjFrom.setClassName("nonsens");
+
         testObjTo.setClassName("nonsens1");
-        Assertions.assertFalse(testNode0.checkFromAndTo(cd, testClassFrom, testClassTo));
-        Assertions.assertFalse(testNode0.checkFromAndTo(cd, testClassTo, testClassFrom));
-        Assertions.assertFalse(testNode1.checkFromAndTo(cd, testClassFrom, testClassTo));
-        Assertions.assertFalse(testNode1.checkFromAndTo(cd, testClassTo, testClassFrom));
 
-        testObjFrom.setClassName("testClass");
-        testObjTo.setClassName("testClass3");
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, testMsg.getName()));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod5()"));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod3()"));
 
-        testClassFrom.setName(cd, "nonsens1");
-        testClassTo.setName(cd, "nonsens2");
-        Assertions.assertTrue(testNode0.checkFromAndTo(cd, testClassFrom, testClassTo));
-        Assertions.assertTrue(testNode0.checkFromAndTo(cd, testClassTo, testClassFrom));
-        Assertions.assertTrue(testNode1.checkFromAndTo(cd, testClassFrom, testClassTo));
-        Assertions.assertTrue(testNode1.checkFromAndTo(cd, testClassTo, testClassFrom));
+        testObjTo.setClassName("testClass");
+        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
+        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
+
+
     }
 }

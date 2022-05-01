@@ -14,6 +14,14 @@
           {
             "name": "myTestMethod()",
             "visibility": "+"
+          },
+          {
+            "name": "myTestMethod4()",
+            "visibility": "-"
+          },
+          {
+            "name": "myTestMethod5()",
+            "visibility": "+"
           }
         ],
         "isInterface": false,
@@ -22,7 +30,7 @@
       },
       {
         "name": "testClass3",
-        "parent": 1,
+        "parent": 2,
         "fields": [
           {
             "name": "tc3a1",
@@ -49,6 +57,14 @@
           {
             "name": "tc3m1",
             "visibility": "+"
+          },
+          {
+            "name": "myTestMethod()",
+            "visibility": "+"
+          },
+          {
+            "name": "myTestMethod2()",
+            "visibility": "+"
           }
         ],
         "isInterface": false,
@@ -68,6 +84,10 @@
           {
             "name": "myTestMethod2()",
             "visibility": "+"
+          },
+          {
+            "name": "myTestMethod3()",
+            "visibility": "-"
           }
         ],
         "isInterface": false,

@@ -224,17 +224,37 @@ public class CDClass {
      */
     public ArrayList<CDField> getOverridenMethods(ClassDiagram cd) {
         ArrayList<CDField> overridenMethods = new ArrayList<>();
+        ArrayList<CDField> superMethods = this.getSuperclassMethods(cd);
         if (this.parent != -1) {
-            CDClass parentClass = cd.getCDClass(this.parent);
             for (CDField method : this.methods) {
-                if (parentClass.methods.contains(method) &&
-                        method.getVisibility() != Visibility.PRIVATE) {
-                    overridenMethods.add(method);
+                for (CDField superMethod : superMethods) {
+                    if (method.getName().equals(superMethod.getName())) {
+                        overridenMethods.add(method);
+                    }
                 }
             }
-            return overridenMethods;
         }
-        return null;
+        return overridenMethods;
+    }
+
+    /**
+     * @return the methods in the parent available in the subclass
+     */
+    public ArrayList<CDField> getSuperclassMethods(ClassDiagram cd) {
+        ArrayList<CDField> superclassMethods = new ArrayList<>();
+        int currParent = this.parent;
+        int superCnt = 0;
+        while (currParent != -1 && superCnt < 50) {
+            CDClass parentClass = cd.getCDClass(currParent);
+            currParent = parentClass.parent;
+            for (CDField superMethod : parentClass.getMethods()) {
+                if (superMethod.getVisibility() != Visibility.PRIVATE) {
+                    superclassMethods.add(superMethod);
+                }
+            }
+            superCnt++;
+        }
+        return superclassMethods;
     }
 
     /**
