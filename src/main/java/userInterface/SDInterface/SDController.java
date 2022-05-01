@@ -5,6 +5,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -74,8 +75,7 @@ public class SDController {
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
         // reset sequence diagram
-        clearPane();
-        clearGPs();
+        clearSD();
         int inc = 0;    // X position error
         // load objects
         for (SDObject o: sd.getObjects()) {
@@ -138,17 +138,22 @@ public class SDController {
 
             double fromX = 115 + error + classIndexFrom * 135;
             // error correction on toX for object creation
-            error += m.getType() == MessageType.CREATE_OBJ ? 50 : 0;
+            error += m.getType() == MessageType.CREATE_OBJ ? (classIndexFrom < classIndexTo ? 50 : -50) : 0;
             double toX = 115 - error + classIndexTo * 135;
             double Y = timeLineStartY + (m.getTimePos() * timeLineOneUnit);
-
+            // message name label positioning
+            Label lNameMessage = new Label(m.getName());
+            lNameMessage.setAlignment(Pos.CENTER);
+            AnchorPane.setLeftAnchor(lNameMessage, fromX - (classIndexFrom < classIndexTo ? 0 : 72));
+            AnchorPane.setTopAnchor(lNameMessage, Y - 17);
+            // message arrow setup
             Line lineMessage = new Line(fromX, Y, toX, Y);
             if (m.getType() == MessageType.CREATE_OBJ || m.getType() == MessageType.RETURN) {
                 lineMessage.getStrokeDashArray().addAll(10d, 10d);
             }
             Shape arrowHead = getArrowHead(fromX, toX, Y);
 
-            root.getChildren().addAll(lineMessage, arrowHead);
+            root.getChildren().addAll(lineMessage, arrowHead, lNameMessage);
 
             // create activation entry and add it on the grid pane
             Label lMessage = new Label(m.getName());
@@ -160,6 +165,11 @@ public class SDController {
             gpMessages.addRow(0, lMessage, bDeleteMessage);
             uiMessageConnectors.add(new UIMessageConnector(m, lMessage, bDeleteMessage));
         }
+    }
+
+    private void clearSD() {
+        clearPane();
+        clearGPs();
     }
 
     private void clearPane() {
