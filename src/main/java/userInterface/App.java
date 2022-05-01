@@ -31,6 +31,8 @@ public class App extends Application {
 
         Scene scene = new Scene(root, 1200, 800);
         stage.setTitle("UML Editor");
+        stage.setResizable(false);
+        // close all opened windows on main window close
         stage.onCloseRequestProperty().setValue(e -> Platform.exit());
         stage.setScene(scene);
         stage.show();

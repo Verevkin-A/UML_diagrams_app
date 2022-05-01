@@ -205,6 +205,8 @@ public class SDController {
             Stage stage = new Stage();
             Parent root = fxmlLoader.load();
             stage.setTitle("Object form");
+            stage.setResizable(false);
+
             ((ObjectFormController) fxmlLoader.getController()).setSDController(this);
 
             stage.setScene(new Scene(root));
@@ -261,6 +263,7 @@ public class SDController {
             Stage stage = new Stage();
             Parent root = fxmlLoader.load();
             stage.setTitle("Message form");
+            stage.setResizable(false);
 
             MessageFormController controller = fxmlLoader.getController();
             controller.setSDController(this);

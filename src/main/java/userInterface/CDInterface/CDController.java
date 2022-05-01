@@ -177,6 +177,7 @@ public class CDController implements EventHandler<ActionEvent> {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
             Stage stage = new Stage();
             stage.setTitle(title);
+            stage.setResizable(false);
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.show();
         } catch (IOException e) {
@@ -305,6 +306,7 @@ public class CDController implements EventHandler<ActionEvent> {
                         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SDWindow.fxml"));
                         Stage stage = new Stage();
                         stage.setTitle(c.getlName().getText());
+                        stage.setResizable(false);
                         Parent root = fxmlLoader.load();
                         // initialize diagram
                         ((SDController) fxmlLoader.getController()).loadSD(c.getSequenceDiagram());
@@ -484,6 +486,7 @@ public class CDController implements EventHandler<ActionEvent> {
 
             tableView.getItems().addAll(uiConnector.getTableView().getItems());
             stage.setTitle("Class form");
+            stage.setResizable(false);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -497,6 +500,7 @@ public class CDController implements EventHandler<ActionEvent> {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Class form");
+            stage.setResizable(false);
             Scene scene = new Scene(fxmlLoader.load());
             stage.setScene(scene);
             stage.show();
@@ -593,6 +597,7 @@ public class CDController implements EventHandler<ActionEvent> {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("nodeForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Node form");
+            stage.setResizable(false);
             Scene scene = new Scene(fxmlLoader.load());
             stage.setScene(scene);
             stage.show();
