@@ -31,4 +31,9 @@ public class UIObjectConnector {
     public Button getbDeleteObject() {
         return bDeleteObject;
     }
+
+    @Override
+    public String toString() {
+        return lObject.getText();
+    }
 }

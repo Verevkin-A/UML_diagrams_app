@@ -235,8 +235,15 @@ public class SDController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("activationForm.fxml"));
             Stage stage = new Stage();
+            Parent root = fxmlLoader.load();
             stage.setTitle("Activation form");
-            stage.setScene(new Scene(fxmlLoader.load()));
+            stage.setResizable(false);
+
+            ActivationFormController controller = fxmlLoader.getController();
+            controller.setSDController(this);
+            controller.setObjects(uiObjectConnectors);
+
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -252,8 +259,14 @@ public class SDController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("messageForm.fxml"));
             Stage stage = new Stage();
+            Parent root = fxmlLoader.load();
             stage.setTitle("Message form");
-            stage.setScene(new Scene(fxmlLoader.load()));
+
+            MessageFormController controller = fxmlLoader.getController();
+            controller.setSDController(this);
+            controller.setObjects(uiObjectConnectors);
+
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
