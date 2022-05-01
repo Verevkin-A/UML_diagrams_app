@@ -108,16 +108,16 @@ public class SDController {
 
             // load object activations
             for (SDActivation a: o.getActivations()) {
-                double timeBegin = a.getTimeBegin();
-                double timeEnd = a.getTimeEnd();
-                Rectangle recActivation = new Rectangle(10, (timeEnd - timeBegin) / 100 * (timeLineEndY - timeLineStartY), Color.WHITESMOKE);
+                int timeBegin = a.getTimeBegin();
+                int timeEnd = a.getTimeEnd();
+                Rectangle recActivation = new Rectangle(10, (timeEnd - timeBegin) / 100.0 * (timeLineEndY - timeLineStartY), Color.WHITESMOKE);
                 recActivation.setStroke(Color.BLACK);
                 AnchorPane.setTopAnchor(recActivation, timeLineStartY + (timeBegin * timeLineOneUnit));
                 AnchorPane.setLeftAnchor(recActivation, inc + 110.0);
                 root.getChildren().add(recActivation);
 
                 // create activation entry and add it on the grid pane
-                Label lActivation = new Label("Todo");
+                Label lActivation = new Label(o.getObjName() + "(" + Integer.toString(timeBegin) + ":" + Integer.toString(timeEnd) + ")");
                 Button bDeleteActivation = new Button("Delete");
                 bDeleteActivation.setOnAction(deleteActivation);
 
@@ -238,7 +238,7 @@ public class SDController {
             alert.showAndWait();
             return;
         }
-        // add new object and reload diagram
+        // add new object and reload the diagram
         sequenceDiagram.getObjects().add(new SDObject(objectName, className, timePos));
         loadSD(sequenceDiagram);
     }
@@ -263,8 +263,10 @@ public class SDController {
         }
     }
 
-    public void putActivation() {
-        // TODO
+    public void putActivation(SDObject object, SDActivation activation) {
+        // add new activation and reload the diagram
+        object.getActivations().add(activation);
+        loadSD(sequenceDiagram);
     }
 
     @FXML
