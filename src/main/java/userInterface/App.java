@@ -7,6 +7,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import userInterface.CDInterface.SetWindow;
 
+import java.util.Set;
+
 
 /**
  * Graphical user interface starter
@@ -14,7 +16,6 @@ import userInterface.CDInterface.SetWindow;
  * @since 2022-04-02
  */
 public class App extends Application {
-    public SetWindow window;
     public Stage stage;
 
     /**
@@ -26,7 +27,7 @@ public class App extends Application {
     public void start(Stage stage) {
         this.stage = stage;
         // create and initialize starting window
-        window = new SetWindow();
+        SetWindow window = new SetWindow();
         AnchorPane root = window.createWindow();
 
         Scene scene = new Scene(root, 1200, 800);

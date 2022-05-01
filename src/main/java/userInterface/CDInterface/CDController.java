@@ -152,9 +152,9 @@ public class CDController implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
-            openFXML("helpWindow.fxml", "Help");       // help menu
+            openFXML("ClassDiagramFXML/helpWindow.fxml", "Help");       // help menu
         } else if (actionEvent.getSource() == this.menuItemCredits) {
-            openFXML("creditsWindow.fxml", "Credits");     // credits menu
+            openFXML("ClassDiagramFXML/creditsWindow.fxml", "Credits");     // credits menu
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             addNode();      // add new node button
         } else if (actionEvent.getSource() == this.buttonCreateSD) {
@@ -303,7 +303,7 @@ public class CDController implements EventHandler<ActionEvent> {
             for (UISDConnector c: uiSDConnectors) {
                 if (event.getSource() == c.getbEditSD()) {
                     try {
-                        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SDWindow.fxml"));
+                        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/SDWindow.fxml"));
                         Stage stage = new Stage();
                         stage.setTitle(c.getlName().getText());
                         stage.setResizable(false);
@@ -473,7 +473,7 @@ public class CDController implements EventHandler<ActionEvent> {
         axisY = uiConnector.getAxisY();
         // open form window and fill up it with class attributes
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/classForm.fxml"));
             Stage stage = new Stage();
             Scene scene = new Scene(fxmlLoader.load());
 
@@ -497,7 +497,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public void addClass() {
         // open form window
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/classForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Class form");
             stage.setResizable(false);
@@ -594,7 +594,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public void addNode() {
         // open form window
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("nodeForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/nodeForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Node form");
             stage.setResizable(false);

@@ -201,7 +201,7 @@ public class SDController {
     @FXML
     void addObject(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("objectForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/objectForm.fxml"));
             Stage stage = new Stage();
             Parent root = fxmlLoader.load();
             stage.setTitle("Object form");
@@ -235,7 +235,7 @@ public class SDController {
     @FXML
     void addActivation(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("activationForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/activationForm.fxml"));
             Stage stage = new Stage();
             Parent root = fxmlLoader.load();
             stage.setTitle("Activation form");
@@ -259,7 +259,7 @@ public class SDController {
     @FXML
     void addMessage(ActionEvent event) {
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("messageForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/messageForm.fxml"));
             Stage stage = new Stage();
             Parent root = fxmlLoader.load();
             stage.setTitle("Message form");
