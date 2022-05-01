@@ -18,17 +18,17 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import sequenceDiagram.*;
 import userInterface.App;
+import userInterface.CDInterface.CDController;
+import userInterface.CDInterface.UIClassConnector;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SDController {
 
     @FXML
     private AnchorPane root;
-
-    @FXML
-    private MenuItem bClear;
 
     @FXML
     private ScrollPane spActivations, spMessages, spObjects;
@@ -81,6 +81,17 @@ public class SDController {
         // load objects
         for (SDObject o: sd.getObjects()) {
             Text objectName = new Text(o.getObjName() + ":\n" + o.getClassName());
+            // check object for inconsistency with class diagram
+            boolean inconsistency = true;
+            for (UIClassConnector c: CDController.getController().uiClassConnectors) {
+                if (Objects.equals(c.getClassNameLabel().getText(), o.getClassName())) {
+                    inconsistency = false;
+                }
+            }
+            if (inconsistency) {
+                objectName.setFill(Color.RED);
+            }
+
             objectName.setTextAlignment(TextAlignment.CENTER);
             Rectangle recObj = new Rectangle(110, 40, Color.WHITESMOKE);
             recObj.setStroke(Color.BLACK);
@@ -237,7 +248,7 @@ public class SDController {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Diagram is full");
             alert.setHeaderText(null);
-            alert.setContentText("There are no space for the new object.\n");
+            alert.setContentText("There are no space for the new object");
 
             alert.showAndWait();
             return;
@@ -294,7 +305,8 @@ public class SDController {
     }
 
     public void putMessage() {
-        // TODO
+
+        loadSD(sequenceDiagram);
     }
 
     @FXML
