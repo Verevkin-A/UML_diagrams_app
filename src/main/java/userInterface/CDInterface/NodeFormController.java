@@ -45,7 +45,7 @@ public class NodeFormController {
     }
 
     @FXML
-    void doneAction(ActionEvent event) {
+    void doneAction() {
         // check if every required field is selected
         // if not show warning message
         if (cbFromClass.getValue() == null || cbToClass.getValue() == null) {

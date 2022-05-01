@@ -23,7 +23,7 @@ public class ObjectFormController {
     }
 
     @FXML
-    void doneAction(ActionEvent event) {
+    void doneAction() {
         String objectName = tfObjectName.getText();
         String className = tfClassName.getText();
         String timePositionString = Objects.equals(tfTimePosition.getText(), "") ? "-1" : tfTimePosition.getText();

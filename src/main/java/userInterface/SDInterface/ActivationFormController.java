@@ -2,7 +2,6 @@ package userInterface.SDInterface;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
@@ -33,15 +32,10 @@ public class ActivationFormController {
     }
 
     @FXML
-    void doneAction(ActionEvent event) {
+    void doneAction() {
         // check if object is selected
         if (cbObjects.getValue() == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Unselected object");
-            alert.setHeaderText(null);
-            alert.setContentText("Object for the new activation is unselected");
-
-            alert.showAndWait();
+            showWarning("Unselected object", "Object for the new activation is unselected");
             return;
         }
 
@@ -55,40 +49,40 @@ public class ActivationFormController {
                 throw new java.lang.NumberFormatException("Invalid time integer");
             }
         } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Invalid time");
-            alert.setHeaderText(null);
-            alert.setContentText("Time can only be integer from 0 to 100.\nEnd time must be greater than begin time");
-
-            alert.showAndWait();
+            showWarning("Invalid time", "Time can only be integer from 0 to 100.\nEnd time must be greater than begin time");
             return;
         }
 
         SDObject object = cbObjects.getValue().getObject();
+        SDActivation newActivation = new SDActivation(beginTimeInt, endTimeInt);
         // check if activation time is valid
-        System.out.println("Object time: " + object.getTimePos());
+        if (!object.checkActivation(newActivation)) {
+            showWarning("Invalid time", "Activation not within the lifeline of the object");
+            return;
+        }
         for (SDActivation a: object.getActivations()) {
             int beginTimeExist = a.getTimeBegin();
             int endTimeExist = a.getTimeEnd();
-            System.out.println("Activation start: " + beginTimeExist);
-            System.out.println("Activation end: " + a.getTimeEnd());
             if (object.getTimePos() > beginTimeInt ||
                     (beginTimeExist > beginTimeInt && beginTimeExist < endTimeInt) ||
                     (endTimeExist > beginTimeInt && endTimeExist < endTimeInt) ||
                     (beginTimeInt > beginTimeExist && beginTimeInt < endTimeExist) ||
                     (endTimeInt > beginTimeExist && endTimeInt < endTimeExist)) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Invalid time");
-                alert.setHeaderText(null);
-                alert.setContentText("Selected time interval for the selected object either already have activation \n" +
-                        "or not within the lifeline of the object.");
-
-                alert.showAndWait();
+                showWarning("Invalid time", "There are existing activation within the selected timeline");
                 return;
             }
         }
         // add activation on the pane
-        sdController.putActivation(object, new SDActivation(beginTimeInt, endTimeInt));
+        sdController.putActivation(object, newActivation);
         ((Stage) tfBeginTime.getScene().getWindow()).close();
+    }
+
+    private void showWarning(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        alert.showAndWait();
     }
 }

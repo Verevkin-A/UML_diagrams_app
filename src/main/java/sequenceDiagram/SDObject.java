@@ -131,7 +131,7 @@ public class SDObject {
      * @return True if the activation is within the bounds of the object's lifeline, false otherwise.
      */
     public boolean checkActivation(SDActivation activation) {
-        return activation.getTimeBegin() > this.timePos && activation.getTimeEnd() <= 100;
+        return activation.getTimeBegin() >= this.timePos && activation.getTimeEnd() <= 100;
     }
 
     public void setTimePos(int timePos) {

@@ -75,7 +75,8 @@ public class SDController {
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
         // reset sequence diagram
-        bClear.fire();
+        clearPane();
+        clearGPs();
         int inc = 0;    // X position error
         // load objects
         for (SDObject o: sd.getObjects()) {
@@ -97,6 +98,7 @@ public class SDController {
             // create object entry and add him on the grid pane
             Label lObject = new Label(o.getObjName() + ":" + o.getClassName());
             Button bEditObject = new Button("Edit");
+            bEditObject.setOnAction(editObject);
             Button bDeleteObject = new Button("Delete");
             bDeleteObject.setOnAction(deleteObject);
 
@@ -117,7 +119,7 @@ public class SDController {
                 root.getChildren().add(recActivation);
 
                 // create activation entry and add it on the grid pane
-                Label lActivation = new Label(o.getObjName() + "(" + Integer.toString(timeBegin) + ":" + Integer.toString(timeEnd) + ")");
+                Label lActivation = new Label(o.getObjName() + "(" + timeBegin + ":" + timeEnd + ")");
                 Button bDeleteActivation = new Button("Delete");
                 bDeleteActivation.setOnAction(deleteActivation);
 
@@ -168,9 +170,11 @@ public class SDController {
     }
 
     @FXML
-    void clearAction(ActionEvent event) {
+    void clearAction() {
         clearPane();
         clearGPs();
+        sequenceDiagram.getObjects().clear();
+        sequenceDiagram.getMessages().clear();
     }
 
     private void clearPane() {
@@ -210,7 +214,7 @@ public class SDController {
     }
 
     @FXML
-    void addObject(ActionEvent event) {
+    void addObject() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/objectForm.fxml"));
             Stage stage = new Stage();
@@ -244,7 +248,7 @@ public class SDController {
     }
 
     @FXML
-    void addActivation(ActionEvent event) {
+    void addActivation() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/activationForm.fxml"));
             Stage stage = new Stage();
@@ -270,7 +274,7 @@ public class SDController {
     }
 
     @FXML
-    void addMessage(ActionEvent event) {
+    void addMessage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/messageForm.fxml"));
             Stage stage = new Stage();
@@ -294,7 +298,7 @@ public class SDController {
     }
 
     @FXML
-    void undoAction(ActionEvent event) {
+    void undoAction() {
         // TODO
     }
 
