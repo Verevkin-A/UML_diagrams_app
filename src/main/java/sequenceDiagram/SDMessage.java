@@ -1,5 +1,6 @@
 package sequenceDiagram;
 
+import classDiagram.CDField;
 import classDiagram.ClassDiagram;
 import classDiagram.NodeType;
 
@@ -45,7 +46,7 @@ public class SDMessage {
      * @param cd The class diagram against which to check inconsistencies
      */
     public void setInconsistentOnLoad(ClassDiagram cd) {
-        isInconsistentOnLoad = !checkFromAndTo(cd, this.from, this.to);
+        isInconsistentOnLoad = !checkConsistency(cd, this.to, this.name);
     }
 
     /**
@@ -57,21 +58,23 @@ public class SDMessage {
     }
 
     /**
-     * Checks the start and end objects of a message.
-     * If the objects are instances of classes with no association, aggregation or composition,
-     * they are not consistent.
+     * Checks the end object of a message, as well as the message name, for consistency.
+     *
      * @param cd The class diagram against which to check.
      * @return True if the message is consistent, false otherwise.
      */
-    public boolean checkFromAndTo(ClassDiagram cd, SDObject from, SDObject to) {
-        for (int i = 0; i < cd.nodesLen(); i++) {
-            if ((this.from.getClassName().equals(cd.getCDNode(i).getFrom().getName()) &&
-                this.to.getClassName().equals(cd.getCDNode(i).getTo().getName()))
-                    ||
-                (this.from.getClassName().equals(cd.getCDNode(i).getTo().getName()) &&
-                this.to.getClassName().equals(cd.getCDNode(i).getFrom().getName()))) {
-                if (cd.getCDNode(i).getType() != NodeType.GENERALIZATION.getNumVal()) {
-                    return true;
+    public boolean checkConsistency(ClassDiagram cd, SDObject to, String name) {
+        for (int i = 0; i < cd.classesLen(); i++) {
+            if (cd.getCDClass(i).getName().equals(to.getClassName())) {
+                for (CDField method : cd.getCDClass(i).getMethods()) {
+                    if (method.getName().equals(name)) {
+                        return true;
+                    }
+                }
+                for (CDField method : cd.getCDClass(i).getSuperclassMethods(cd)) {
+                    if (method.getName().equals(name)) {
+                        return true;
+                    }
                 }
             }
         }

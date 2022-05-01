@@ -8,6 +8,7 @@ import parser.Parser;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 /**
  * A test suite for the ClassDiagram
@@ -43,5 +44,30 @@ public class ClassDiagramTest {
 
         Assertions.assertEquals(-1, classRmvdParent.getParent());
         Assertions.assertEquals(1, cd.nodesLen());
+    }
+
+    @Test
+    public void testSuperMethods() {
+        CDClass testClass = cd.getCDClass(1);
+
+        ArrayList<CDField> superMethods = testClass.getSuperclassMethods(cd);
+
+        Assertions.assertEquals(superMethods.get(0).getName(), "myTestMethod2()");
+        Assertions.assertEquals(superMethods.get(1).getName(), "myTestMethod()");
+        Assertions.assertEquals(superMethods.get(2).getName(), "myTestMethod5()");
+
+        Assertions.assertEquals(superMethods.size(), 3);
+    }
+
+    @Test
+    public void testOverridenMethods() {
+        CDClass testClass = cd.getCDClass(1);
+
+        ArrayList<CDField> overridenMethods = testClass.getOverridenMethods(cd);
+
+        Assertions.assertEquals(overridenMethods.get(0).getName(), "myTestMethod()");
+        Assertions.assertEquals(overridenMethods.get(1).getName(), "myTestMethod2()");
+
+        Assertions.assertEquals(overridenMethods.size(), 2);
     }
 }

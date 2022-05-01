@@ -1,5 +1,6 @@
 package classDiagram;
 
+import sequenceDiagram.SDMessage;
 import sequenceDiagram.SDObject;
 import sequenceDiagram.SequenceDiagram;
 
@@ -155,6 +156,24 @@ public class CDClass {
     }
 
     /**
+     * Checks if a method is bound to a message in a sequence diagram.
+     * Would deleting this method cause an inconsistency?
+     * @param cd The class diagram against which to check consistency
+     * @param method The method to be deleted
+     * @return TRUE if deleting this method would cause an inconsistency, FALSE otherwise
+     */
+    public boolean checkDeleteMethod(ClassDiagram cd, CDField method) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDMessage msg : sd.getMessages()) {
+                if (msg.getTo().getClassName().equals(this.name) && msg.getName().equals(method.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets the isInterface property.
      * @param isInterface true if class is an interface, false otherwise
      */
@@ -224,17 +243,37 @@ public class CDClass {
      */
     public ArrayList<CDField> getOverridenMethods(ClassDiagram cd) {
         ArrayList<CDField> overridenMethods = new ArrayList<>();
+        ArrayList<CDField> superMethods = this.getSuperclassMethods(cd);
         if (this.parent != -1) {
-            CDClass parentClass = cd.getCDClass(this.parent);
             for (CDField method : this.methods) {
-                if (parentClass.methods.contains(method) &&
-                        method.getVisibility() != Visibility.PRIVATE) {
-                    overridenMethods.add(method);
+                for (CDField superMethod : superMethods) {
+                    if (method.getName().equals(superMethod.getName())) {
+                        overridenMethods.add(method);
+                    }
                 }
             }
-            return overridenMethods;
         }
-        return null;
+        return overridenMethods;
+    }
+
+    /**
+     * @return the methods in the parent available in the subclass
+     */
+    public ArrayList<CDField> getSuperclassMethods(ClassDiagram cd) {
+        ArrayList<CDField> superclassMethods = new ArrayList<>();
+        int currParent = this.parent;
+        int superCnt = 0;
+        while (currParent != -1 && superCnt < 50) {
+            CDClass parentClass = cd.getCDClass(currParent);
+            currParent = parentClass.parent;
+            for (CDField superMethod : parentClass.getMethods()) {
+                if (superMethod.getVisibility() != Visibility.PRIVATE) {
+                    superclassMethods.add(superMethod);
+                }
+            }
+            superCnt++;
+        }
+        return superclassMethods;
     }
 
     /**
