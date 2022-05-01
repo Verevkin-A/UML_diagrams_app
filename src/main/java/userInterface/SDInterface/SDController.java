@@ -9,10 +9,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -29,6 +26,9 @@ public class SDController {
 
     @FXML
     private AnchorPane root;
+
+    @FXML
+    private MenuItem bClear;
 
     @FXML
     private ScrollPane spActivations, spMessages, spObjects;
@@ -75,7 +75,7 @@ public class SDController {
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
         // reset sequence diagram
-        clearSD();
+        bClear.fire();
         int inc = 0;    // X position error
         // load objects
         for (SDObject o: sd.getObjects()) {
@@ -167,7 +167,8 @@ public class SDController {
         }
     }
 
-    private void clearSD() {
+    @FXML
+    void clearAction(ActionEvent event) {
         clearPane();
         clearGPs();
     }

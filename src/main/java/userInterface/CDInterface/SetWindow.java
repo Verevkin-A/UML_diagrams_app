@@ -29,7 +29,8 @@ public class SetWindow {
      */
     public AnchorPane createWindow() {
         Menu menuFile = new Menu("File");
-        menuFile.getItems().addAll(this.CDController.menuItemLoad, this.CDController.menuItemSave, this.CDController.menuItemUndo);
+        menuFile.getItems().addAll(this.CDController.menuItemLoad, this.CDController.menuItemSave,
+                this.CDController.menuItemClear, this.CDController.menuItemUndo);
         Menu menuAbout = new Menu("About");
         menuAbout.getItems().addAll(this.CDController.menuItemHelp, this.CDController.menuItemCredits);
         // configure menu title bar

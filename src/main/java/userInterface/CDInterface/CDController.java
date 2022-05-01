@@ -51,9 +51,10 @@ public class CDController implements EventHandler<ActionEvent> {
     // Menu buttons
     public MenuItem menuItemLoad = new MenuItem("Load");
     public MenuItem menuItemSave = new MenuItem("Save");
+    public MenuItem menuItemClear = new MenuItem("Clear");
+    public MenuItem menuItemUndo = new MenuItem("Undo");
     public MenuItem menuItemHelp = new MenuItem("Help");
     public MenuItem menuItemCredits = new MenuItem("Credits");
-    public MenuItem menuItemUndo = new MenuItem("Undo");
     // pane static buttons
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
     public final Button buttonCreateNode = new Button("New node");
@@ -82,6 +83,7 @@ public class CDController implements EventHandler<ActionEvent> {
         this.menuItemSave.setOnAction(this);
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
+        this.menuItemClear.setOnAction(this);
         this.menuItemUndo.setOnAction(this);
 
         this.buttonCreateNode.setOnAction(this);
@@ -161,12 +163,14 @@ public class CDController implements EventHandler<ActionEvent> {
             // add new sequence diagram and window with it
             SequenceDiagram sd = new SequenceDiagram();
             saveSD(sd);
-            for (UISDConnector c: uiSDConnectors) {
+            for (UISDConnector c : uiSDConnectors) {
                 if (c.getSequenceDiagram() == sd) {
                     c.getbEditSD().fire();
                     break;
                 }
             }
+        } else if (actionEvent.getSource() == this.menuItemClear) {
+            clearScreen();      // clear pane from all user objects
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
         }
@@ -303,7 +307,7 @@ public class CDController implements EventHandler<ActionEvent> {
             for (UISDConnector c: uiSDConnectors) {
                 if (event.getSource() == c.getbEditSD()) {
                     try {
-                        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/SDWindow.fxml"));
+                        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/SDWindow.fxml"));
                         Stage stage = new Stage();
                         stage.setTitle(c.getlName().getText());
                         stage.setResizable(false);
