@@ -1,5 +1,6 @@
 package classDiagram;
 
+import sequenceDiagram.SDMessage;
 import sequenceDiagram.SDObject;
 import sequenceDiagram.SequenceDiagram;
 
@@ -152,6 +153,24 @@ public class CDClass {
      */
     public boolean addMethod(CDField method) {
         return this.methods.add(method);
+    }
+
+    /**
+     * Checks if a method is bound to a message in a sequence diagram.
+     * Would deleting this method cause an inconsistency?
+     * @param cd The class diagram against which to check consistency
+     * @param method The method to be deleted
+     * @return TRUE if deleting this method would cause an inconsistency, FALSE otherwise
+     */
+    public boolean checkDeleteMethod(ClassDiagram cd, CDField method) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDMessage msg : sd.getMessages()) {
+                if (msg.getTo().getClassName().equals(this.name) && msg.getName().equals(method.getName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

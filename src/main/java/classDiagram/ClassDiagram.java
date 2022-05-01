@@ -1,5 +1,6 @@
 package classDiagram;
 
+import sequenceDiagram.SDObject;
 import sequenceDiagram.SequenceDiagram;
 
 import java.util.ArrayList;
@@ -114,6 +115,22 @@ public class ClassDiagram {
         if (index < this.nodes.size()) {
             this.nodes.remove(index);
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if deleting a class would cause an inconsistency in the sequence diagrams.
+     * @param deletedClass The class we want to delete.
+     * @return TRUE if an inconsistency would be caused, false otherwise.
+     */
+    public boolean checkDeleteClass(CDClass deletedClass) {
+        for (SequenceDiagram sd : this.getSequenceDiagrams()) {
+            for (SDObject obj : sd.getObjects()) {
+                if (obj.getClassName().equals(deletedClass.getName())) {
+                    return true;
+                }
+            }
         }
         return false;
     }

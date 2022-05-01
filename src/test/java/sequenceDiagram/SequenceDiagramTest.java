@@ -75,6 +75,7 @@ public class SequenceDiagramTest {
         Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, testMsg.getName()));
 
         testObjTo.setClassName("testClass3");
+        Assertions.assertTrue(cd.checkDeleteClass(testClassTo));
 
         Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
         Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
@@ -83,6 +84,7 @@ public class SequenceDiagramTest {
 
 
         testObjTo.setClassName("nonsens1");
+        Assertions.assertFalse(cd.checkDeleteClass(testClassTo));
 
         Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, testMsg.getName()));
         Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
@@ -91,6 +93,7 @@ public class SequenceDiagramTest {
         Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod3()"));
 
         testObjTo.setClassName("testClass");
+        Assertions.assertFalse(cd.checkDeleteClass(testClassTo));
         Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
         Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
 
