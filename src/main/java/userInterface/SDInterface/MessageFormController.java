@@ -1,13 +1,20 @@
 package userInterface.SDInterface;
 
+import classDiagram.ClassDiagram;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import sequenceDiagram.MessageType;
+import sequenceDiagram.SDMessage;
+import userInterface.CDInterface.CDController;
+import userInterface.CDInterface.UIClassConnector;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MessageFormController {
 
@@ -37,8 +44,6 @@ public class MessageFormController {
 
     @FXML
     void doneAction() {
-        String msgName = tfMessageName.getText(); // TODO consistency check
-
         if (cbFrom.getValue() == null || cbTo.getValue() == null) {
             showWarning("Unselected object", "One or both objects are not selected");
             return;
@@ -58,6 +63,19 @@ public class MessageFormController {
             return;
         }
 
+        String msgName = tfMessageName.getText();
+        ClassDiagram currentCD = CDController.getController().saveCD();
+        if (!SDMessage.checkConsistency(currentCD, cbTo.getValue().getObject(), msgName)) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Inconsistency");
+            alert.setHeaderText(null);
+            alert.setContentText("There are no method named '" + msgName + "' in selected class. Still proceed?");
+
+            alert.showAndWait();
+            if (alert.getResult() != ButtonType.OK){
+                return;
+            }
+        }
 
         sdController.putMessage(msgName, cbFrom.getItems().indexOf(cbFrom.getValue()), cbTo.getItems().indexOf(cbTo.getValue()),
                 getMessageType(tgMessageType.getSelectedToggle()), timePosInt);

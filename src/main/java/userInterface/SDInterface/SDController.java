@@ -1,5 +1,6 @@
 package userInterface.SDInterface;
 
+import classDiagram.ClassDiagram;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -74,6 +75,7 @@ public class SDController {
 
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
+        ClassDiagram currentCD = CDController.getController().saveCD();
         // reset sequence diagram
         clearPane();
         clearGPs();
@@ -156,6 +158,10 @@ public class SDController {
             double Y = timeLineStartY + (m.getTimePos() * timeLineOneUnit);
             // message name label positioning
             Label lNameMessage = new Label(m.getName());
+            // color message red in case of inconsistency
+            if (!SDMessage.checkConsistency(currentCD, uiObjectConnectors.get(classIndexTo).getObject(), m.getName())) {
+                lNameMessage.setTextFill(Color.RED);
+            }
             lNameMessage.setAlignment(Pos.CENTER);
             AnchorPane.setLeftAnchor(lNameMessage, fromX - (classIndexFrom < classIndexTo ? 0 : 72));
             AnchorPane.setTopAnchor(lNameMessage, Y - 17);
@@ -167,7 +173,7 @@ public class SDController {
             Shape arrowHead = getArrowHead(fromX, toX, Y);
 
             root.getChildren().addAll(lineMessage, arrowHead, lNameMessage);
-
+            // if message is destroy, create cross object on the object lifeline
             if (m.getType() == MessageType.DESTROY_OBJ) {
                 Line cross1 = new Line(105 + classIndexTo * 135, Y + 30, 125 + classIndexTo * 135, Y + 50);
                 Line cross2 = new Line(125 + classIndexTo * 135, Y + 30, 105 + classIndexTo * 135, Y + 50);

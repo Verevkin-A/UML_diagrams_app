@@ -63,7 +63,7 @@ public class SDMessage {
      * @param cd The class diagram against which to check.
      * @return True if the message is consistent, false otherwise.
      */
-    public boolean checkConsistency(ClassDiagram cd, SDObject to, String name) {
+    public static boolean checkConsistency(ClassDiagram cd, SDObject to, String name) {
         for (int i = 0; i < cd.classesLen(); i++) {
             if (cd.getCDClass(i).getName().equals(to.getClassName())) {
                 for (CDField method : cd.getCDClass(i).getMethods()) {

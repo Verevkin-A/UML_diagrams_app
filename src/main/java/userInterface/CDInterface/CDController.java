@@ -419,11 +419,11 @@ public class CDController implements EventHandler<ActionEvent> {
     }
 
     private void saveClasses(ClassDiagram cd) {
-        for (UIClassConnector connector: uiClassConnectors) {
+        for (UIClassConnector cClass: uiClassConnectors) {
             // extract fields and methods from connector
             ArrayList<CDField> fields = new ArrayList<>();
             ArrayList<CDField> methods = new ArrayList<>();
-            for (FormField ff: connector.getTableView().getItems()) {
+            for (FormField ff: cClass.getTableView().getItems()) {
                 if (Objects.equals(ff.getType(), "Field")) {
                     fields.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
                 }
@@ -431,11 +431,17 @@ public class CDController implements EventHandler<ActionEvent> {
                     methods.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
                 }
             }
-            // TODO Parent
+            // assign parent class
+            int parent = -1;
+            for (UINodeConnector cNode: uiNodeConnectors) {
+                if (cNode.getNodeType() == NodeType.GENERALIZATION && cNode.getFrom() == cClass) {
+                    parent = uiClassConnectors.indexOf(cNode.getTo());
+                }
+            }
             // create and add new class to class diagram
-            CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99,
-                    fields, methods, connector.getInterface_(),
-                    connector.getAxisX().intValue(), connector.getAxisY().intValue());
+            CDClass cdClass = new CDClass(cClass.getClassNameLabel().getText(), parent,
+                    fields, methods, cClass.getInterface_(),
+                    cClass.getAxisX().intValue(), cClass.getAxisY().intValue());
             cd.addClass(cdClass);
         }
     }
