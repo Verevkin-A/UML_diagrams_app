@@ -76,13 +76,12 @@ public class CDClass {
     /**
      * Checks whether changing a class to a different name causes an inconsistency in the sequence diagram.
      * @param cd The class diagram containing a sequence diagram against which to check inconsistencies.
-     * @param name The name of the class you want to set.
      * @return TRUE if an inconsistency is not caused, FALSE otherwise.
      */
-    private boolean checkName(ClassDiagram cd, String name) {
+    public boolean checkName(ClassDiagram cd) {
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDObject obj : sd.getObjects()) {
-                if (obj.getClassName().equals(name)) {
+                if (obj.getClassName().equals(this.name)) {
                     return true;
                 }
             }

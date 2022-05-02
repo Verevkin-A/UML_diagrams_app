@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -32,6 +33,7 @@ import javafx.util.Duration;
 import parser.Parser;
 import sequenceDiagram.SequenceDiagram;
 import userInterface.App;
+import userInterface.SDInterface.SDController;
 
 /**
  * Main window CDController
@@ -43,15 +45,16 @@ public class CDController implements EventHandler<ActionEvent> {
     public AnchorPane root;
     public GridPane gridPaneClasses;
     public GridPane gridPaneNodes;
-    public GridPane gridPaneCD;
+    public GridPane gridPaneSD;
 
     private final FileChooser fileChooser = new FileChooser();
     // Menu buttons
     public MenuItem menuItemLoad = new MenuItem("Load");
     public MenuItem menuItemSave = new MenuItem("Save");
+    public MenuItem menuItemClear = new MenuItem("Clear");
+    public MenuItem menuItemUndo = new MenuItem("Undo");
     public MenuItem menuItemHelp = new MenuItem("Help");
     public MenuItem menuItemCredits = new MenuItem("Credits");
-    public MenuItem menuItemUndo = new MenuItem("Undo");
     // pane static buttons
     public final ToggleButton buttonCreateClass = new ToggleButton("New class");
     public final Button buttonCreateNode = new Button("New node");
@@ -64,6 +67,11 @@ public class CDController implements EventHandler<ActionEvent> {
     // lists with depending on each other GUI objects
     public ArrayList<UIClassConnector> uiClassConnectors;
     public ArrayList<UINodeConnector> uiNodeConnectors;
+    public ArrayList<UISDConnector> uiSDConnectors;
+
+    public ArrayList<ClassDiagram> undoMemory;
+    // sequence diagrams counter
+    private int SDIdentifNum = 1;
     // CDController singleton instance
     private static CDController CD_controller;
 
@@ -77,13 +85,17 @@ public class CDController implements EventHandler<ActionEvent> {
         this.menuItemSave.setOnAction(this);
         this.menuItemHelp.setOnAction(this);
         this.menuItemCredits.setOnAction(this);
+        this.menuItemClear.setOnAction(this);
         this.menuItemUndo.setOnAction(this);
 
         this.buttonCreateNode.setOnAction(this);
         this.buttonCreateSD.setOnAction(this);
-
+        // initialize UI connectors
         uiClassConnectors = new ArrayList<>();
         uiNodeConnectors = new ArrayList<>();
+        uiSDConnectors = new ArrayList<>();
+
+        undoMemory = new ArrayList<>();
     }
 
     public static CDController setController(AnchorPane root) {
@@ -97,10 +109,10 @@ public class CDController implements EventHandler<ActionEvent> {
         return CD_controller;
     }
 
-    public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes, GridPane gridPaneCD) {
+    public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes, GridPane gridPaneSD) {
         this.gridPaneClasses = gridPaneClasses;
         this.gridPaneNodes = gridPaneNodes;
-        this.gridPaneCD = gridPaneCD;
+        this.gridPaneSD = gridPaneSD;
     }
 
     @Override
@@ -109,7 +121,6 @@ public class CDController implements EventHandler<ActionEvent> {
             // load class diagram from .json
             File file = this.fileChooser.showOpenDialog(null);
             ClassDiagram cd = new ClassDiagram();
-            ArrayList<SequenceDiagram> sds = new ArrayList<>();
             // read input
             try {
                 String diagString = Files.readString(Paths.get(file.getAbsolutePath()));
@@ -122,13 +133,16 @@ public class CDController implements EventHandler<ActionEvent> {
             // load class diagram
             loadClasses(cd);
             // wait before all classes are saved and load nodes
-            PauseTransition wait = new PauseTransition(Duration.seconds(0.01));
+            PauseTransition wait = new PauseTransition(Duration.seconds(0.1));
             ClassDiagram finalCd = cd;
             wait.setOnFinished((e) -> loadNodes(finalCd));
             wait.play();
+            // load sequence diagrams
+            loadSDs(cd.getSequenceDiagrams());
         } else if (actionEvent.getSource() == this.menuItemSave) {
             // save class diagram into .json
             ClassDiagram cd = saveCD();
+            saveSDs(cd);
             // show file chooser
             File file = this.fileChooser.showSaveDialog(null);
             // check if file have extension
@@ -144,13 +158,28 @@ public class CDController implements EventHandler<ActionEvent> {
                 e.printStackTrace();
             }
         } else if (actionEvent.getSource() == this.menuItemHelp) {
-            openFXML("helpWindow.fxml", "Help");       // help menu
+            openFXML("ClassDiagramFXML/helpWindow.fxml", "Help");       // help menu
         } else if (actionEvent.getSource() == this.menuItemCredits) {
-            openFXML("creditsWindow.fxml", "Credits");     // credits menu
+            openFXML("ClassDiagramFXML/creditsWindow.fxml", "Credits");     // credits menu
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             addNode();      // add new node button
         } else if (actionEvent.getSource() == this.buttonCreateSD) {
-            openFXML("SDWindow.fxml", "Sequence Diagram");        // add new sequence diagram
+            undoSave();
+            // add new sequence diagram and window with it
+            SequenceDiagram sd = new SequenceDiagram();
+            saveSD(sd);
+            for (UISDConnector c : uiSDConnectors) {
+                if (c.getSequenceDiagram() == sd) {
+                    c.getbEditSD().fire();
+                    break;
+                }
+            }
+        } else if (actionEvent.getSource() == this.menuItemClear) {
+            if (showConformation("Remove everything?", "All classes, nodes and sequence diagrams will be removed. Proceed?")) {
+                return;
+            }
+            undoSave();
+            clearScreen();      // clear pane from all user objects
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
         }
@@ -161,6 +190,7 @@ public class CDController implements EventHandler<ActionEvent> {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
             Stage stage = new Stage();
             stage.setTitle(title);
+            stage.setResizable(false);
             stage.setScene(new Scene(fxmlLoader.load()));
             stage.show();
         } catch (IOException e) {
@@ -168,17 +198,38 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    public boolean showConformation(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        alert.showAndWait();
+        return alert.getResult() != ButtonType.OK;
+    }
+
     public EventHandler<ActionEvent> deleteClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UIClassConnector cClass : uiClassConnectors) {
+            for (UIClassConnector cClass: uiClassConnectors) {
                 if (event.getSource() == cClass.getBtnDelete()) {
+                    undoSave();
+
+                    ClassDiagram currentCD = CDController.getController().saveCD();
+                    saveSDs(currentCD);
+                    // check if deleting class would cause inconsistency in one of the class diagrams
+                    if (currentCD.checkDeleteClass(currentCD.getCDClass(uiClassConnectors.indexOf(cClass)))) {
+                        if (showConformation("Inconsistency", "Action will cause inconsistency in one of the sequence diagrams. Still proceed?")) {
+                            return;
+                        }
+                    }
+
                     root.getChildren().remove(cClass.getTpClass());
                     gridPaneClasses.getChildren().removeAll(cClass.getClassNameLabel(), cClass.getBtnEdit(), cClass.getBtnDelete());
 
                     // delete all nodes, connected with deleting class
                     ArrayList<UINodeConnector> nodesToDelete = new ArrayList<>();
-                    for (UINodeConnector cNode : uiNodeConnectors) {
+                    for (UINodeConnector cNode: uiNodeConnectors) {
                         if (cNode.getFrom() == cClass || cNode.getTo() == cClass) {
                             root.getChildren().removeAll(cNode.getNode(), cNode.getArrowHead(), cNode.getfCard(), cNode.gettCard());
                             gridPaneNodes.getChildren().removeAll(cNode.getNodeNameLabel(), cNode.getBtnDelete());
@@ -189,9 +240,9 @@ public class CDController implements EventHandler<ActionEvent> {
                     for (UINodeConnector cNode: nodesToDelete) {
                         // if deleted node type is generalization, remove possible highlighting on inherited methods
                         if (cNode.getNodeType() == NodeType.GENERALIZATION) {
-                            for (Node fromField : cNode.getFrom().getVbFields().getChildren()) {
+                            for (Node fromField: cNode.getFrom().getVbFields().getChildren()) {
                                 if (((Label) fromField).getText().endsWith("()") && ((Label) fromField).getTextFill() == Color.RED) {
-                                    for (Node toField : cNode.getTo().getVbFields().getChildren())
+                                    for (Node toField: cNode.getTo().getVbFields().getChildren())
                                         if (Objects.equals(((Label) fromField).getText(), ((Label) toField).getText())) {
                                             ((Label) fromField).setTextFill(Color.BLACK);
                                             break;
@@ -213,7 +264,7 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> editClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UIClassConnector c : uiClassConnectors) {
+            for (UIClassConnector c: uiClassConnectors) {
                 if (event.getSource() == c.getBtnEdit()) {
                     editClass(c);
                     connectorEditing = c;
@@ -226,8 +277,10 @@ public class CDController implements EventHandler<ActionEvent> {
     public EventHandler<ActionEvent> deleteNode = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
-            for (UINodeConnector c : uiNodeConnectors) {
+            for (UINodeConnector c: uiNodeConnectors) {
                 if (event.getSource() == c.getBtnDelete()) {
+                    undoSave();
+
                     root.getChildren().removeAll(c.getNode(), c.getArrowHead(), c.getfCard(), c.gettCard());
                     gridPaneNodes.getChildren().removeAll(c.getNodeNameLabel(), c.getBtnDelete());
 
@@ -267,8 +320,85 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     };
 
+    public EventHandler<ActionEvent> deleteSD = new EventHandler<>() {
+        @Override
+        public void handle(ActionEvent event) {
+            for (UISDConnector c: uiSDConnectors) {
+                if (event.getSource() == c.getbDeleteSD()) {
+                    undoSave();
+
+                    gridPaneSD.getChildren().removeAll(c.getlName(), c.getbEditSD(), c.getbDeleteSD());
+                    uiSDConnectors.remove(c);
+                    break;
+                }
+            }
+        }
+    };
+
+    public EventHandler<ActionEvent> editSD = new EventHandler<>() {
+        @Override
+        public void handle(ActionEvent event) {
+            for (UISDConnector c: uiSDConnectors) {
+                if (event.getSource() == c.getbEditSD()) {
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/SDWindow.fxml"));
+                        Stage stage = new Stage();
+                        stage.setTitle(c.getlName().getText());
+                        stage.setResizable(false);
+                        Parent root = fxmlLoader.load();
+                        // initialize diagram
+                        ((SDController) fxmlLoader.getController()).setConnector(c);
+
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                }
+            }
+        }
+    };
+
+    public void saveSD(SequenceDiagram sd) {
+        // create row elements
+        Label lName = new Label("SD #" + SDIdentifNum++);
+        Button bEdit = new Button("Edit");
+        bEdit.setOnAction(editSD);
+        Button bDelete = new Button("Delete");
+        bDelete.setOnAction(deleteSD);
+        // push all rows, creating place for the new sequence diagram
+        for (Node child: gridPaneSD.getChildren()) {
+            GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
+        }
+        gridPaneSD.addRow(0, lName, bEdit, bDelete);
+        // save diagram and his UI attributes in the memory
+        uiSDConnectors.add(new UISDConnector(sd, lName, bEdit, bDelete));
+    }
+
+    public void undoSave() {
+        // clone existing diagram
+        ClassDiagram cdToSave = saveCD();
+        saveSDs(cdToSave);
+
+        undoMemory.add(cdToSave);
+    }
+
     public void undo() {
-        // TODO
+        if (undoMemory.size() != 0) {
+            // clear screen and memory from all classes
+            clearScreen();
+
+            ClassDiagram cdToLoad = undoMemory.remove(undoMemory.size() - 1);
+            // load class diagram
+            loadClasses(cdToLoad);
+            // wait before all classes are saved and load nodes
+            PauseTransition wait = new PauseTransition(Duration.seconds(0.1));
+            wait.setOnFinished((e) -> loadNodes(cdToLoad));
+            wait.play();
+            // load sequence diagrams
+            loadSDs(cdToLoad.getSequenceDiagrams());
+        }
     }
 
     public void clearScreen() {
@@ -284,9 +414,22 @@ public class CDController implements EventHandler<ActionEvent> {
             gridPaneNodes.getChildren().removeAll(cNode.getNodeNameLabel(), cNode.getBtnDelete());
         }
         uiNodeConnectors.clear();
+        // delete all sequence diagrams
+        for (UISDConnector cSD: uiSDConnectors) {
+            gridPaneSD.getChildren().removeAll(cSD.getlName(), cSD.getbEditSD(), cSD.getbDeleteSD());
+        }
+        uiSDConnectors.clear();
+        // update sequence diagrams counter
+        SDIdentifNum = 1;
     }
 
-    public void loadClasses(ClassDiagram cd) {
+    private void loadSDs(ArrayList<SequenceDiagram> sds) {
+        for (SequenceDiagram sd: sds) {
+            saveSD(sd);
+        }
+    }
+
+    private void loadClasses(ClassDiagram cd) {
         for (int i = 0; i < cd.classesLen(); i++) {
             CDClass clsToAdd = cd.getCDClass(i);
             axisX = clsToAdd.getXposition();
@@ -331,11 +474,11 @@ public class CDController implements EventHandler<ActionEvent> {
     }
 
     private void saveClasses(ClassDiagram cd) {
-        for (UIClassConnector connector: uiClassConnectors) {
+        for (UIClassConnector cClass: uiClassConnectors) {
             // extract fields and methods from connector
             ArrayList<CDField> fields = new ArrayList<>();
             ArrayList<CDField> methods = new ArrayList<>();
-            for (FormField ff: connector.getTableView().getItems()) {
+            for (FormField ff: cClass.getTableView().getItems()) {
                 if (Objects.equals(ff.getType(), "Field")) {
                     fields.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
                 }
@@ -343,11 +486,17 @@ public class CDController implements EventHandler<ActionEvent> {
                     methods.add(new CDField(ff.getName(), Visibility.valueOfLabel(ff.getVisibilitySymbol())));
                 }
             }
-            // TODO Parent
+            // assign parent class
+            int parent = -1;
+            for (UINodeConnector cNode: uiNodeConnectors) {
+                if (cNode.getNodeType() == NodeType.GENERALIZATION && cNode.getFrom() == cClass) {
+                    parent = uiClassConnectors.indexOf(cNode.getTo());
+                }
+            }
             // create and add new class to class diagram
-            CDClass cdClass = new CDClass(connector.getClassNameLabel().getText(), 99,
-                    fields, methods, connector.getInterface_(),
-                    connector.getAxisX().intValue(), connector.getAxisY().intValue());
+            CDClass cdClass = new CDClass(cClass.getClassNameLabel().getText(), parent,
+                    fields, methods, cClass.getInterface_(),
+                    cClass.getAxisX().intValue(), cClass.getAxisY().intValue());
             cd.addClass(cdClass);
         }
     }
@@ -375,25 +524,38 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
-    public void editClass(UIClassConnector uiConnector) {
+    public void saveSDs(ClassDiagram cd) {
+        ArrayList<SequenceDiagram> sds = new ArrayList<>();
+        for (UISDConnector c: uiSDConnectors) {
+            sds.add(c.getSequenceDiagram());
+        }
+        cd.setSequenceDiagrams(sds);
+    }
+
+    public void editClass(UIClassConnector cClass) {
         // set class x and y
-        axisX = uiConnector.getAxisX();
-        axisY = uiConnector.getAxisY();
+        axisX = cClass.getAxisX();
+        axisY = cClass.getAxisY();
         // open form window and fill up it with class attributes
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/classForm.fxml"));
             Stage stage = new Stage();
-            Scene scene = new Scene(fxmlLoader.load());
+            Parent root = fxmlLoader.load();
+
+            ((ClassFormController) fxmlLoader.getController()).setEdit(cClass);
+
+            Scene scene = new Scene(root);
 
             TextField textField = (TextField) scene.lookup("#tfClassName");
-            textField.setText(uiConnector.getClassNameLabel().getText());   // set class name in form
+            textField.setText(cClass.getClassNameLabel().getText());   // set class name in form
 
             TableView<FormField> tableView = (TableView<FormField>) scene.lookup("#tvFields");
             ToggleButton tbInterface =  (ToggleButton) scene.lookup("#tbInterface");
-            tbInterface.setSelected(uiConnector.getInterface_());
+            tbInterface.setSelected(cClass.getInterface_());
 
-            tableView.getItems().addAll(uiConnector.getTableView().getItems());
+            tableView.getItems().addAll(cClass.getTableView().getItems());
             stage.setTitle("Class form");
+            stage.setResizable(false);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -404,9 +566,10 @@ public class CDController implements EventHandler<ActionEvent> {
     public void addClass() {
         // open form window
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("classForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/classForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Class form");
+            stage.setResizable(false);
             Scene scene = new Scene(fxmlLoader.load());
             stage.setScene(scene);
             stage.show();
@@ -427,7 +590,7 @@ public class CDController implements EventHandler<ActionEvent> {
                 vbFields.getChildren().add(new Label(ff.getVisibilitySymbol() + ff.getName() + "()"));
             }
         }
-        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_? "<<interface>>\n" : ""), className), vbFields);
+        TitledPane titledPane = new TitledPane(String.format("%s%s", (interface_ ? "<<interface>>\n" : ""), className), vbFields);
         titledPane.setCollapsible(false);
 
         AnchorPane.setLeftAnchor(titledPane, axisX);
@@ -440,7 +603,7 @@ public class CDController implements EventHandler<ActionEvent> {
         btnClassEdit.setOnAction(editClass);
         btnClassDelete.setOnAction(deleteClass);
         // create place for new row
-        for (Node child : gridPaneClasses.getChildren()) {
+        for (Node child: gridPaneClasses.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
         // insert new class row
@@ -500,9 +663,10 @@ public class CDController implements EventHandler<ActionEvent> {
     public void addNode() {
         // open form window
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("nodeForm.fxml"));
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/nodeForm.fxml"));
             Stage stage = new Stage();
             stage.setTitle("Node form");
+            stage.setResizable(false);
             Scene scene = new Scene(fxmlLoader.load());
             stage.setScene(scene);
             stage.show();
@@ -521,7 +685,7 @@ public class CDController implements EventHandler<ActionEvent> {
             for (Node fromField: fromClass.getVbFields().getChildren()) {
                 if (((Label) fromField).getText().endsWith("()")) {
                     boolean inherit = false;
-                    for (Node toField : toClass.getVbFields().getChildren()) {
+                    for (Node toField: toClass.getVbFields().getChildren()) {
                         if (Objects.equals(((Label) toField).getText(), ((Label) fromField).getText())) {
                             inherit = true;
                             break;
@@ -557,7 +721,7 @@ public class CDController implements EventHandler<ActionEvent> {
         Button btnNodeDelete = new Button("Delete");
         btnNodeDelete.setOnAction(deleteNode);
         // create place for new row
-        for (Node child : gridPaneNodes.getChildren()) {
+        for (Node child: gridPaneNodes.getChildren()) {
             GridPane.setRowIndex(child, GridPane.getRowIndex(child) + 1);
         }
         // insert new node row
@@ -566,12 +730,28 @@ public class CDController implements EventHandler<ActionEvent> {
 
         uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel,
                 nameLabel, btnNodeDelete, anchorFrom, anchorTo, nodeType));
+
+//        ClassDiagram currentCD = CDController.getController().saveCD();
+//         color red inherited methods
+//        if (nodeType == NodeType.GENERALIZATION) {
+//            for (CDField field: currentCD.getCDClass(uiClassConnectors.indexOf(fromClass)).getOverridenMethods(currentCD)) {
+//                System.out.println(field.getName());
+//                for (Node fromField: fromClass.getVbFields().getChildren()) {
+//                    String fieldName = ((Label) fromField).getText();
+//                    if (fieldName.endsWith("()") &&
+//                            (Objects.equals(fieldName.substring(1, fieldName.length() - 2), field.getName()))) {
+//                        ((Label) fromField).setTextFill(Color.RED);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
     }
 
     private Shape getArrowHead(NodeType nodeType, double[] fCrds, double[] tCrds) {
         double L1 = 15;     // arrow head wings length
         double L2 = Math.sqrt((tCrds[1] - fCrds[1]) * (tCrds[1] - fCrds[1]) + (tCrds[0] - fCrds[0]) * (tCrds[0] - fCrds[0]));
-        // calculate arrow head coordinates
+        // calculate arrow head coordinates (big brain math)
         double arrowX1 = tCrds[0] + L1 * ((fCrds[0] - tCrds[0]) * (Math.sqrt(3)/2) + (fCrds[1] - tCrds[1]) * (Math.sqrt(1)/2)) / L2;
         double arrowY1 = tCrds[1] + L1 * ((fCrds[1] - tCrds[1]) * (Math.sqrt(3)/2) - (fCrds[0] - tCrds[0]) * (Math.sqrt(1)/2)) / L2;
         double arrowX2 = tCrds[0] + L1 * ((fCrds[0] - tCrds[0]) * (Math.sqrt(3)/2) - (fCrds[1] - tCrds[1]) * (Math.sqrt(1)/2)) / L2;

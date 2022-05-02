@@ -110,7 +110,7 @@ public class SDObject {
      * @param cd The class diagram against which to check the inconsistency
      * @param className The class name we wish to set the SDObject to.
      */
-    public boolean checkClassName(ClassDiagram cd, String className) {
+    public static boolean checkClassName(ClassDiagram cd, String className) {
         for (int i = 0; i < cd.classesLen(); i++) {
             if (cd.getCDClass(i).getName().equals(className)) {
                 return true;
@@ -131,7 +131,7 @@ public class SDObject {
      * @return True if the activation is within the bounds of the object's lifeline, false otherwise.
      */
     public boolean checkActivation(SDActivation activation) {
-        return activation.getTimeBegin() > this.timePos && activation.getTimeEnd() <= 100;
+        return activation.getTimeBegin() >= this.timePos && activation.getTimeEnd() <= 100;
     }
 
     public void setTimePos(int timePos) {
