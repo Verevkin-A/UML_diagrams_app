@@ -36,7 +36,7 @@ public class SDController {
 
     private GridPane gpActivations, gpMessages, gpObjects;
 
-    private SequenceDiagram sequenceDiagram;
+    public SequenceDiagram sequenceDiagram;
 
     public double timeLineStartY = 93.0;
     public double timeLineEndY = 683.0;
@@ -335,7 +335,22 @@ public class SDController {
         public void handle(ActionEvent event) {
             for (UIObjectConnector c: uiObjectConnectors) {
                 if (event.getSource() == c.getbEditObject()) {
-                    // TODO
+                    try {
+                        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("SequenceDiagramFXML/objectForm.fxml"));
+                        Stage stage = new Stage();
+                        Parent root = fxmlLoader.load();
+                        stage.setTitle("Object form");
+                        stage.setResizable(false);
+
+                        ObjectFormController formController = fxmlLoader.getController();
+                        formController.setSDController(SDController.this);
+                        formController.setEdit(c);
+
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 }
             }

@@ -1,27 +1,35 @@
 package userInterface.SDInterface;
 
 import classDiagram.ClassDiagram;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import sequenceDiagram.SDActivation;
 import sequenceDiagram.SDObject;
 import userInterface.CDInterface.CDController;
-import userInterface.CDInterface.UIClassConnector;
 
 import java.util.Objects;
 
 public class ObjectFormController {
 
     private SDController sdController;
+    private SDObject editingObject = null;
 
     @FXML
     private TextField tfClassName, tfObjectName, tfTimePosition;
 
     public void setSDController(SDController sdController) {
         this.sdController = sdController;
+    }
+
+    public void setEdit(UIObjectConnector cObject) {
+        SDObject object = cObject.getObject();
+        tfClassName.setText(object.getClassName());
+        tfObjectName.setText(object.getObjName());
+        tfTimePosition.setText(Integer.toString(object.getTimePos()));
+        editingObject = object;
     }
 
     @FXML
@@ -34,12 +42,7 @@ public class ObjectFormController {
                 throw new java.lang.NumberFormatException("Invalid timeline position");
             }
         } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Invalid time");
-            alert.setHeaderText(null);
-            alert.setContentText("Time position can only be integer from 0 to 100.\n-1 or empty for above the timeline");
-
-            alert.showAndWait();
+            showWarning("Invalid time", "Time position can only be integer from 0 to 100.\n-1 or empty for above the timeline");
             return;
         }
 
@@ -58,8 +61,34 @@ public class ObjectFormController {
                 return;
             }
         }
-        // add new object
-        sdController.putObject(objectName, className, timePositionInt);
+
+        if (editingObject != null) {
+            for (SDActivation a: editingObject.getActivations()) {
+                if (a.getTimeBegin() < timePositionInt) {
+                    showWarning("Invalid time", "New time position overlaps with existing activation. Remove activation or change time position");
+                    return;
+                }
+            }
+
+            // edit existing object
+            editingObject.setObjName(objectName);
+            editingObject.setClassName(className);
+            editingObject.setTimePos(timePositionInt);
+
+            sdController.loadSD(sdController.sequenceDiagram);
+        } else {
+            // add new object
+            sdController.putObject(objectName, className, timePositionInt);
+        }
         ((Stage) tfClassName.getScene().getWindow()).close();
+    }
+
+    private void showWarning(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        alert.showAndWait();
     }
 }
