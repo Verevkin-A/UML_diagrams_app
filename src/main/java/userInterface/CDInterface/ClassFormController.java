@@ -59,7 +59,9 @@ public class ClassFormController {
         } else if (event.getSource() == bUpdate) {
             this.updateField();
         } else if (event.getSource() == bDone) {
-            CDController.getController().putClass(tfClassName.getText(), tbInterface.isSelected(), tvFields);
+            CDController controller = CDController.getController();
+            controller.undoSave();
+            controller.putClass(tfClassName.getText(), tbInterface.isSelected(), tvFields);
             ((Stage) bDone.getScene().getWindow()).close();
         }
     }

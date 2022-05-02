@@ -125,8 +125,11 @@ public class ClassDiagram {
      * @return TRUE if an inconsistency would be caused, false otherwise.
      */
     public boolean checkDeleteClass(CDClass deletedClass) {
+        System.out.println("|" + this.getSequenceDiagrams() + "|");
         for (SequenceDiagram sd : this.getSequenceDiagrams()) {
+            System.out.println("===================");
             for (SDObject obj : sd.getObjects()) {
+                System.out.println(obj.getClassName());
                 if (obj.getClassName().equals(deletedClass.getName())) {
                     return true;
                 }

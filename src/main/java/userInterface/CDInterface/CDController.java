@@ -68,6 +68,8 @@ public class CDController implements EventHandler<ActionEvent> {
     public ArrayList<UIClassConnector> uiClassConnectors;
     public ArrayList<UINodeConnector> uiNodeConnectors;
     public ArrayList<UISDConnector> uiSDConnectors;
+
+    public ArrayList<ClassDiagram> undoMemory;
     // sequence diagrams counter
     private int SDIdentifNum = 1;
     // CDController singleton instance
@@ -92,6 +94,8 @@ public class CDController implements EventHandler<ActionEvent> {
         uiClassConnectors = new ArrayList<>();
         uiNodeConnectors = new ArrayList<>();
         uiSDConnectors = new ArrayList<>();
+
+        undoMemory = new ArrayList<>();
     }
 
     public static CDController setController(AnchorPane root) {
@@ -160,6 +164,7 @@ public class CDController implements EventHandler<ActionEvent> {
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
             addNode();      // add new node button
         } else if (actionEvent.getSource() == this.buttonCreateSD) {
+            undoSave();
             // add new sequence diagram and window with it
             SequenceDiagram sd = new SequenceDiagram();
             saveSD(sd);
@@ -173,6 +178,7 @@ public class CDController implements EventHandler<ActionEvent> {
             if (showConformation("Remove everything?", "All classes, nodes and sequence diagrams will be removed. Proceed?")) {
                 return;
             }
+            undoSave();
             clearScreen();      // clear pane from all user objects
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
@@ -207,10 +213,15 @@ public class CDController implements EventHandler<ActionEvent> {
         public void handle(ActionEvent event) {
             for (UIClassConnector cClass: uiClassConnectors) {
                 if (event.getSource() == cClass.getBtnDelete()) {
-                    // check if deleting class would cause inconsistency in one of the class diagrams
+                    undoSave();
+
                     ClassDiagram currentCD = CDController.getController().saveCD();
-                    if (showConformation("Inconsistency", "Action will cause inconsistency in on of the sequence diagrams. Still proceed?")) {
-                        return;
+                    saveSDs(currentCD);
+                    // check if deleting class would cause inconsistency in one of the class diagrams
+                    if (currentCD.checkDeleteClass(currentCD.getCDClass(uiClassConnectors.indexOf(cClass)))) {
+                        if (showConformation("Inconsistency", "Action will cause inconsistency in one of the sequence diagrams. Still proceed?")) {
+                            return;
+                        }
                     }
 
                     root.getChildren().remove(cClass.getTpClass());
@@ -268,6 +279,8 @@ public class CDController implements EventHandler<ActionEvent> {
         public void handle(ActionEvent event) {
             for (UINodeConnector c: uiNodeConnectors) {
                 if (event.getSource() == c.getBtnDelete()) {
+                    undoSave();
+
                     root.getChildren().removeAll(c.getNode(), c.getArrowHead(), c.getfCard(), c.gettCard());
                     gridPaneNodes.getChildren().removeAll(c.getNodeNameLabel(), c.getBtnDelete());
 
@@ -312,6 +325,8 @@ public class CDController implements EventHandler<ActionEvent> {
         public void handle(ActionEvent event) {
             for (UISDConnector c: uiSDConnectors) {
                 if (event.getSource() == c.getbDeleteSD()) {
+                    undoSave();
+
                     gridPaneSD.getChildren().removeAll(c.getlName(), c.getbEditSD(), c.getbDeleteSD());
                     uiSDConnectors.remove(c);
                     break;
@@ -361,8 +376,29 @@ public class CDController implements EventHandler<ActionEvent> {
         uiSDConnectors.add(new UISDConnector(sd, lName, bEdit, bDelete));
     }
 
+    public void undoSave() {
+        // clone existing diagram
+        ClassDiagram cdToSave = saveCD();
+        saveSDs(cdToSave);
+
+        undoMemory.add(cdToSave);
+    }
+
     public void undo() {
-        // TODO
+        if (undoMemory.size() != 0) {
+            // clear screen and memory from all classes
+            clearScreen();
+
+            ClassDiagram cdToLoad = undoMemory.remove(undoMemory.size() - 1);
+            // load class diagram
+            loadClasses(cdToLoad);
+            // wait before all classes are saved and load nodes
+            PauseTransition wait = new PauseTransition(Duration.seconds(0.1));
+            wait.setOnFinished((e) -> loadNodes(cdToLoad));
+            wait.play();
+            // load sequence diagrams
+            loadSDs(cdToLoad.getSequenceDiagrams());
+        }
     }
 
     public void clearScreen() {
@@ -690,9 +726,9 @@ public class CDController implements EventHandler<ActionEvent> {
 
         uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel,
                 nameLabel, btnNodeDelete, anchorFrom, anchorTo, nodeType));
-        ClassDiagram currentCD = CDController.getController().saveCD();
 
-        // color red inherited methods
+//        ClassDiagram currentCD = CDController.getController().saveCD();
+//         color red inherited methods
 //        if (nodeType == NodeType.GENERALIZATION) {
 //            for (CDField field: currentCD.getCDClass(uiClassConnectors.indexOf(fromClass)).getOverridenMethods(currentCD)) {
 //                System.out.println(field.getName());

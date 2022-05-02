@@ -61,7 +61,10 @@ public class NodeFormController {
             showWarning("Unary generalization", "Unary generalization is not supported");
             return;
         }
-        CDController.getController().putNode(cbFromClass.getValue(), cbToClass.getValue(),
+        CDController controller = CDController.getController();
+        controller.undoSave();
+
+        controller.putNode(cbFromClass.getValue(), cbToClass.getValue(),
                 getFromAnchorType(AnchorFrom.getSelectedToggle()),
                 getToAnchorType(AnchorTo.getSelectedToggle()),
                 tfFromCardinality.getText(), tfToCardinality.getText(),
