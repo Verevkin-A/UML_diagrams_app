@@ -524,7 +524,7 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
-    private void saveSDs(ClassDiagram cd) {
+    public void saveSDs(ClassDiagram cd) {
         ArrayList<SequenceDiagram> sds = new ArrayList<>();
         for (UISDConnector c: uiSDConnectors) {
             sds.add(c.getSequenceDiagram());
@@ -532,24 +532,28 @@ public class CDController implements EventHandler<ActionEvent> {
         cd.setSequenceDiagrams(sds);
     }
 
-    public void editClass(UIClassConnector uiConnector) {
+    public void editClass(UIClassConnector cClass) {
         // set class x and y
-        axisX = uiConnector.getAxisX();
-        axisY = uiConnector.getAxisY();
+        axisX = cClass.getAxisX();
+        axisY = cClass.getAxisY();
         // open form window and fill up it with class attributes
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/classForm.fxml"));
             Stage stage = new Stage();
-            Scene scene = new Scene(fxmlLoader.load());
+            Parent root = fxmlLoader.load();
+
+            ((ClassFormController) fxmlLoader.getController()).setEdit(cClass);
+
+            Scene scene = new Scene(root);
 
             TextField textField = (TextField) scene.lookup("#tfClassName");
-            textField.setText(uiConnector.getClassNameLabel().getText());   // set class name in form
+            textField.setText(cClass.getClassNameLabel().getText());   // set class name in form
 
             TableView<FormField> tableView = (TableView<FormField>) scene.lookup("#tvFields");
             ToggleButton tbInterface =  (ToggleButton) scene.lookup("#tbInterface");
-            tbInterface.setSelected(uiConnector.getInterface_());
+            tbInterface.setSelected(cClass.getInterface_());
 
-            tableView.getItems().addAll(uiConnector.getTableView().getItems());
+            tableView.getItems().addAll(cClass.getTableView().getItems());
             stage.setTitle("Class form");
             stage.setResizable(false);
             stage.setScene(scene);
