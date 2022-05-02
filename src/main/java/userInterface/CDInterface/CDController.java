@@ -170,6 +170,9 @@ public class CDController implements EventHandler<ActionEvent> {
                 }
             }
         } else if (actionEvent.getSource() == this.menuItemClear) {
+            if (showConformation("Remove everything?", "All classes, nodes and sequence diagrams will be removed. Proceed?")) {
+                return;
+            }
             clearScreen();      // clear pane from all user objects
         } else if (actionEvent.getSource() == this.menuItemUndo) {
             undo();     // undo last action
@@ -189,11 +192,27 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    public boolean showConformation(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        alert.showAndWait();
+        return alert.getResult() != ButtonType.OK;
+    }
+
     public EventHandler<ActionEvent> deleteClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
             for (UIClassConnector cClass: uiClassConnectors) {
                 if (event.getSource() == cClass.getBtnDelete()) {
+                    // check if deleting class would cause inconsistency in one of the class diagrams
+                    ClassDiagram currentCD = CDController.getController().saveCD();
+                    if (showConformation("Inconsistency", "Action will cause inconsistency in on of the sequence diagrams. Still proceed?")) {
+                        return;
+                    }
+
                     root.getChildren().remove(cClass.getTpClass());
                     gridPaneClasses.getChildren().removeAll(cClass.getClassNameLabel(), cClass.getBtnEdit(), cClass.getBtnDelete());
 
@@ -671,6 +690,22 @@ public class CDController implements EventHandler<ActionEvent> {
 
         uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel,
                 nameLabel, btnNodeDelete, anchorFrom, anchorTo, nodeType));
+        ClassDiagram currentCD = CDController.getController().saveCD();
+
+        // color red inherited methods
+//        if (nodeType == NodeType.GENERALIZATION) {
+//            for (CDField field: currentCD.getCDClass(uiClassConnectors.indexOf(fromClass)).getOverridenMethods(currentCD)) {
+//                System.out.println(field.getName());
+//                for (Node fromField: fromClass.getVbFields().getChildren()) {
+//                    String fieldName = ((Label) fromField).getText();
+//                    if (fieldName.endsWith("()") &&
+//                            (Objects.equals(fieldName.substring(1, fieldName.length() - 2), field.getName()))) {
+//                        ((Label) fromField).setTextFill(Color.RED);
+//                        break;
+//                    }
+//                }
+//            }
+//        }
     }
 
     private Shape getArrowHead(NodeType nodeType, double[] fCrds, double[] tCrds) {

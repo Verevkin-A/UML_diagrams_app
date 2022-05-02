@@ -4,17 +4,13 @@ import classDiagram.ClassDiagram;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import sequenceDiagram.MessageType;
 import sequenceDiagram.SDMessage;
 import userInterface.CDInterface.CDController;
-import userInterface.CDInterface.UIClassConnector;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class MessageFormController {
 

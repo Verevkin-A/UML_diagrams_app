@@ -83,14 +83,8 @@ public class SDController {
         // load objects
         for (SDObject o: sd.getObjects()) {
             Text objectName = new Text(o.getObjName() + ":\n" + o.getClassName());
-            // check object for inconsistency with class diagram
-            boolean inconsistency = true;
-            for (UIClassConnector c: CDController.getController().uiClassConnectors) {
-                if (Objects.equals(c.getClassNameLabel().getText(), o.getClassName())) {
-                    inconsistency = false;
-                }
-            }
-            if (inconsistency) {
+            // color object name red in case of inconsistency with class diagram
+            if (!SDObject.checkClassName(currentCD, o.getClassName())) {
                 objectName.setFill(Color.RED);
             }
 
@@ -194,6 +188,15 @@ public class SDController {
 
     @FXML
     void clearAction() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Remove everything?");
+        alert.setHeaderText(null);
+        alert.setContentText("All objects, activations and messages will be removed. Proceed?");
+
+        alert.showAndWait();
+        if (alert.getResult() != ButtonType.OK) {
+            return;
+        }
         clearPane();
         clearGPs();
         sequenceDiagram.getObjects().clear();

@@ -16,11 +16,11 @@
             "visibility": "+"
           },
           {
-            "name": "myTestMethod4()",
+            "name": "myTestMethod4",
             "visibility": "-"
           },
           {
-            "name": "myTestMethod5()",
+            "name": "myTestMethod5",
             "visibility": "+"
           }
         ],
@@ -51,19 +51,15 @@
             "visibility": "-"
           },
           {
-            "name": "myTestMethod",
-            "visibility": "+"
-          },
-          {
             "name": "tc3m1",
             "visibility": "+"
           },
           {
-            "name": "myTestMethod()",
+            "name": "myTestMethod",
             "visibility": "+"
           },
           {
-            "name": "myTestMethod2()",
+            "name": "myTestMethod2",
             "visibility": "+"
           }
         ],
@@ -86,7 +82,7 @@
             "visibility": "+"
           },
           {
-            "name": "myTestMethod3()",
+            "name": "myTestMethod3",
             "visibility": "-"
           }
         ],
@@ -140,7 +136,7 @@
           },
           {
             "objName": "SDo2objName",
-            "className": "SDo2className",
+            "className": "testClass",
             "activations": [
               {
                 "timeBegin": 15,
@@ -150,48 +146,26 @@
             "timePos": 5
           },
           {
-            "objName": "SDo2objName",
-            "className": "SDo2className",
+            "objName": "SDo3objName",
+            "className": "SDo3className",
             "activations": [
               {
                 "timeBegin": 15,
                 "timeEnd": 20
               }
             ],
-            "timePos": 5
+            "timePos": 10
           },
           {
-            "objName": "SDo2objName",
-            "className": "SDo2className",
+            "objName": "SDo4objName",
+            "className": "SDo4className",
             "activations": [
               {
                 "timeBegin": 15,
                 "timeEnd": 20
               }
             ],
-            "timePos": 5
-          },
-          {
-            "objName": "SDo2objName",
-            "className": "SDo2className",
-            "activations": [
-              {
-                "timeBegin": 15,
-                "timeEnd": 20
-              }
-            ],
-            "timePos": 5
-          },
-          {
-            "objName": "SDo2objName",
-            "className": "SDo2className",
-            "activations": [
-              {
-                "timeBegin": 15,
-                "timeEnd": 20
-              }
-            ],
-            "timePos": 5
+            "timePos": -1
           }
         ],
         "messages": [
@@ -218,10 +192,10 @@
           },
           {
             "name": "SDm1Name",
-            "from": 0,
-            "to": 1,
+            "from": 1,
+            "to": 0,
             "type": "DESTROY_OBJ",
-            "timePos": 25
+            "timePos": 35
           }
         ]
       }

@@ -1,11 +1,13 @@
 package userInterface.SDInterface;
 
+import classDiagram.ClassDiagram;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import sequenceDiagram.SDObject;
 import userInterface.CDInterface.CDController;
 import userInterface.CDInterface.UIClassConnector;
 
@@ -24,8 +26,6 @@ public class ObjectFormController {
 
     @FXML
     void doneAction() {
-        String objectName = tfObjectName.getText();
-        String className = tfClassName.getText();
         String timePositionString = Objects.equals(tfTimePosition.getText(), "") ? "-1" : tfTimePosition.getText();
         int timePositionInt;
         try {
@@ -43,16 +43,11 @@ public class ObjectFormController {
             return;
         }
 
+        String objectName = tfObjectName.getText();
+        String className = tfClassName.getText();
         // check for consistency with class diagram
-        boolean inconsistency = true;
-        for (UIClassConnector c: CDController.getController().uiClassConnectors) {
-            if (Objects.equals(c.getClassNameLabel().getText(), className)) {
-                inconsistency = false;
-                break;
-            }
-        }
-        // throw conformation window in case of inconsistency
-        if (inconsistency) {
+        ClassDiagram currentCD = CDController.getController().saveCD();
+        if (!SDObject.checkClassName(currentCD, className)) {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Inconsistency");
             alert.setHeaderText(null);

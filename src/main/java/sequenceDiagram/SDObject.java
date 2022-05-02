@@ -110,7 +110,7 @@ public class SDObject {
      * @param cd The class diagram against which to check the inconsistency
      * @param className The class name we wish to set the SDObject to.
      */
-    public boolean checkClassName(ClassDiagram cd, String className) {
+    public static boolean checkClassName(ClassDiagram cd, String className) {
         for (int i = 0; i < cd.classesLen(); i++) {
             if (cd.getCDClass(i).getName().equals(className)) {
                 return true;
