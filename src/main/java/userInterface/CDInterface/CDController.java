@@ -332,7 +332,7 @@ public class CDController implements EventHandler<ActionEvent> {
                         stage.setResizable(false);
                         Parent root = fxmlLoader.load();
                         // initialize diagram
-                        ((SDController) fxmlLoader.getController()).loadSD(c.getSequenceDiagram());
+                        ((SDController) fxmlLoader.getController()).setConnector(c);
 
                         stage.setScene(new Scene(root));
                         stage.show();

@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 
 public class UISDConnector {
-    private final SequenceDiagram sequenceDiagram;
+    private SequenceDiagram sequenceDiagram;
     private final Label lName;
     private final Button bEditSD, bDeleteSD;
 
@@ -19,6 +19,10 @@ public class UISDConnector {
 
     public SequenceDiagram getSequenceDiagram() {
         return sequenceDiagram;
+    }
+
+    public void setSequenceDiagram(SequenceDiagram sequenceDiagram) {
+        this.sequenceDiagram = sequenceDiagram;
     }
 
     public Label getlName() {

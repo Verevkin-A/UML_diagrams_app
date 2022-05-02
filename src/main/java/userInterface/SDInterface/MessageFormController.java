@@ -45,6 +45,11 @@ public class MessageFormController {
             return;
         }
 
+        if (cbFrom.getValue() ==  cbTo.getValue()) {
+            showWarning("Same object", "Object cannot send message to himself");
+            return;
+        }
+
         String timePosStr = tfTimePosition.getText();
         int timePosInt;
         try {

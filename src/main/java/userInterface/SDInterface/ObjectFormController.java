@@ -69,7 +69,7 @@ public class ObjectFormController {
                     return;
                 }
             }
-
+            sdController.undoSave();
             // edit existing object
             editingObject.setObjName(objectName);
             editingObject.setClassName(className);

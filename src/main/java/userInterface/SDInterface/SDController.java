@@ -20,11 +20,10 @@ import javafx.stage.Stage;
 import sequenceDiagram.*;
 import userInterface.App;
 import userInterface.CDInterface.CDController;
-import userInterface.CDInterface.UIClassConnector;
+import userInterface.CDInterface.UISDConnector;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class SDController {
 
@@ -36,6 +35,7 @@ public class SDController {
 
     private GridPane gpActivations, gpMessages, gpObjects;
 
+    private UISDConnector uisdConnector;
     public SequenceDiagram sequenceDiagram;
 
     public double timeLineStartY = 93.0;
@@ -45,6 +45,8 @@ public class SDController {
     public ArrayList<UIObjectConnector> uiObjectConnectors;
     public ArrayList<UIActivationConnector> uiActivationConnectors;
     public ArrayList<UIMessageConnector> uiMessageConnectors;
+
+    private ArrayList<SequenceDiagram> undoMemory;
 
     /**
      * Sequence diagram window initialization
@@ -62,6 +64,7 @@ public class SDController {
         uiObjectConnectors = new ArrayList<>();
         uiActivationConnectors = new ArrayList<>();
         uiMessageConnectors = new ArrayList<>();
+        undoMemory = new ArrayList<>();
         // define new sequence diagram
         sequenceDiagram = new SequenceDiagram();
     }
@@ -73,8 +76,14 @@ public class SDController {
         scrollPane.setContent(gridPane);
     }
 
+    public void setConnector(UISDConnector uisdConnector) {
+        this.uisdConnector = uisdConnector;
+        loadSD(uisdConnector.getSequenceDiagram());
+    }
+
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
+        this.uisdConnector.setSequenceDiagram(sd);
         ClassDiagram currentCD = CDController.getController().saveCD();
         // reset sequence diagram
         clearPane();
@@ -188,6 +197,7 @@ public class SDController {
 
     @FXML
     void clearAction() {
+        undoSave();
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Remove everything?");
         alert.setHeaderText(null);
@@ -268,6 +278,7 @@ public class SDController {
             alert.showAndWait();
             return;
         }
+        undoSave();
         // add new object and reload the diagram
         sequenceDiagram.getObjects().add(new SDObject(objectName, className, timePos));
         loadSD(sequenceDiagram);
@@ -294,6 +305,7 @@ public class SDController {
     }
 
     public void putActivation(SDObject object, SDActivation activation) {
+        undoSave();
         // add new activation and reload the diagram
         object.getActivations().add(activation);
         loadSD(sequenceDiagram);
@@ -320,14 +332,40 @@ public class SDController {
     }
 
     public void putMessage(String msgName, int fromIdx, int toIdx, MessageType msgType, int timePos) {
+        undoSave();
         // add new message and reload the diagram
         sequenceDiagram.getMessages().add(new SDMessage(msgName, fromIdx, toIdx, sequenceDiagram, msgType, timePos));
         loadSD(sequenceDiagram);
     }
 
+    public void undoSave () {
+        // clone existing diagram
+        SequenceDiagram sdToSave = new SequenceDiagram();
+        ArrayList<SDObject> sdObjects = new ArrayList<>();
+        ArrayList<SDMessage> sdMessages = new ArrayList<>();
+        for (SDObject o: sequenceDiagram.getObjects()) {
+            SDObject objToSave = new SDObject(o.getObjName(), o.getClassName(), o.getTimePos());
+            ArrayList<SDActivation> sdActivations = new ArrayList<>();
+            for (SDActivation a: o.getActivations()) {
+                sdActivations.add(new SDActivation(a.getTimeBegin(), a.getTimeEnd()));
+            }
+            objToSave.setActivations(sdActivations);
+            sdObjects.add(objToSave);
+        }
+        sdToSave.setObjects(sdObjects);
+        for (SDMessage m: sequenceDiagram.getMessages()) {
+            sdMessages.add(new SDMessage(m.getName(), m.getFrom(sequenceDiagram), m.getTo(sequenceDiagram), sdToSave,
+                    m.getType(), m.getTimePos()));
+        }
+        sdToSave.setMessages(sdMessages);
+        undoMemory.add(sdToSave);
+    }
+
     @FXML
     void undoAction() {
-        // TODO
+        if (undoMemory.size() != 0) {
+            loadSD(undoMemory.remove(undoMemory.size() - 1));
+        }
     }
 
     public EventHandler<ActionEvent> editObject = new EventHandler<>() {
@@ -362,6 +400,7 @@ public class SDController {
         public void handle(ActionEvent event) {
             for (UIObjectConnector cObj: uiObjectConnectors) {
                 if (event.getSource() == cObj.getbDeleteObject()) {
+                    undoSave();
                     // reload sequence diagram
                     sequenceDiagram.getObjects().remove(cObj.getObject());
 
@@ -388,6 +427,7 @@ public class SDController {
                 if (event.getSource() == cAct.getbDeleteActivation()) {
                     for (SDObject o: sequenceDiagram.getObjects()) {
                         if (o == cAct.getsdObject()) {
+                            undoSave();
                             // reload sequence diagram
                             o.getActivations().remove(cAct.getsdActivation());
                             loadSD(sequenceDiagram);
@@ -405,6 +445,7 @@ public class SDController {
         public void handle(ActionEvent event) {
             for (UIMessageConnector cMsg: uiMessageConnectors) {
                 if (event.getSource() == cMsg.getbDeleteMessage()) {
+                    undoSave();
                     // reload sequence diagram
                     sequenceDiagram.getMessages().remove(cMsg.getsdMessage());
                     loadSD(sequenceDiagram);
