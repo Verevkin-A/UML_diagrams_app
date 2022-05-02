@@ -32,12 +32,12 @@
       <TitledPane collapsible="false" layoutX="282.0" layoutY="190.0" prefHeight="86.0" prefWidth="91.0" />
       <RadioButton fx:id="rbAssociation" layoutX="56.0" layoutY="443.0" mnemonicParsing="false" selected="true" text="Association">
          <toggleGroup>
-            <ToggleGroup fx:id="NodeType" />
+            <ToggleGroup fx:id="nodeType" />
          </toggleGroup>
       </RadioButton>
-      <RadioButton fx:id="rbAggregation" layoutX="56.0" layoutY="485.0" mnemonicParsing="false" text="Aggregation" toggleGroup="$NodeType" />
-      <RadioButton fx:id="rbComposition" layoutX="206.0" layoutY="443.0" mnemonicParsing="false" text="Composition" toggleGroup="$NodeType" />
-      <RadioButton fx:id="rbGeneralization" layoutX="206.0" layoutY="485.0" mnemonicParsing="false" text="Generalization" toggleGroup="$NodeType" />
+      <RadioButton fx:id="rbAggregation" layoutX="56.0" layoutY="485.0" mnemonicParsing="false" text="Aggregation" toggleGroup="$nodeType" />
+      <RadioButton fx:id="rbComposition" layoutX="206.0" layoutY="443.0" mnemonicParsing="false" text="Composition" toggleGroup="$nodeType" />
+      <RadioButton fx:id="rbGeneralization" layoutX="206.0" layoutY="485.0" mnemonicParsing="false" text="Generalization" toggleGroup="$nodeType" />
       <RadioButton fx:id="rbToDown" layoutX="321.0" layoutY="267.0" mnemonicParsing="false">
          <toggleGroup>
             <ToggleGroup fx:id="AnchorTo" />

@@ -3,11 +3,9 @@ package userInterface.SDInterface;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
+import sequenceDiagram.MessageType;
 
 import java.util.ArrayList;
 
@@ -39,8 +37,52 @@ public class MessageFormController {
 
     @FXML
     void doneAction() {
+        String msgName = tfMessageName.getText(); // TODO consistency check
+
+        if (cbFrom.getValue() == null || cbTo.getValue() == null) {
+            showWarning("Unselected object", "One or both objects are not selected");
+            return;
+        }
+
+        String timePosStr = tfTimePosition.getText();
+        int timePosInt;
+        try {
+            timePosInt = Integer.parseInt(timePosStr);      // TODO check destroyed lifeline?
+            if (timePosInt < cbFrom.getValue().getObject().getTimePos() ||
+                    timePosInt < cbTo.getValue().getObject().getTimePos() ||
+                    timePosInt < 0 || timePosInt > 100) {
+                throw new java.lang.NumberFormatException("Invalid time integer");
+            }
+        } catch (NumberFormatException e) {
+            showWarning("Invalid time", "Time position must be integer from 0 to 100 and can only be placed within both objects lifeline");
+            return;
+        }
 
 
+        sdController.putMessage(msgName, cbFrom.getItems().indexOf(cbFrom.getValue()), cbTo.getItems().indexOf(cbTo.getValue()),
+                getMessageType(tgMessageType.getSelectedToggle()), timePosInt);
         ((Stage) tfMessageName.getScene().getWindow()).close();
+    }
+
+    private MessageType getMessageType(Toggle rbType) {
+        if (rbType == rbCall) {
+            return MessageType.CALL;
+        } else if (rbType == rbReturn) {
+            return MessageType.RETURN;
+        } else if (rbType == rbCreate) {
+            return MessageType.CREATE_OBJ;
+        } else if (rbType == rbDestroy) {
+            return MessageType.DESTROY_OBJ;
+        }
+        return null;
+    }
+
+    private void showWarning(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        alert.showAndWait();
     }
 }

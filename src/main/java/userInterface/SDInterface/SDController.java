@@ -168,6 +168,12 @@ public class SDController {
 
             root.getChildren().addAll(lineMessage, arrowHead, lNameMessage);
 
+            if (m.getType() == MessageType.DESTROY_OBJ) {
+                Line cross1 = new Line(105 + classIndexTo * 135, Y + 30, 125 + classIndexTo * 135, Y + 50);
+                Line cross2 = new Line(125 + classIndexTo * 135, Y + 30, 105 + classIndexTo * 135, Y + 50);
+                root.getChildren().addAll(cross1, cross2);
+            }
+
             // create activation entry and add it on the grid pane
             Label lMessage = new Label(m.getName());
             Button bDeleteMessage = new Button("Delete");
@@ -304,8 +310,9 @@ public class SDController {
         }
     }
 
-    public void putMessage() {
-
+    public void putMessage(String msgName, int fromIdx, int toIdx, MessageType msgType, int timePos) {
+        // add new message and reload the diagram
+        sequenceDiagram.getMessages().add(new SDMessage(msgName, fromIdx, toIdx, sequenceDiagram, msgType, timePos));
         loadSD(sequenceDiagram);
     }
 

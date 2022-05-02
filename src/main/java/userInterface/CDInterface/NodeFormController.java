@@ -4,7 +4,6 @@ import classDiagram.NodeType;
 import classDiagram.AnchorType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
@@ -14,7 +13,7 @@ import java.util.Objects;
 public class NodeFormController {
 
     @FXML
-    private ToggleGroup AnchorFrom, AnchorTo, NodeType;
+    private ToggleGroup AnchorFrom, AnchorTo, nodeType;
 
     @FXML
     private ComboBox<UIClassConnector> cbFromClass, cbToClass;
@@ -49,43 +48,28 @@ public class NodeFormController {
         // check if every required field is selected
         // if not show warning message
         if (cbFromClass.getValue() == null || cbToClass.getValue() == null) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Unselected class");
-            alert.setHeaderText(null);
-            alert.setContentText("One or both classes are not selected");
-
-            alert.showAndWait();
+            showWarning("Unselected class", "One or both classes are not selected");
             return;
         }
-        if (!Objects.equals(((RadioButton) NodeType.getSelectedToggle()).getText(), "Generalization") &&
+        if (!Objects.equals(((RadioButton) nodeType.getSelectedToggle()).getText(), "Generalization") &&
                 (Objects.equals(tfFromCardinality.getText(), "") || Objects.equals(tfToCardinality.getText(), ""))) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Unselected cardinality");
-            alert.setHeaderText(null);
-            alert.setContentText("One or both cardinality fields are empty, but required for the selected type of node");
-
-            alert.showAndWait();
+            showWarning("Unselected cardinality", "One or both cardinality fields are empty, but required for the selected type of node");
             return;
         }
-        if (Objects.equals(((RadioButton) NodeType.getSelectedToggle()).getText(), "Generalization") &&
+        if (Objects.equals(((RadioButton) nodeType.getSelectedToggle()).getText(), "Generalization") &&
                 cbFromClass.getValue() == cbToClass.getValue()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Unary generalization");
-            alert.setHeaderText(null);
-            alert.setContentText("Unary generalization is not supported");
-
-            alert.showAndWait();
+            showWarning("Unary generalization", "Unary generalization is not supported");
             return;
         }
         CDController.getController().putNode(cbFromClass.getValue(), cbToClass.getValue(),
-                getFromAnchorType((RadioButton) AnchorFrom.getSelectedToggle()),
-                getToAnchorType((RadioButton) AnchorTo.getSelectedToggle()),
+                getFromAnchorType(AnchorFrom.getSelectedToggle()),
+                getToAnchorType(AnchorTo.getSelectedToggle()),
                 tfFromCardinality.getText(), tfToCardinality.getText(),
-                getNodeType((RadioButton) NodeType.getSelectedToggle()));
+                getNodeType(nodeType.getSelectedToggle()));
         ((Stage) btnDone.getScene().getWindow()).close();
     }
 
-    private AnchorType getFromAnchorType(RadioButton rbAnchor) {
+    private AnchorType getFromAnchorType(Toggle rbAnchor) {
         if (rbAnchor == rbFromUp) {
             return classDiagram.AnchorType.valueOfLabel("UP");
         } else if (rbAnchor == rbFromDown) {
@@ -98,29 +82,38 @@ public class NodeFormController {
         return null;
     }
 
-    private AnchorType getToAnchorType(RadioButton rbAnchor) {
+    private AnchorType getToAnchorType(Toggle rbAnchor) {
         if (rbAnchor == rbToUp) {
-            return classDiagram.AnchorType.valueOfLabel("UP");
+            return AnchorType.UP;
         } else if (rbAnchor == rbToDown) {
-            return classDiagram.AnchorType.valueOfLabel("DOWN");
+            return AnchorType.DOWN;
         } else if (rbAnchor == rbToLeft) {
-            return classDiagram.AnchorType.valueOfLabel("LEFT");
+            return AnchorType.LEFT;
         } else if (rbAnchor == rbToRight) {
-            return classDiagram.AnchorType.valueOfLabel("RIGHT");
+            return AnchorType.RIGHT;
         }
         return null;
     }
 
-    private NodeType getNodeType(RadioButton rbType) {
+    private NodeType getNodeType(Toggle rbType) {
         if (rbType == rbAggregation) {
-            return classDiagram.NodeType.valueOfLabel(0);
+            return NodeType.AGGREGATION;
         } else if (rbType == rbAssociation) {
-            return classDiagram.NodeType.valueOfLabel(1);
+            return NodeType.ASSOCIATION;
         } else if (rbType == rbGeneralization) {
-            return classDiagram.NodeType.valueOfLabel(2);
+            return NodeType.GENERALIZATION;
         } else if (rbType == rbComposition) {
-            return classDiagram.NodeType.valueOfLabel(3);
+            return NodeType.COMPOSITION;
         }
         return null;
+    }
+
+    private void showWarning(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+
+        alert.showAndWait();
     }
 }

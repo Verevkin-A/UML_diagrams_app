@@ -22,7 +22,7 @@
       <RadioButton fx:id="rbDestroy" layoutX="175.0" layoutY="245.0" mnemonicParsing="false" text="DESTROY" toggleGroup="$tgMessageType" />
       <RadioButton fx:id="rbCreate" layoutX="175.0" layoutY="215.0" mnemonicParsing="false" text="CREATE" toggleGroup="$tgMessageType" />
       <RadioButton fx:id="rbReturn" layoutX="86.0" layoutY="245.0" mnemonicParsing="false" text="RETURN" toggleGroup="$tgMessageType" />
-      <Button layoutX="194.0" layoutY="295.0" mnemonicParsing="false" onAction="#doneAction" text="Button" />
+      <Button layoutX="203.0" layoutY="295.0" mnemonicParsing="false" onAction="#doneAction" text="Done" />
       <Label layoutX="17.0" layoutY="18.0" text="Name:" />
       <Label layoutX="17.0" layoutY="68.0" text="From:" />
       <Label layoutX="17.0" layoutY="118.0" text="To:" />
