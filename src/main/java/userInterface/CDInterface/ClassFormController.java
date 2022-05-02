@@ -73,29 +73,31 @@ public class ClassFormController {
             this.updateField();
         } else if (event.getSource() == bDone) {
             CDController controller = CDController.getController();
-            ClassDiagram currentCD = controller.saveCD();
-            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
             String newName = tfClassName.getText();
 
             // if editing check for class consistency
-            if (editing && !Objects.equals(newName, currentClass.getName())) {
-                controller.saveSDs(currentCD);
-                if (currentClass.checkName(currentCD)) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Inconsistency");
-                    alert.setHeaderText("Changing of class name will cause inconsistency in one of the sequence diagrams.");
-                    alert.setContentText("Would you like to change name in sequence diagram too?");
+            if (editing) {
+                ClassDiagram currentCD = controller.saveCD();
+                CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
+                if (!Objects.equals(newName, currentClass.getName())) {
+                    controller.saveSDs(currentCD);
+                    if (currentClass.checkName(currentCD)) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Inconsistency");
+                        alert.setHeaderText("Changing of class name will cause inconsistency in one of the sequence diagrams.");
+                        alert.setContentText("Would you like to change name in sequence diagram too?");
 
-                    ButtonType bYes = new ButtonType("Yes");
-                    ButtonType bNo = new ButtonType("No");
-                    ButtonType bCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    alert.getButtonTypes().setAll(bYes, bNo,  bCancel);
+                        ButtonType bYes = new ButtonType("Yes");
+                        ButtonType bNo = new ButtonType("No");
+                        ButtonType bCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        alert.getButtonTypes().setAll(bYes, bNo, bCancel);
 
-                    alert.showAndWait();
-                    if (alert.getResult() == bYes){
-                        currentClass.setName(currentCD, newName);
-                    } else if (alert.getResult() == bCancel){
-                        return;
+                        alert.showAndWait();
+                        if (alert.getResult() == bYes) {
+                            currentClass.setName(currentCD, newName);
+                        } else if (alert.getResult() == bCancel) {
+                            return;
+                        }
                     }
                 }
             }
