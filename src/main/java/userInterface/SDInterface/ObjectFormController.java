@@ -7,6 +7,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import sequenceDiagram.SDActivation;
+import sequenceDiagram.SDMessage;
 import sequenceDiagram.SDObject;
 import userInterface.CDInterface.CDController;
 
@@ -63,12 +64,22 @@ public class ObjectFormController {
         }
 
         if (editingObject != null) {
+            // check if new time position overlaps with existing activations
             for (SDActivation a: editingObject.getActivations()) {
                 if (a.getTimeBegin() < timePositionInt) {
                     showWarning("Invalid time", "New time position overlaps with existing activation. Remove activation or change time position");
                     return;
                 }
             }
+            // check if new time position overlaps with existing messages
+            for (SDMessage m: sdController.sequenceDiagram.getMessages()) {
+                if ((m.getTo() == editingObject || m.getFrom() == editingObject) &&
+                        (m.getTimePos() < timePositionInt)) {
+                    showWarning("Invalid time", "New time position overlaps with existing message. Remove message or change time position");
+                    return;
+                }
+            }
+
             sdController.undoSave();
             // edit existing object
             editingObject.setObjName(objectName);

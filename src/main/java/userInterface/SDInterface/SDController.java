@@ -89,6 +89,7 @@ public class SDController {
         clearPane();
         clearGPs();
         int inc = 0;    // X position error
+        ArrayList<Line> timeLines= new ArrayList<>();
         // load objects
         for (SDObject o: sd.getObjects()) {
             Text objectName = new Text(o.getObjName() + ":\n" + o.getClassName());
@@ -109,6 +110,7 @@ public class SDController {
 
             Line timeLine = new Line(inc + 115, classYPos + 40, inc + 115, 683);
             timeLine.getStrokeDashArray().addAll(25d, 10d);
+            timeLines.add(timeLine);
 
             root.getChildren().addAll(timeLine, stackPaneObj);
             // create object entry and add him on the grid pane
@@ -180,6 +182,20 @@ public class SDController {
             if (m.getType() == MessageType.DESTROY_OBJ) {
                 Line cross1 = new Line(105 + classIndexTo * 135, Y + 30, 125 + classIndexTo * 135, Y + 50);
                 Line cross2 = new Line(125 + classIndexTo * 135, Y + 30, 105 + classIndexTo * 135, Y + 50);
+                // correct existing timeline if destroy message is higher than other destroy messages
+                boolean destroyNotExist = true;
+                for (SDMessage mDestroy: sd.getMessages()) {
+                    if (mDestroy.getType() == MessageType.DESTROY_OBJ && mDestroy.getTo(sequenceDiagram) == classIndexTo) {
+                        if (mDestroy.getTimePos() < m.getTimePos()) {
+                            destroyNotExist = false;
+                            break;
+                        }
+                    }
+                }
+                if (destroyNotExist) {
+                    timeLines.get(classIndexTo).setEndY(Y + 40);
+                }
+
                 root.getChildren().addAll(cross1, cross2);
             }
 
