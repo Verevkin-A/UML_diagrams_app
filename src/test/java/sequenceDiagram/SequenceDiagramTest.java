@@ -25,7 +25,7 @@ public class SequenceDiagramTest {
     void setUp() {
         cd = new ClassDiagram();
         try {
-            String filepath = "data/format.json";
+            String filepath = "data/test/seqDiagTest/seqDiagTestIn.json";
             diagString = Files.readString(Paths.get(filepath));
             cd = Parser.decodeJSON(diagString);
         } catch (IOException e) {
@@ -47,7 +47,7 @@ public class SequenceDiagramTest {
         CDClass testClass = cd.getCDClass(0);
         SDObject testObj = cd.getSequenceDiagrams().get(0).getObjects().get(0);
 
-        Assertions.assertTrue(testObj.checkClassName(cd, "testClass"));
+        Assertions.assertTrue(SDObject.checkClassName(cd, "testClass"));
 
         testObj.setClassName("testClass");
         testClass.setName(cd, "randomNamme");
@@ -72,30 +72,30 @@ public class SequenceDiagramTest {
         SDObject testObjTo = cd.getSequenceDiagrams().get(0).getObjects().get(1);
         SDMessage testMsg = cd.getSequenceDiagrams().get(0).getMessages().get(0);
 
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, testMsg.getName()));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, testMsg.getName()));
 
         testObjTo.setClassName("testClass3");
         Assertions.assertTrue(cd.checkDeleteClass(testClassTo));
 
-        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
-        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
-        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod5()"));
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod3()"));
+        Assertions.assertTrue(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod"));
+        Assertions.assertTrue(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod2"));
+        Assertions.assertTrue(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod5"));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod3"));
 
 
         testObjTo.setClassName("nonsens1");
         Assertions.assertFalse(cd.checkDeleteClass(testClassTo));
 
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, testMsg.getName()));
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod5()"));
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod3()"));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, testMsg.getName()));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod"));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod2"));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod5"));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod3"));
 
         testObjTo.setClassName("testClass");
         Assertions.assertFalse(cd.checkDeleteClass(testClassTo));
-        Assertions.assertTrue(testMsg.checkConsistency(cd, testObjTo, "myTestMethod()"));
-        Assertions.assertFalse(testMsg.checkConsistency(cd, testObjTo, "myTestMethod2()"));
+        Assertions.assertTrue(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod"));
+        Assertions.assertFalse(SDMessage.checkConsistency(cd, testObjTo, "myTestMethod2"));
 
 
     }
