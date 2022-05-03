@@ -76,7 +76,7 @@ public class CDClass {
     /**
      * Checks whether changing a class to a different name causes an inconsistency in the sequence diagram.
      * @param cd The class diagram containing a sequence diagram against which to check inconsistencies.
-     * @return TRUE if an inconsistency is not caused, FALSE otherwise.
+     * @return TRUE if an inconsistency is caused, FALSE otherwise.
      */
     public boolean checkName(ClassDiagram cd) {
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {

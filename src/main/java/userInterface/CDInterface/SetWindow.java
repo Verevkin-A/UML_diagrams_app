@@ -105,6 +105,12 @@ public class SetWindow {
         AnchorPane.setBottomAnchor(scrollPane, spBottom);
     }
 
+    /**
+     * Setting up label position on the pane
+     * @param label label to setup
+     * @param lTop position Y
+     * @param lLeft position X
+     */
     private void labelInit(Label label, Double lTop, Double lLeft) {
         AnchorPane.setTopAnchor(label, lTop);
         AnchorPane.setLeftAnchor(label, lLeft);

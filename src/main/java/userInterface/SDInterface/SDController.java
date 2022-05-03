@@ -25,6 +25,11 @@ import userInterface.CDInterface.UISDConnector;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Sequence Diagram window controller
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-15
+ */
 public class SDController {
 
     @FXML
@@ -69,6 +74,11 @@ public class SDController {
         sequenceDiagram = new SequenceDiagram();
     }
 
+    /**
+     * Sequence diagram GridPane initialization
+     * @param scrollPane ScrollPane for GridPane
+     * @param gridPane GridPane to initialize
+     */
     private void gpInit(ScrollPane scrollPane, GridPane gridPane) {
         gridPane.setPadding(new Insets(10));
         gridPane.setVgap(5);
@@ -76,11 +86,19 @@ public class SDController {
         scrollPane.setContent(gridPane);
     }
 
+    /**
+     * Set corresponding Sequence Diagram connector
+     * @param uisdConnector Sequence Diagram connector
+     */
     public void setConnector(UISDConnector uisdConnector) {
         this.uisdConnector = uisdConnector;
         loadSD(uisdConnector.getSequenceDiagram());
     }
 
+    /**
+     * Load into pane and save given Sequence Diagram
+     * @param sd Sequence Diagram to load and save
+     */
     public void loadSD(SequenceDiagram sd) {
         this.sequenceDiagram = sd;
         this.uisdConnector.setSequenceDiagram(sd);
@@ -211,6 +229,9 @@ public class SDController {
         }
     }
 
+    /**
+     * Clear pane action handler
+     */
     @FXML
     void clearAction() {
         undoSave();
@@ -229,6 +250,9 @@ public class SDController {
         sequenceDiagram.getMessages().clear();
     }
 
+    /**
+     * Clear pane from user elements
+     */
     private void clearPane() {
         ArrayList<Node> nodesToDelete = new ArrayList<>();
         for (Node child: root.getChildren()) {
@@ -239,6 +263,9 @@ public class SDController {
         root.getChildren().removeAll(nodesToDelete);
     }
 
+    /**
+     * Clear GridPanes from user elements
+     */
     private void clearGPs() {
         for (UIObjectConnector cObj: uiObjectConnectors) {
             gpObjects.getChildren().removeAll(cObj.getlObject(), cObj.getbEditObject(), cObj.getbDeleteObject());
@@ -254,6 +281,13 @@ public class SDController {
         uiMessageConnectors.clear();
     }
 
+    /**
+     * Get shape of the arrow head for the message
+     * @param fromX FROM coordinates of the message
+     * @param toX TO coordinates of the message
+     * @param Y message Y position
+     * @return positioned Shape of the arrow head
+     */
     private Shape getArrowHead(double fromX, double toX, double Y) {
         double L1 = 15;     // arrow head wings length
         double L2 = Math.sqrt((toX - fromX) * (toX - fromX));
@@ -265,6 +299,9 @@ public class SDController {
         return new Polyline(arrowX, arrowY1, toX, Y, arrowX, arrowY2);
     }
 
+    /**
+     * Add new object action handler
+     */
     @FXML
     void addObject() {
         try {
@@ -283,6 +320,12 @@ public class SDController {
         }
     }
 
+    /**
+     * Add new object to the Sequence Diagram and reload the pane
+     * @param objectName new object name
+     * @param className new object class name
+     * @param timePos object time position
+     */
     public void putObject(String objectName, String className, Integer timePos) {
         // throw warning if there are no place for the new object in diagram
         if (sequenceDiagram.getObjects().size() >= 6) {
@@ -300,6 +343,9 @@ public class SDController {
         loadSD(sequenceDiagram);
     }
 
+    /**
+     * Add new activation action handler
+     */
     @FXML
     void addActivation() {
         try {
@@ -320,6 +366,11 @@ public class SDController {
         }
     }
 
+    /**
+     * Add new activation to the Sequence Diagram and reload the pane
+     * @param object object to add activation to
+     * @param activation activation to add
+     */
     public void putActivation(SDObject object, SDActivation activation) {
         undoSave();
         // add new activation and reload the diagram
@@ -327,6 +378,9 @@ public class SDController {
         loadSD(sequenceDiagram);
     }
 
+    /**
+     * Add new message action handler
+     */
     @FXML
     void addMessage() {
         try {
@@ -347,6 +401,14 @@ public class SDController {
         }
     }
 
+    /**
+     * Add new message to the Sequence Diagram and reload the pane
+     * @param msgName name of the message
+     * @param fromIdx FROM object index
+     * @param toIdx TO object index
+     * @param msgType type of the message
+     * @param timePos time position of the message
+     */
     public void putMessage(String msgName, int fromIdx, int toIdx, MessageType msgType, int timePos) {
         undoSave();
         // add new message and reload the diagram
@@ -354,6 +416,9 @@ public class SDController {
         loadSD(sequenceDiagram);
     }
 
+    /**
+     * Save current diagram into list with diagram states for possible future UNDO actions
+     */
     public void undoSave () {
         // clone existing diagram
         SequenceDiagram sdToSave = new SequenceDiagram();
@@ -377,6 +442,9 @@ public class SDController {
         undoMemory.add(sdToSave);
     }
 
+    /**
+     * UNDO action handler
+     */
     @FXML
     void undoAction() {
         if (undoMemory.size() != 0) {
@@ -384,6 +452,9 @@ public class SDController {
         }
     }
 
+    /**
+     * Edit object action handler
+     */
     public EventHandler<ActionEvent> editObject = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -411,6 +482,9 @@ public class SDController {
         }
     };
 
+    /**
+     * Delete object action handler
+     */
     public EventHandler<ActionEvent> deleteObject = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -436,6 +510,9 @@ public class SDController {
         }
     };
 
+    /**
+     * Delete activation action handler
+     */
     public EventHandler<ActionEvent> deleteActivation = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -456,6 +533,9 @@ public class SDController {
         }
     };
 
+    /**
+     * Delete message action handler
+     */
     public EventHandler<ActionEvent> deleteMessage = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {

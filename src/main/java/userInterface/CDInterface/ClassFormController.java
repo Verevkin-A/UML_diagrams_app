@@ -53,6 +53,10 @@ public class ClassFormController {
         editing = false;
     }
 
+    /**
+     * Set edit flag and connector in case of class editing
+     * @param uiClassConnector connector with editing class
+     */
     public void setEdit(UIClassConnector uiClassConnector) {
         this.uiClassConnector = uiClassConnector;
         editing = true;
@@ -60,7 +64,6 @@ public class ClassFormController {
 
     /**
      * Form button events handler
-     *
      * @param event pressed button
      */
     @FXML

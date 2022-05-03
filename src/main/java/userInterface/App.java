@@ -7,8 +7,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import userInterface.CDInterface.SetWindow;
 
-import java.util.Set;
-
 
 /**
  * Graphical user interface starter
@@ -20,7 +18,6 @@ public class App extends Application {
 
     /**
      * Executed on the app start
-     *
      * @param stage application main stage
      */
     @Override
@@ -41,8 +38,7 @@ public class App extends Application {
 
     /**
      * Application launch
-     *
-     * @param args
+     * @param args arguments
      */
     public static void main(String[] args) {
         // launch application

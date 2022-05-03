@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.shape.Line?>
 
-<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SDInterface.SDController">
+<AnchorPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userInterface.SDInterface.SDController">
    <children>
       <ScrollPane fx:id="spMessages" layoutX="868.0" layoutY="511.0" prefHeight="176.0" prefWidth="218.0" />
       <ScrollPane fx:id="spActivations" layoutX="868.0" layoutY="289.0" prefHeight="182.0" prefWidth="218.0" />

@@ -13,6 +13,11 @@ import userInterface.CDInterface.CDController;
 
 import java.util.Objects;
 
+/**
+ * Object form window controller
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-15
+ */
 public class ObjectFormController {
 
     private SDController sdController;
@@ -21,10 +26,18 @@ public class ObjectFormController {
     @FXML
     private TextField tfClassName, tfObjectName, tfTimePosition;
 
+    /**
+     * SDController setter
+     * @param sdController SDController to set
+     */
     public void setSDController(SDController sdController) {
         this.sdController = sdController;
     }
 
+    /**
+     * Set class attributes in case of class editing
+     * @param cObject connector with object to edit
+     */
     public void setEdit(UIObjectConnector cObject) {
         SDObject object = cObject.getObject();
         tfClassName.setText(object.getClassName());
@@ -33,6 +46,9 @@ public class ObjectFormController {
         editingObject = object;
     }
 
+    /**
+     * Done button action handler
+     */
     @FXML
     void doneAction() {
         String timePositionString = Objects.equals(tfTimePosition.getText(), "") ? "-1" : tfTimePosition.getText();
@@ -94,6 +110,11 @@ public class ObjectFormController {
         ((Stage) tfClassName.getScene().getWindow()).close();
     }
 
+    /**
+     * Show warning message
+     * @param title window title
+     * @param content warning message content
+     */
     private void showWarning(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);

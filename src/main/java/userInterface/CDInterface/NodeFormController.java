@@ -10,6 +10,11 @@ import javafx.stage.Stage;
 
 import java.util.Objects;
 
+/**
+ * Node form window CDController
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-15
+ */
 public class NodeFormController {
 
     @FXML
@@ -43,6 +48,9 @@ public class NodeFormController {
         cbToClass.setItems(classes);
     }
 
+    /**
+     * Node form done(save node) action
+     */
     @FXML
     void doneAction() {
         // check if every required field is selected
@@ -72,19 +80,29 @@ public class NodeFormController {
         ((Stage) btnDone.getScene().getWindow()).close();
     }
 
+    /**
+     * Get FROM anchor from selected toggle
+     * @param rbAnchor selected toggle
+     * @return corresponding anchor type
+     */
     private AnchorType getFromAnchorType(Toggle rbAnchor) {
         if (rbAnchor == rbFromUp) {
-            return classDiagram.AnchorType.valueOfLabel("UP");
+            return AnchorType.UP;
         } else if (rbAnchor == rbFromDown) {
-            return classDiagram.AnchorType.valueOfLabel("DOWN");
+            return AnchorType.DOWN;
         } else if (rbAnchor == rbFromLeft) {
-            return classDiagram.AnchorType.valueOfLabel("LEFT");
+            return AnchorType.LEFT;
         } else if (rbAnchor == rbFromRight) {
-            return classDiagram.AnchorType.valueOfLabel("RIGHT");
+            return AnchorType.RIGHT;
         }
         return null;
     }
 
+    /**
+     * Get TO anchor from selected toggle
+     * @param rbAnchor selected toggle
+     * @return corresponding anchor type
+     */
     private AnchorType getToAnchorType(Toggle rbAnchor) {
         if (rbAnchor == rbToUp) {
             return AnchorType.UP;
@@ -98,6 +116,11 @@ public class NodeFormController {
         return null;
     }
 
+    /**
+     * Return node type according to selected toggle
+     * @param rbType selected toggle with node type
+     * @return NodeType
+     */
     private NodeType getNodeType(Toggle rbType) {
         if (rbType == rbAggregation) {
             return NodeType.AGGREGATION;
@@ -111,6 +134,11 @@ public class NodeFormController {
         return null;
     }
 
+    /**
+     * Show warning message
+     * @param title window title
+     * @param content warning message content
+     */
     private void showWarning(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);

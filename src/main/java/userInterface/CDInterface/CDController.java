@@ -36,7 +36,8 @@ import userInterface.App;
 import userInterface.SDInterface.SDController;
 
 /**
- * Main window CDController
+ * Main window controller
+ * Build with Singleton pattern
  * @author Aleksandr Verevkin (xverev00)
  * @since 2022-04-02
  */
@@ -75,6 +76,10 @@ public class CDController implements EventHandler<ActionEvent> {
     // CDController singleton instance
     private static CDController CD_controller;
 
+    /**
+     * CDController constructor
+     * @param root main pane
+     */
     private CDController(AnchorPane root) {
         this.root = root;
         this.root.setOnMouseClicked(this.canvasMousePress);
@@ -98,6 +103,11 @@ public class CDController implements EventHandler<ActionEvent> {
         undoMemory = new ArrayList<>();
     }
 
+    /**
+     * CDController singleton setter
+     * @param root main pane
+     * @return CDController singleton instance
+     */
     public static CDController setController(AnchorPane root) {
         if (CD_controller == null) {
             CD_controller = new CDController(root);
@@ -105,16 +115,30 @@ public class CDController implements EventHandler<ActionEvent> {
         return CD_controller;
     }
 
+    /**
+     * Controller singleton instance getter
+     * @return CDController singleton instance
+     */
     public static CDController getController() {
         return CD_controller;
     }
 
+    /**
+     * Window GridPanes setter
+     * @param gridPaneClasses GridPane with classes
+     * @param gridPaneNodes GridPane with nodes
+     * @param gridPaneSD GridPane with Sequence Diagrams
+     */
     public void setGridPanes(GridPane gridPaneClasses, GridPane gridPaneNodes, GridPane gridPaneSD) {
         this.gridPaneClasses = gridPaneClasses;
         this.gridPaneNodes = gridPaneNodes;
         this.gridPaneSD = gridPaneSD;
     }
 
+    /**
+     * Handler of the main window static buttons
+     * @param actionEvent button click event
+     */
     @Override
     public void handle(ActionEvent actionEvent) {
         if (actionEvent.getSource() == menuItemLoad) {
@@ -162,7 +186,7 @@ public class CDController implements EventHandler<ActionEvent> {
         } else if (actionEvent.getSource() == this.menuItemCredits) {
             openFXML("ClassDiagramFXML/creditsWindow.fxml", "Credits");     // credits menu
         } else if (actionEvent.getSource() == this.buttonCreateNode) {
-            addNode();      // add new node button
+            openFXML("ClassDiagramFXML/nodeForm.fxml", "Node form");        // add new node
         } else if (actionEvent.getSource() == this.buttonCreateSD) {
             undoSave();
             // add new sequence diagram and window with it
@@ -175,7 +199,7 @@ public class CDController implements EventHandler<ActionEvent> {
                 }
             }
         } else if (actionEvent.getSource() == this.menuItemClear) {
-            if (showConformation("Remove everything?", "All classes, nodes and sequence diagrams will be removed. Proceed?")) {
+            if (!showConformation("Remove everything?", "All classes, nodes and sequence diagrams will be removed. Proceed?")) {
                 return;
             }
             undoSave();
@@ -185,6 +209,11 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Open specifed FXML window
+     * @param fxml FXML file name
+     * @param title new window title
+     */
     private void openFXML(String fxml, String title) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml));
@@ -198,6 +227,12 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Open conformation window
+     * @param title conformation window title
+     * @param content conformation window content
+     * @return TRUE in case of conformation, FALSE otherwise
+     */
     public boolean showConformation(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
@@ -205,9 +240,12 @@ public class CDController implements EventHandler<ActionEvent> {
         alert.setContentText(content);
 
         alert.showAndWait();
-        return alert.getResult() != ButtonType.OK;
+        return alert.getResult() == ButtonType.OK;
     }
 
+    /**
+     * Delete class event handler
+     */
     public EventHandler<ActionEvent> deleteClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -219,7 +257,7 @@ public class CDController implements EventHandler<ActionEvent> {
                     saveSDs(currentCD);
                     // check if deleting class would cause inconsistency in one of the class diagrams
                     if (currentCD.checkDeleteClass(currentCD.getCDClass(uiClassConnectors.indexOf(cClass)))) {
-                        if (showConformation("Inconsistency", "Action will cause inconsistency in one of the sequence diagrams. Still proceed?")) {
+                        if (!showConformation("Inconsistency", "Action will cause inconsistency in one of the sequence diagrams. Still proceed?")) {
                             return;
                         }
                     }
@@ -261,6 +299,9 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     };
 
+    /**
+     * Edit class event handler
+     */
     public EventHandler<ActionEvent> editClass = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -274,6 +315,9 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     };
 
+    /**
+     * Delete node event handler
+     */
     public EventHandler<ActionEvent> deleteNode = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -304,6 +348,9 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     };
 
+    /**
+     * Canvas mouse click event handler
+     */
     public EventHandler<MouseEvent> canvasMousePress = event -> {
         if (event.getTarget() == event.getSource())
         {
@@ -313,13 +360,17 @@ public class CDController implements EventHandler<ActionEvent> {
                 } else {
                     axisX = event.getX();
                     axisY = event.getY();
-                    addClass();
+                    // open new class form window
+                    openFXML("ClassDiagramFXML/classForm.fxml", "Class form");
                     buttonCreateClass.setSelected(false);
                 }
             }
         }
     };
 
+    /**
+     * Delete Sequence Diagram event handler
+     */
     public EventHandler<ActionEvent> deleteSD = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -335,6 +386,9 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     };
 
+    /**
+     * Edit Sequence Diagram event handler
+     */
     public EventHandler<ActionEvent> editSD = new EventHandler<>() {
         @Override
         public void handle(ActionEvent event) {
@@ -360,6 +414,10 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     };
 
+    /**
+     * Save new Sequence diagram
+     * @param sd Sequence Diagram to save
+     */
     public void saveSD(SequenceDiagram sd) {
         // create row elements
         Label lName = new Label("SD #" + SDIdentifNum++);
@@ -376,6 +434,9 @@ public class CDController implements EventHandler<ActionEvent> {
         uiSDConnectors.add(new UISDConnector(sd, lName, bEdit, bDelete));
     }
 
+    /**
+     * Save diagrams for possible UNDO action
+     */
     public void undoSave() {
         // clone existing diagram
         ClassDiagram cdToSave = saveCD();
@@ -384,6 +445,9 @@ public class CDController implements EventHandler<ActionEvent> {
         undoMemory.add(cdToSave);
     }
 
+    /**
+     * Undo last action
+     */
     public void undo() {
         if (undoMemory.size() != 0) {
             // clear screen and memory from all classes
@@ -401,6 +465,9 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Clear screen action
+     */
     public void clearScreen() {
         // delete all classes
         for (UIClassConnector cClass: uiClassConnectors) {
@@ -423,12 +490,20 @@ public class CDController implements EventHandler<ActionEvent> {
         SDIdentifNum = 1;
     }
 
+    /**
+     * Load all Sequence Diagrams into pane
+     * @param sds array with Sequence Diagrams
+     */
     private void loadSDs(ArrayList<SequenceDiagram> sds) {
         for (SequenceDiagram sd: sds) {
             saveSD(sd);
         }
     }
 
+    /**
+     * Load all classes into pane
+     * @param cd Class Diagram with classes
+     */
     private void loadClasses(ClassDiagram cd) {
         for (int i = 0; i < cd.classesLen(); i++) {
             CDClass clsToAdd = cd.getCDClass(i);
@@ -456,6 +531,10 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Load all nodes into pane
+     * @param cd Class Diagram with nodes
+     */
     public void loadNodes(ClassDiagram cd) {
         for (int i = 0; i < cd.nodesLen(); i++) {
             CDNode nodeToAdd = cd.getCDNode(i);
@@ -466,6 +545,10 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Fetch all pane elements of the Class Diagram and save it
+     * @return Class Diagram with all pane elements
+     */
     public ClassDiagram saveCD() {
         ClassDiagram cd = new ClassDiagram();
         saveClasses(cd);
@@ -473,6 +556,10 @@ public class CDController implements EventHandler<ActionEvent> {
         return cd;
     }
 
+    /**
+     * Save all pane classes into given Class Diagram
+     * @param cd Class Diagram to save classes into
+     */
     private void saveClasses(ClassDiagram cd) {
         for (UIClassConnector cClass: uiClassConnectors) {
             // extract fields and methods from connector
@@ -501,6 +588,10 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Save all pane nodes into given Class Diagram
+     * @param cd Class Diagram to save nodes into
+     */
     private void saveNodes(ClassDiagram cd) {
         for (UINodeConnector connector: uiNodeConnectors) {
             // get nodes classes
@@ -524,6 +615,10 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Save all pane Sequence Diagrams into given Class Diagram
+     * @param cd Class Diagram to save Sequence Diagrams into
+     */
     public void saveSDs(ClassDiagram cd) {
         ArrayList<SequenceDiagram> sds = new ArrayList<>();
         for (UISDConnector c: uiSDConnectors) {
@@ -532,6 +627,10 @@ public class CDController implements EventHandler<ActionEvent> {
         cd.setSequenceDiagrams(sds);
     }
 
+    /**
+     * Edit existing class action
+     * @param cClass connector with class to edit
+     */
     public void editClass(UIClassConnector cClass) {
         // set class x and y
         axisX = cClass.getAxisX();
@@ -563,21 +662,12 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
-    public void addClass() {
-        // open form window
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/classForm.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Class form");
-            stage.setResizable(false);
-            Scene scene = new Scene(fxmlLoader.load());
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Put class into pane
+     * @param className name of the new class
+     * @param interface_ is class an interface
+     * @param tableView TableView with class fields and methods
+     */
     public void putClass(String className, Boolean interface_, TableView<FormField> tableView) {
         VBox vbFields = new VBox(10.0);
         for (FormField ff: tableView.getItems()) {
@@ -660,21 +750,16 @@ public class CDController implements EventHandler<ActionEvent> {
         uiClassConnectors.add(newCon);
     }
 
-    public void addNode() {
-        // open form window
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("ClassDiagramFXML/nodeForm.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Node form");
-            stage.setResizable(false);
-            Scene scene = new Scene(fxmlLoader.load());
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Put node into pane
+     * @param fromClass connector with node FROM class
+     * @param toClass connector with node TO class
+     * @param anchorFrom FROM class anchor type
+     * @param anchorTo TO class anchor type
+     * @param fCard FROM class cardinality
+     * @param tCard TO class cardinality
+     * @param nodeType type of the node
+     */
     public void putNode(UIClassConnector fromClass, UIClassConnector toClass, AnchorType anchorFrom, AnchorType anchorTo,
                         String fCard, String tCard, NodeType nodeType) {
         if (nodeType == NodeType.GENERALIZATION) {
@@ -730,24 +815,15 @@ public class CDController implements EventHandler<ActionEvent> {
 
         uiNodeConnectors.add(new UINodeConnector(fromClass, toClass, node, arrowHead, fCardLabel, tCardLabel,
                 nameLabel, btnNodeDelete, anchorFrom, anchorTo, nodeType));
-
-//        ClassDiagram currentCD = CDController.getController().saveCD();
-//         color red inherited methods
-//        if (nodeType == NodeType.GENERALIZATION) {
-//            for (CDField field: currentCD.getCDClass(uiClassConnectors.indexOf(fromClass)).getOverridenMethods(currentCD)) {
-//                System.out.println(field.getName());
-//                for (Node fromField: fromClass.getVbFields().getChildren()) {
-//                    String fieldName = ((Label) fromField).getText();
-//                    if (fieldName.endsWith("()") &&
-//                            (Objects.equals(fieldName.substring(1, fieldName.length() - 2), field.getName()))) {
-//                        ((Label) fromField).setTextFill(Color.RED);
-//                        break;
-//                    }
-//                }
-//            }
-//        }
     }
 
+    /**
+     * Calculate coordinates and shape of the node arrow head
+     * @param nodeType type of the node
+     * @param fCrds FROM point coordinates
+     * @param tCrds TO point coordinates
+     * @return positioned arrow head shape
+     */
     private Shape getArrowHead(NodeType nodeType, double[] fCrds, double[] tCrds) {
         double L1 = 15;     // arrow head wings length
         double L2 = Math.sqrt((tCrds[1] - fCrds[1]) * (tCrds[1] - fCrds[1]) + (tCrds[0] - fCrds[0]) * (tCrds[0] - fCrds[0]));
@@ -783,6 +859,12 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Get node X and Y coordinates based on the bounds and anchor type
+     * @param bounds TitledPane bounds
+     * @param anchor node anchor type
+     * @return X and Y coordinates as doubles array
+     */
     private double[] getLineXY(Bounds bounds, AnchorType anchor) {
         switch (anchor.getSymb()) {
             case "LEFT":
@@ -796,6 +878,12 @@ public class CDController implements EventHandler<ActionEvent> {
         }
     }
 
+    /**
+     * Set cardinality labels based on the anchor type and coordinates
+     * @param cardLabel label to set
+     * @param anchor anchor type
+     * @param crds coordinates of the node
+     */
     private void putCard(Label cardLabel, AnchorType anchor, double[] crds) {
         switch (anchor.getSymb()) {
             case "LEFT":

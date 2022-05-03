@@ -12,6 +12,11 @@ import sequenceDiagram.SDObject;
 
 import java.util.ArrayList;
 
+/**
+ * Activation form window controller
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-15
+ */
 public class ActivationFormController {
 
     private SDController sdController;
@@ -22,15 +27,26 @@ public class ActivationFormController {
     @FXML
     private TextField tfBeginTime, tdEndTime;
 
+    /**
+     * SDController setter
+     * @param sdController SDController to set
+     */
     public void setSDController(SDController sdController) {
         this.sdController = sdController;
     }
 
+    /**
+     * Objects to chose from
+     * @param uiObjectConnectors connectors with existing objects
+     */
     public void setObjects(ArrayList<UIObjectConnector> uiObjectConnectors) {
         ObservableList<UIObjectConnector> objects = FXCollections.observableList(uiObjectConnectors);
         cbObjects.setItems(objects);
     }
 
+    /**
+     * Done button action handler
+     */
     @FXML
     void doneAction() {
         // check if object is selected
@@ -77,6 +93,11 @@ public class ActivationFormController {
         ((Stage) tfBeginTime.getScene().getWindow()).close();
     }
 
+    /**
+     * Show warning message
+     * @param title window title
+     * @param content warning message content
+     */
     private void showWarning(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);

@@ -12,6 +12,11 @@ import userInterface.CDInterface.CDController;
 
 import java.util.ArrayList;
 
+/**
+ * Message form window controller
+ * @author Aleksandr Verevkin (xverev00)
+ * @since 2022-04-15
+ */
 public class MessageFormController {
 
     private SDController sdController;
@@ -28,16 +33,27 @@ public class MessageFormController {
     @FXML
     private TextField tfMessageName, tfTimePosition;
 
+    /**
+     * SDController setter
+     * @param sdController SDController to set
+     */
     public void setSDController(SDController sdController) {
         this.sdController = sdController;
     }
 
+    /**
+     * Objects to chose from
+     * @param uiObjectConnectors connectors with existing objects
+     */
     public void setObjects(ArrayList<UIObjectConnector> uiObjectConnectors) {
         ObservableList<UIObjectConnector> classes = FXCollections.observableList(uiObjectConnectors);
         cbFrom.setItems(classes);
         cbTo.setItems(classes);
     }
 
+    /**
+     * Done button action handler
+     */
     @FXML
     void doneAction() {
         if (cbFrom.getValue() == null || cbTo.getValue() == null) {
@@ -83,6 +99,11 @@ public class MessageFormController {
         ((Stage) tfMessageName.getScene().getWindow()).close();
     }
 
+    /**
+     * Get message type from currently selected toggle
+     * @param rbType toggle with message type
+     * @return type of the message
+     */
     private MessageType getMessageType(Toggle rbType) {
         if (rbType == rbCall) {
             return MessageType.CALL;
@@ -96,6 +117,11 @@ public class MessageFormController {
         return null;
     }
 
+    /**
+     * Show warning message
+     * @param title window title
+     * @param content warning message content
+     */
     private void showWarning(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle(title);
