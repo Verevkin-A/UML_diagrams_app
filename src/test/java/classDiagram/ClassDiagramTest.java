@@ -22,7 +22,7 @@ public class ClassDiagramTest {
     void setUp() {
         cd = new ClassDiagram();
         try {
-            String filepath = "data/format.json";
+            String filepath = "data/test/seqDiagTest/seqDiagTestIn.json";
             diagString = Files.readString(Paths.get(filepath));
             cd = Parser.decodeJSON(diagString);
         } catch (IOException e) {
@@ -52,9 +52,9 @@ public class ClassDiagramTest {
 
         ArrayList<CDField> superMethods = testClass.getSuperclassMethods(cd);
 
-        Assertions.assertEquals(superMethods.get(0).getName(), "myTestMethod2()");
-        Assertions.assertEquals(superMethods.get(1).getName(), "myTestMethod()");
-        Assertions.assertEquals(superMethods.get(2).getName(), "myTestMethod5()");
+        Assertions.assertEquals(superMethods.get(0).getName(), "myTestMethod2");
+        Assertions.assertEquals(superMethods.get(1).getName(), "myTestMethod");
+        Assertions.assertEquals(superMethods.get(2).getName(), "myTestMethod5");
 
         Assertions.assertEquals(superMethods.size(), 3);
     }
@@ -65,8 +65,8 @@ public class ClassDiagramTest {
 
         ArrayList<CDField> overridenMethods = testClass.getOverridenMethods(cd);
 
-        Assertions.assertEquals(overridenMethods.get(0).getName(), "myTestMethod()");
-        Assertions.assertEquals(overridenMethods.get(1).getName(), "myTestMethod2()");
+        Assertions.assertEquals(overridenMethods.get(0).getName(), "myTestMethod");
+        Assertions.assertEquals(overridenMethods.get(1).getName(), "myTestMethod2");
 
         Assertions.assertEquals(overridenMethods.size(), 2);
     }
