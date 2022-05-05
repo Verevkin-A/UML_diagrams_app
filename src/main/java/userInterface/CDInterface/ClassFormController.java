@@ -1,6 +1,7 @@
 package userInterface.CDInterface;
 
 import classDiagram.CDClass;
+import classDiagram.CDField;
 import classDiagram.ClassDiagram;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -124,7 +125,31 @@ public class ClassFormController {
      */
     void deleteField() {
         try {
-            tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
+            CDController controller = CDController.getController();
+            ClassDiagram currentCD = controller.saveCD();
+            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
+            controller.saveSDs(currentCD);
+
+            if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method") &&
+                currentClass.checkDeleteMethod(currentCD, tvFields.getSelectionModel().getSelectedItem().getName())) {
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Inconsistency");
+                alert.setHeaderText("Deleting this method will cause an inconsistency in one of the sequence diagrams.");
+                alert.setContentText("Do you want to proceed?");
+
+                ButtonType bYes = new ButtonType("Yes");
+                ButtonType bNo = new ButtonType("No");
+                ButtonType bCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(bYes, bNo, bCancel);
+
+                alert.showAndWait();
+                if (alert.getResult() == bYes) {
+                    tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
+                }
+            } else {
+                tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
+            }
         } catch (Exception e) {
             System.out.println("Nothing is selected");
         }
@@ -135,11 +160,19 @@ public class ClassFormController {
      */
     void updateField() {
         try {
+            CDController controller = CDController.getController();
+            ClassDiagram currentCD = controller.saveCD();
+            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
+            controller.saveSDs(currentCD);
+
             FormField formField = tvFields.getSelectionModel().getSelectedItem();
             formField.setName(tfFieldName.getText());
             formField.setType(getType());
             formField.setVisibility(getVisibility());
             tvFields.refresh();
+            if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method")) {
+                currentClass.propagateMethodRename(currentCD, tfFieldName.getText());
+            }
         } catch (Exception e) {
             System.out.println("Nothing is selected");
         }
