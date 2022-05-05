@@ -1,0 +1,100 @@
+{
+    "classDiagram": {
+        "nodes": [
+            {
+                "tAnchor": "DOWN",
+                "tCard": "",
+                "fAnchor": "UP",
+                "from": 0,
+                "to": 2,
+                "fCard": "",
+                "type": 2
+            },
+            {
+                "tAnchor": "DOWN",
+                "tCard": "",
+                "fAnchor": "UP",
+                "from": 2,
+                "to": 1,
+                "fCard": "",
+                "type": 2
+            }
+        ],
+        "classes": [
+            {
+                "parent": 2,
+                "yPos": 601,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "myMethod"
+                    }
+                ],
+                "name": "SubSubClass",
+                "xPos": 432,
+                "fields": [],
+                "isInterface": false
+            },
+            {
+                "parent": -1,
+                "yPos": 115,
+                "methods": [],
+                "name": "Superclass1",
+                "xPos": 434,
+                "fields": [
+                    {
+                        "visibility": "-",
+                        "name": "myField"
+                    }
+                ],
+                "isInterface": false
+            },
+            {
+                "parent": 1,
+                "yPos": 362,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "myMethod"
+                    }
+                ],
+                "name": "Subclass1",
+                "xPos": 420,
+                "fields": [
+                    {
+                        "visibility": "-",
+                        "name": "myField"
+                    }
+                ],
+                "isInterface": false
+            }
+        ],
+        "sequenceDiagrams": [
+            {
+                "objects": [
+                    {
+                        "activations": [],
+                        "timePos": -1,
+                        "className": "Main",
+                        "objName": ""
+                    },
+                    {
+                        "activations": [],
+                        "timePos": -1,
+                        "className": "Subclass1",
+                        "objName": ""
+                    }
+                ],
+                "messages": [
+                    {
+                        "name": "myMethod",
+                        "timePos": 10,
+                        "from": 0,
+                        "to": 1,
+                        "type": "CALL"
+                    }
+                ]
+            }
+        ]
+    }
+}

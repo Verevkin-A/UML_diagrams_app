@@ -61,6 +61,10 @@
           {
             "name": "myTestMethod2",
             "visibility": "+"
+          },
+          {
+            "name": "SDM1Name",
+            "visibility": "+"
           }
         ],
         "isInterface": false,

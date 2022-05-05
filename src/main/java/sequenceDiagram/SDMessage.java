@@ -33,6 +33,10 @@ public class SDMessage {
         isInconsistentOnLoad = false;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setFrom(int fromIdx, SequenceDiagram sd) {
         this.from = sd.getObjects().get(fromIdx);
     }

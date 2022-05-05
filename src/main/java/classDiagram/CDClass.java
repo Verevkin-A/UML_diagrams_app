@@ -158,13 +158,13 @@ public class CDClass {
      * Checks if a method is bound to a message in a sequence diagram.
      * Would deleting this method cause an inconsistency?
      * @param cd The class diagram against which to check consistency
-     * @param method The method to be deleted
+     * @param methodName The method to be deleted
      * @return TRUE if deleting this method would cause an inconsistency, FALSE otherwise
      */
-    public boolean checkDeleteMethod(ClassDiagram cd, CDField method) {
+    public boolean checkDeleteMethod(ClassDiagram cd, String methodName) {
         for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
             for (SDMessage msg : sd.getMessages()) {
-                if (msg.getTo().getClassName().equals(this.name) && msg.getName().equals(method.getName())) {
+                if (msg.getTo().getClassName().equals(this.name) && msg.getName().equals(methodName)) {
                     return true;
                 }
             }
@@ -172,6 +172,23 @@ public class CDClass {
         return false;
     }
 
+    /**
+     * To be called when renaming a method in a class diagram.
+     * Propagates the name change to all sequence diagrams.
+     * @param cd The class diagram containing the sequence diagrams
+     * @param newMthdName The new name of the method.
+     */
+    public void propagateMethodRename(ClassDiagram cd, String newMthdName) {
+        for (SequenceDiagram sd : cd.getSequenceDiagrams()) {
+            for (SDMessage msg : sd.getMessages()) {
+                for (CDField method : this.methods) {
+                    if (msg.getTo().getClassName().equals(this.name) && msg.getName().equals(method.getName())) {
+                        msg.setName(newMthdName);
+                    }
+                }
+            }
+        }
+    }
     /**
      * Sets the isInterface property.
      * @param isInterface true if class is an interface, false otherwise

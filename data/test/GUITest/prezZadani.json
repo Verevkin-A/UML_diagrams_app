@@ -1,0 +1,294 @@
+{
+    "classDiagram": {
+        "nodes": [
+            {
+                "tAnchor": "DOWN",
+                "tCard": "",
+                "fAnchor": "UP",
+                "from": 2,
+                "to": 0,
+                "fCard": "",
+                "type": 2
+            },
+            {
+                "tAnchor": "DOWN",
+                "tCard": "",
+                "fAnchor": "UP",
+                "from": 4,
+                "to": 2,
+                "fCard": "",
+                "type": 2
+            },
+            {
+                "tAnchor": "LEFT",
+                "tCard": "0",
+                "fAnchor": "RIGHT",
+                "from": 1,
+                "to": 3,
+                "fCard": "0",
+                "type": 1
+            },
+            {
+                "tAnchor": "DOWN",
+                "tCard": "0",
+                "fAnchor": "LEFT",
+                "from": 4,
+                "to": 1,
+                "fCard": "0",
+                "type": 1
+            },
+            {
+                "tAnchor": "LEFT",
+                "tCard": "0",
+                "fAnchor": "RIGHT",
+                "from": 1,
+                "to": 2,
+                "fCard": "0",
+                "type": 1
+            },
+            {
+                "tAnchor": "RIGHT",
+                "tCard": "0",
+                "fAnchor": "LEFT",
+                "from": 3,
+                "to": 2,
+                "fCard": "0",
+                "type": 1
+            }
+        ],
+        "classes": [
+            {
+                "parent": -1,
+                "yPos": 106,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "Element"
+                    },
+                    {
+                        "visibility": "+",
+                        "name": "getName"
+                    },
+                    {
+                        "visibility": "+",
+                        "name": "rename"
+                    }
+                ],
+                "name": "Element",
+                "xPos": 404,
+                "fields": [
+                    {
+                        "visibility": "+",
+                        "name": "name"
+                    }
+                ],
+                "isInterface": false
+            },
+            {
+                "parent": -1,
+                "yPos": 302,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "getType"
+                    }
+                ],
+                "name": "UMLAttribute",
+                "xPos": 137,
+                "fields": [
+                    {
+                        "visibility": "+",
+                        "name": "type"
+                    }
+                ],
+                "isInterface": false
+            },
+            {
+                "parent": 0,
+                "yPos": 374,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "UMLClassifier"
+                    },
+                    {
+                        "visibility": "+",
+                        "name": "isUserDefined"
+                    }
+                ],
+                "name": "UMLClassifier",
+                "xPos": 438,
+                "fields": [],
+                "isInterface": false
+            },
+            {
+                "parent": -1,
+                "yPos": 279,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "createClass"
+                    },
+                    {
+                        "visibility": "+",
+                        "name": "classifierForName"
+                    }
+                ],
+                "name": "ClassDiagram",
+                "xPos": 650,
+                "fields": [
+                    {
+                        "visibility": "+",
+                        "name": "classes"
+                    }
+                ],
+                "isInterface": false
+            },
+            {
+                "parent": 2,
+                "yPos": 574,
+                "methods": [
+                    {
+                        "visibility": "+",
+                        "name": "addAttribute"
+                    },
+                    {
+                        "visibility": "+",
+                        "name": "getAttrPosition"
+                    }
+                ],
+                "name": "UMLClass",
+                "xPos": 428,
+                "fields": [
+                    {
+                        "visibility": "+",
+                        "name": "attributes"
+                    }
+                ],
+                "isInterface": false
+            }
+        ],
+        "sequenceDiagrams": [
+            {
+                "objects": [
+                    {
+                        "activations": [
+                            {
+                                "timeEnd": 95,
+                                "timeBegin": 5
+                            }
+                        ],
+                        "timePos": -1,
+                        "className": "Main",
+                        "objName": ""
+                    },
+                    {
+                        "activations": [
+                            {
+                                "timeEnd": 20,
+                                "timeBegin": 10
+                            }
+                        ],
+                        "timePos": -1,
+                        "className": "ClassDiagram",
+                        "objName": ""
+                    },
+                    {
+                        "activations": [
+                            {
+                                "timeEnd": 70,
+                                "timeBegin": 55
+                            }
+                        ],
+                        "timePos": 15,
+                        "className": "UMLClass",
+                        "objName": "c1"
+                    },
+                    {
+                        "activations": [
+                            {
+                                "timeEnd": 90,
+                                "timeBegin": 75
+                            }
+                        ],
+                        "timePos": 45,
+                        "className": "UMLAttribute",
+                        "objName": "a1"
+                    }
+                ],
+                "messages": [
+                    {
+                        "name": "createClass",
+                        "timePos": 10,
+                        "from": 0,
+                        "to": 1,
+                        "type": "CALL"
+                    },
+                    {
+                        "name": "c1",
+                        "timePos": 18,
+                        "from": 1,
+                        "to": 0,
+                        "type": "RETURN"
+                    },
+                    {
+                        "name": "classifierForName",
+                        "timePos": 30,
+                        "from": 0,
+                        "to": 1,
+                        "type": "CALL"
+                    },
+                    {
+                        "name": "cInt",
+                        "timePos": 35,
+                        "from": 1,
+                        "to": 0,
+                        "type": "RETURN"
+                    },
+                    {
+                        "name": "<<create>>",
+                        "timePos": 15,
+                        "from": 1,
+                        "to": 2,
+                        "type": "CREATE_OBJ"
+                    },
+                    {
+                        "name": "<<create>>",
+                        "timePos": 45,
+                        "from": 0,
+                        "to": 3,
+                        "type": "CREATE_OBJ"
+                    },
+                    {
+                        "name": "addAttribute",
+                        "timePos": 57,
+                        "from": 0,
+                        "to": 2,
+                        "type": "CALL"
+                    },
+                    {
+                        "name": "true",
+                        "timePos": 68,
+                        "from": 2,
+                        "to": 0,
+                        "type": "RETURN"
+                    },
+                    {
+                        "name": "isAbstract",
+                        "timePos": 77,
+                        "from": 0,
+                        "to": 3,
+                        "type": "CALL"
+                    },
+                    {
+                        "name": "false",
+                        "timePos": 88,
+                        "from": 3,
+                        "to": 0,
+                        "type": "RETURN"
+                    }
+                ]
+            }
+        ]
+    }
+}
