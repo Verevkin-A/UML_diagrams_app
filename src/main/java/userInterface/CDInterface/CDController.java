@@ -257,7 +257,7 @@ public class CDController implements EventHandler<ActionEvent> {
                     saveSDs(currentCD);
                     // check if deleting class would cause inconsistency in one of the class diagrams
                     if (currentCD.checkDeleteClass(currentCD.getCDClass(uiClassConnectors.indexOf(cClass)))) {
-                        if (!showConformation("Inconsistency", "Action will cause inconsistency in one of the sequence diagrams. Still proceed?")) {
+                        if (!showConformation("Inconsistency", "Action will cause an inconsistency in one of the sequence diagrams. Still proceed?")) {
                             return;
                         }
                     }

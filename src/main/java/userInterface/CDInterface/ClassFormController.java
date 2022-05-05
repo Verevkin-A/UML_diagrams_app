@@ -129,27 +129,15 @@ public class ClassFormController {
             ClassDiagram currentCD = controller.saveCD();
             CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
             controller.saveSDs(currentCD);
-
+            // check for possible inconsistency in Sequence Diagrams on method deletion
             if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method") &&
                 currentClass.checkDeleteMethod(currentCD, tvFields.getSelectionModel().getSelectedItem().getName())) {
-
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Inconsistency");
-                alert.setHeaderText("Deleting this method will cause an inconsistency in one of the sequence diagrams.");
-                alert.setContentText("Do you want to proceed?");
-
-                ButtonType bYes = new ButtonType("Yes");
-                ButtonType bNo = new ButtonType("No");
-                ButtonType bCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(bYes, bNo, bCancel);
-
-                alert.showAndWait();
-                if (alert.getResult() == bYes) {
-                    tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
+                if (!controller.showConformation("Inconsistency",
+                        "Action will cause an inconsistency in one of the sequence diagrams. Still proceed?")) {
+                    return;
                 }
-            } else {
-                tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
             }
+            tvFields.getItems().removeAll(tvFields.getSelectionModel().getSelectedItem());
         } catch (Exception e) {
             System.out.println("Nothing is selected");
         }
@@ -160,19 +148,19 @@ public class ClassFormController {
      */
     void updateField() {
         try {
-            CDController controller = CDController.getController();
-            ClassDiagram currentCD = controller.saveCD();
-            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
-            controller.saveSDs(currentCD);
+//            CDController controller = CDController.getController();   // TODO?
+//            ClassDiagram currentCD = controller.saveCD();
+//            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
+//            controller.saveSDs(currentCD);
 
             FormField formField = tvFields.getSelectionModel().getSelectedItem();
             formField.setName(tfFieldName.getText());
             formField.setType(getType());
             formField.setVisibility(getVisibility());
             tvFields.refresh();
-            if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method")) {
-                currentClass.propagateMethodRename(currentCD, tfFieldName.getText());
-            }
+//            if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method")) {
+//                currentClass.propagateMethodRename(currentCD, tfFieldName.getText());
+//            }
         } catch (Exception e) {
             System.out.println("Nothing is selected");
         }
@@ -180,11 +168,9 @@ public class ClassFormController {
 
     /**
      * Table view dynamic row selection
-     *
-     * @param event selected row
      */
     @FXML
-    void tvSelectRow(MouseEvent event) {
+    void tvSelectRow() {
         FormField formField = tvFields.getSelectionModel().getSelectedItem();
         tfFieldName.setText(formField.getName());
         switch (formField.getType()) {
@@ -194,7 +180,7 @@ public class ClassFormController {
             case "Method":
                 rbMethod.fire();
         }
-        switch (formField.getVisibility()) {
+        switch (formField.getVisibilitySymbol()) {
             case "+":
                 rbPublic.fire();
                 break;
