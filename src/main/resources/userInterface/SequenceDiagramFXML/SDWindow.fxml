@@ -18,6 +18,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
                <items>
+                  <MenuItem fx:id="bRefresh" mnemonicParsing="false" onAction="#refreshAction" text="Refresh" />
                   <MenuItem fx:id="bClear" mnemonicParsing="false" onAction="#clearAction" text="Clear" />
                   <MenuItem mnemonicParsing="false" onAction="#undoAction" text="Undo" />
                </items></Menu>

@@ -230,6 +230,16 @@ public class SDController {
     }
 
     /**
+     * Refresh pane action handler
+     *
+     * Reload pane with the same Sequence Diagram
+     */
+    @FXML
+    void refreshAction() {
+        loadSD(sequenceDiagram);
+    }
+
+    /**
      * Clear pane action handler
      */
     @FXML
