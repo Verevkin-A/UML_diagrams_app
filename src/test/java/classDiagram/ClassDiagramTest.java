@@ -60,6 +60,23 @@ public class ClassDiagramTest {
     }
 
     @Test
+    public void testRemoveMethod() {
+        ClassDiagram cd2 = new ClassDiagram();
+        try {
+            String filepath = "data/test/GUITest/methodOverriding.json";
+            diagString = Files.readString(Paths.get(filepath));
+            cd2 = Parser.decodeJSON(diagString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        CDClass testClass = cd2.getCDClass(2);
+        Assertions.assertTrue(testClass.checkDeleteMethod(cd2, "myMethod"));
+
+
+    }
+
+    @Test
     public void testOverridenMethods() {
         CDClass testClass = cd.getCDClass(1);
 
