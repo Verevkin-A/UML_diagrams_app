@@ -59,11 +59,6 @@ public class NodeFormController {
             showWarning("Unselected class", "One or both classes are not selected");
             return;
         }
-        if (!Objects.equals(((RadioButton) nodeType.getSelectedToggle()).getText(), "Generalization") &&
-                (Objects.equals(tfFromCardinality.getText(), "") || Objects.equals(tfToCardinality.getText(), ""))) {
-            showWarning("Unselected cardinality", "One or both cardinality fields are empty, but required for the selected type of node");
-            return;
-        }
         if (Objects.equals(((RadioButton) nodeType.getSelectedToggle()).getText(), "Generalization") &&
                 cbFromClass.getValue() == cbToClass.getValue()) {
             showWarning("Unary generalization", "Unary generalization is not supported");
