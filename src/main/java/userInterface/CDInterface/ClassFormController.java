@@ -148,19 +148,19 @@ public class ClassFormController {
      */
     void updateField() {
         try {
-//            CDController controller = CDController.getController();   // TODO?
-//            ClassDiagram currentCD = controller.saveCD();
-//            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
-//            controller.saveSDs(currentCD);
+            CDController controller = CDController.getController();
+            ClassDiagram currentCD = controller.saveCD();
+            CDClass currentClass = currentCD.getCDClass(controller.uiClassConnectors.indexOf(uiClassConnector));
+            controller.saveSDs(currentCD);
 
             FormField formField = tvFields.getSelectionModel().getSelectedItem();
             formField.setName(tfFieldName.getText());
             formField.setType(getType());
             formField.setVisibility(getVisibility());
             tvFields.refresh();
-//            if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method")) {
-//                currentClass.propagateMethodRename(currentCD, tfFieldName.getText());
-//            }
+            if (tvFields.getSelectionModel().getSelectedItem().getType().equals("Method")) {
+                currentClass.propagateMethodRename(currentCD, tfFieldName.getText());
+            }
         } catch (Exception e) {
             System.out.println("Nothing is selected");
         }
