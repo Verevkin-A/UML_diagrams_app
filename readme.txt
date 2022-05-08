@@ -8,11 +8,14 @@ Datum:
     2022-04-12
 
 Popis implementace:
-    V implementaci jsme se mírně odchýlili od požadavků specifikovaných v Úkolu 2.
-    Aplikace podporuje načtení a uložení JSON souborů obsahujících pouze třídy.
+    Aplikace podporuje načtení a uložení JSON souborů obsahujících třídní diagram se sekvenčními diagramy.
+
     Uživatel může vytvořit třídu pomocí tlačítka "Create class" a následného kliknutí na prázdné pole.
     Pomocí vyskakovacího okna může editovat parametry třídy. Třída je uložena v seznamu tříd v pravém sloupci,
-    kde je možné ji znovu editovat, nebo smazat.
+    kde je možné ji znovu editovat, nebo smazat. Obdobně lze editovat hrany mezi třídami.
+
+    K diagramu tříd je možné využít několik sekvenčních diagramů. Objekty se do sekvenčních diagramu zadávají s referencí
+    na "časovou osu", která udává pozici jednotlivých položek.
 
     Funkcionalita knihovny je demonstrována několika testy v souboru ParserTest.java. Testy demonstrují možnost
     načítat, editovat, a ukládat JSON soubory s třídami a uzly.
